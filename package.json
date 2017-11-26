@@ -1,0 +1,33 @@
+{
+  "name": "node-red-contrib-googlehome-web",
+  "version": "0.0.1",
+  "description": "Google Home Node-RED Action",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Google Home",
+    "node-red"
+  ],
+  "author": "hardillb@gmail.com",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.6",
+    "express": "^4.15.3",
+    "express-session": "^1.15.3",
+    "mongoose": "^4.10.0",
+    "mongoose-sequence": "^3.2.0",
+    "morgan": "^1.8.1",
+    "oauth2orize": "^1.8.0",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
+    "passport-http-bearer": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0",
+    "uid2": "0.0.3"
+  }
+}

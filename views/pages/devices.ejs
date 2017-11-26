@@ -1,0 +1,274 @@
+<% include ../fragments/header.ejs %>
+  <div class="container main-content">
+    <h1>Devices</h1>
+    <div class="deviceHeader">
+      <div style="width:200px; float:left" ><strong>Name</strong></div>
+      <div style="width:200px; float:left" ><strong>Room</strong></div>
+      <div style="width:200px; float:left"><strong>Type</strong></div>
+      <div class="deviceActions"><strong>Traits</strong></div>
+    </div>
+    <% devices.forEach(function(device){ %>
+    <div class="deviceRow">
+      <div class="device">
+      <div class="deviceName"><%= device.name.nicknames %></div>
+      <div class="room"><%= device.roomHint %></div>
+      <div class="deviceDescription"><img src="/images/<%= device.type %>.png" title="<%= device.type %>"></div>
+      <div class="deviceActions">
+        <% device.traits.forEach(function(action){ %>
+          <img class="action" src="/images/<%= action %>.png" title="<%= action %>">
+        <% }); %>
+      </div>
+      </div>
+      <div>
+      <button onclick="edit('<%= device._id %>')">Edit</button>
+      <button onclick="deleteDevice('<%= device._id%>')">Delete</button>
+      </div>
+    </div>
+    <% }); %>
+    <div style="padding-top: 10px;">
+      <button onclick="addDevice();">Add Device</button>
+    </div>
+  </div>
+
+  <div id="dialog" hidden>
+    <input id="devID" type="hidden">
+    <label for="friendlyName">Name: </label>
+    <input id="friendlyName" type="text">
+    <label for="roomHint">Room: </label>
+    <input id="roomHint" type="text">
+    <span>Optional</span>
+    <fieldset id="deviceType">
+      <legend>Type</legend>
+      <div style="display: flex; width: 100%">
+        <div class="types">
+          <input type="radio" name="type" value="action.devices.types.SWITCH" checked="true" onclick="switchType(this.value);">Switch</input><br/>
+          <input type="radio" name="type" value="action.devices.types.OUTLET" onclick="switchType(this.value);">Outlet</input><br/>
+          <input type="radio" name="type" value="action.devices.types.LIGHT" onclick="switchType(this.value);">Light</input><br/>
+        </div>
+        <div class="types">
+          <input type="radio" name="type" value="action.devices.types.THERMOSTAT" onclick="switchType(this.value);">Thermostat</input><br/>
+          <input type="radio" name="type" value="action.devices.types.SCENE" onclick="switchType(this.value);">Scene</input><br/>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset id="deviceTraits">
+      <legend>Traits</legend>
+      <fieldset id="OnOffTraits">
+        <label for="OnOff">On/Off: </label>
+        <input type="checkbox" name="trait" id="OnOff" value="action.devices.traits.OnOff" checked="true">
+      </fieldset>
+      <fieldset id="lightTraits" disabled>
+        <label for="Brightness">Brightness: </label>
+        <input type="checkbox" name="trait" id="Brightness" value="action.devices.traits.Brightness"><br/>
+        <label for="ColorSpectrum">RGB: </label>
+        <input type="checkbox" name="trait" id="ColorSpectrum" value="action.devcies.trait.ColorSpectrum">
+        <label for="ColorTemperature">Color Temperature: </label>
+        <input type="checkbox" name="trait" id="ColorTemperature" value="action.devices.traits.ColorTemperature">
+      </fieldset>
+      <fieldset id="temperatureTraits" disabled>
+        <label for="TemperatureSetting">Temperature: </label>
+        <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting">
+      </fieldset>
+      <fieldset id="sceneTraits" disabled hidden>
+        <label for="Scene">Scene: </label>
+        <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
+      </fieldset>
+    </fieldset>
+  </div>
+
+  <script type="application/javascript">
+    $('#dialog').dialog({
+      autoOpen: false,
+      dragable: false,
+      modal: true,
+      position: {
+        my: "center",
+        at: "center",
+        of: window,
+        using: function( pos ) {
+          $(this).css("top", '55px');
+          $(this).css("left", pos.left);
+            }
+      },
+      title: "Add New Device",
+      dialogClass: "no-close",
+      buttons:[
+        {
+          text: 'OK',
+          click: function(){
+            var devID = $('#devID').val();
+            var name = $('#friendlyName').val();
+            if (devID === '') {
+              var dev = {
+                type: $('input[name=type]:checked').val(),
+                traits: [],
+                name:{
+                  name: name,
+                  nicknames: [
+                    name
+                  ]
+                }
+              };
+              if (dev.type === "action.devices.types.SCENE") {
+                dev.attributes = {
+                  "sceneReversible": true
+                };
+              }
+              $('input[name=trait]').each(function(index){
+                if (this.checked) {
+                  dev.traits.push(this.value);
+                }
+              });
+              console.log(dev);
+              if (name && dev.type && dev.traits.length > 0) {
+                $.ajax({
+                  url: '/user/devices',
+                  method: 'PUT',
+                  data: JSON.stringify(dev),
+                  contentType: "application/json",
+                  success: function(data){
+                    document.location.reload();
+                  },
+                  dataType: 'json'
+                }).fail(function(){
+                  alert('failed to create device');
+                });
+                $(this).dialog( "close" );
+              } else {
+                alert('You need to set a name');
+              }
+            } else {
+              //update
+
+            }
+          }
+        },
+        {
+          text: 'Cancel',
+          click: function(){
+            reset();
+            $(this).dialog( "close" );
+          }
+        }
+      ]
+    });
+
+    function clearDevice() {
+      $('#devID').val("");
+      $('#friendlyName').val("");
+      $('#friendlyName').prop('readonly', false);
+      $('input[name=type]').each(function(index){
+        this.checked = false;
+      });
+      $('input[name=trait]').each(function(index){
+        this.checked = false;
+      });
+      $("#dialog")
+    }
+
+    function edit(id) {
+      clearDevice();
+      $("#dialog").dialog({
+        title: "Edit Device"
+      }).dialog("open");
+      var device = devices[id];
+      $('#devID').val(device._id);
+      $('#friendlyName').val(device.name.name);
+      $('#friendlyName').prop('readonly', true);
+      switchType(device.type);
+      $('input[name=type][value="' + device.type + '"]').prop('checked', true);
+      device.traits.forEach(function(trait){
+        var stuff = trait.split('\.');
+        $('#'+stuff[stuff.length-1]).prop('checked',true);
+      });
+    }
+
+    function addDevice(){
+      clearDevice();
+      $("#dialog").dialog({title: "Add New Device"}).dialog("open");
+    }
+
+    function switchType(type) {
+      switch(type) {
+        case 'action.devices.types.SWITCH':
+        case 'action.devices.types.OUTLET':
+          $('#OnOff').prop('checked',true);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked',false);
+          $('#TemperatureSetting').prop('checked',false);
+          $('#Scene').prop('checked', false);
+
+          $('#OnOffTraits').removeAttr('disabled');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').attr('disabled','');
+          $('#sceneTraits').attr('disabled','');
+          
+          break;
+        case 'action.devices.types.LIGHT':
+          $('#OnOff').prop('checked', true);
+          $('#TemperatureSetting').prop('checked', false);
+          $('#Scene').prop('checked', false);
+
+          $('#OnOffTraits').removeAttr('disabled');
+          $('#lightTraits').removeAttr('disabled');
+          $('#temperatureTraits').attr('disabled','');
+          $('#sceneTraits').attr('disabled','');
+          break;
+        case 'action.devices.types.THERMOSTAT':
+          $('#OnOff').prop('checked',false);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',true);
+          $('#Scene').prop('checked', false);
+
+          $('#OnOffTraits').attr('disabled','');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').removeAttr('disabled');
+          $('#sceneTraits').attr('disabled','');
+          break;
+        case 'action.devices.types.SCENE':
+          $('#OnOff').prop('checked',false);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',false);
+          $('#Scene').prop('checked',true);
+
+          $('#OnOffTraits').attr('disabled','');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').attr('disabled','');
+          $('#sceneTraits').removeAttr('disabled');
+          break;
+      }
+    }
+
+    function reset() {
+      $('#devID').val("");
+      $('#OnOff').prop('checked',true);
+      $('#Brightness').prop('checked', false);
+      $('#ColorTemperature').prop('checked', false);
+      $('#ColorSpectrum').prop('checked', false);
+      $('#TemperatureSetting').prop('checked',false);
+      $('#Scene').prop('checked',false);
+
+      $('#OnOffTraits').removeAttr('disabled');
+      $('#lightTraits').attr('disabled','');
+      $('#temperatureTraits').attr('disabled','');
+      $('#sceneTraits').attr('disabled','');
+
+      $('input[name=type]').each(function(index){
+        if (this.value === 'action.devices.types.SWITCH') {
+          this.checked = true;
+        }
+      });
+
+    }
+
+    var devices = {};
+    <%- JSON.stringify(devices) %>.forEach(function(device){
+      devices[device._id] = device;
+    });
+  </script>
+<% include ../fragments/footer.ejs %>

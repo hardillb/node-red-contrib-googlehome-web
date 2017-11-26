@@ -1,0 +1,67 @@
+body {
+  padding-top: 50px;
+}
+
+.main {
+  display: flex;
+}
+
+.login label {
+	width: 75px;
+}
+
+.register label {
+	width: 75px;
+}
+
+.pwq {
+	text-align: center;
+	margin-left: 10px;
+	padding: 5px;
+	width: 75px;
+	height: 20px;
+}
+
+.types {
+	width: 100px;
+	flex-shrink: 0;
+	flex-basis: 100px;
+}
+
+.devicerow {
+	padding: 5px;
+	margin: 1px;
+	border: 1px solid;
+}
+
+.device {
+	display: flex;
+}
+
+.deviceName {
+	flex-shrink: 0; 
+	flex-basis: 200px;
+	width: 200px;
+	order: 1;
+}
+
+.room {
+	flex-shrink: 0;
+	flex-basis: 200px;
+	width: 200px;
+	order: 2
+}
+
+.deviceDescription {
+	flex-shrink: 0;
+	flex-basis: 200px;
+	width: 200px;
+	order: 3;
+}
+
+
+.deviceActions {
+	order: 4;
+	display: flex;
+	flex-wrap: wrap;
+}
