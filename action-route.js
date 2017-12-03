@@ -1,6 +1,7 @@
 var device = require('./models/device');
+var mqtt = require('mqtt');
 
-module.exports = function(app, passport) {
+module.exports = function(app, passport, mqttOptions) {
 
 	var inflightRequests = {};
 

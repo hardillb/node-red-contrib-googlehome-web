@@ -144,7 +144,7 @@ module.exports = function(app, passport) {
 			var user = req.user.username;
 			var id = req.params.dev_id;
 			Devices.remove({_id: id, username: user },
-				funcition(err) {
+				function(err) {
 					if (err) {
 						console.log(err);
 						res.status(500);

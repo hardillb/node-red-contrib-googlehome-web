@@ -1,4 +1,5 @@
 var fs = require('fs');
+var url = require('url');
 var http = require('http');
 var https = require('https');
 var flash = require('connect-flash');
@@ -14,12 +15,30 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
-var mongo_url = (process.env.MONGO_URL || 'mongodb://localhost/users');
+var mongo_url = (process.env.MONGO_URL || 'mongodb://localhosti:27017/assistant');
+console.log(mongo_url);
 
 var mqtt_url = (process.env.MQTT_URL || 'mqtt://localhost:1883');
 var mqtt_user = (process.env.MQTT_USER || undefined);
 var mqtt_password = (process.env.MQTT_PASSWORD || undefined);
 console.log(mqtt_url);
+
+mqtt_url = url.parse(mqtt_url);
+
+var mqttOptions = {
+	reconnectPeriod: 3000,
+	keepAlive: 10,
+	clean: true,
+	clientId: 'homeApp_' + Math.random().toString(16).substr(2, 8),
+	hostname: mqtt_url.hostname,
+	port: mqtt_url.port,
+	protocol: mqtt_url.protocol
+};
+
+if (mqtt_user) {
+	mqttOptions.username = mqtt_user;
+	mqttOptions.password = mqtt_password;
+}
 
 var app_id = 'https://localhost:' + port;
 
@@ -87,6 +106,7 @@ Account.findOne({username: mqtt_user}, function(error, account){
 	}
 });
 
+//Should be passed in as a env var
 var cookieSecret = 'ihytsrf334';
 
 var app = express();
@@ -150,7 +170,8 @@ app.get('/:page',function(req,res){
 
 require('./user-routes.js')(app, passport);
 require('./oauth-routes.js')(app, passport);
-require('./action-route.js')(app, passport);
+require('./action-route.js')(app, passport, mqttOptions);
+require('./api.js')(app,passport);
 
 
 var server = http.Server(app);
@@ -168,7 +189,7 @@ server.listen(port, host, function(){
 	console.log("App_ID -> %s", app_id);
 
 	setTimeout(function(){
-		
+		//started?
 	},5000);
 	
 	
