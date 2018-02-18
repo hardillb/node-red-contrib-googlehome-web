@@ -13,6 +13,7 @@ module.exports = function(app, passport) {
 						dev.name = data[i].name.name;
 						dev.id = data[i].id;
 						dev.type = data[i].type;
+						dev.traits = data[i].traits;
 						devices.push(dev);
 					}
 					res.send(devices);
