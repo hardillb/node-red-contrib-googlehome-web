@@ -41,10 +41,10 @@ var Device = new Schema({
 	traits: [String],
 	willReportState: { type: Boolean, default: false},
 	deviceInfo: {
-		manufacturer: String,
-		model: String,
-		hwVersion: String,
-		swVersion: String
+		manufacturer: {type: String, default: "Node-RED"},
+		model: {type: String, default: "virtual" },
+		hwVersion: {type: String, default: "1.0"},
+		swVersion: {type: String, default: "1.0"}
 	},
 	attributes: Schema.Types.Mixed,
 	customData: Schema.Types.Mixed
