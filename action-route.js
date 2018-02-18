@@ -1,9 +1,34 @@
 var device = require('./models/device');
 var mqtt = require('mqtt');
 
-module.exports = function(app, passport, mqttOptions) {
+module.exports = function(app, passport, mqttOptions){
+
+	var mqttClient = mqtt.connect(mqttOptions);
+
+	mqttClient.on('error',function(err){
+		console.log(err);
+	});
+
+	mqttClient.on('reconnect', function(){
+
+	});
+
+	console.log("action-route");
+
+	mqttClient.on('connect', function(){
+		console.log("connected");
+		mqttClient.subscribe('response/#');
+	});
+
+	mqttClient.on('message',function(topic, message){
+
+	});
 
 	var inflightRequests = {};
+
+	var timeout = setTimeout(function() {
+
+	}, 500);
 
 	app.post('/action',
 		//passport.authenticate('bearer', { session: false }), 
@@ -51,6 +76,13 @@ module.exports = function(app, passport, mqttOptions) {
 						devices: devices,
 						execution: execution
 					};
+					var topic = "command/" +req.user.username;
+					var message = JSON.stringify({foo: "bar"});
+					try {
+						mqttClient.publish(topic, message);
+					} catch (err) {
+
+					}
 					break;
 			}
 

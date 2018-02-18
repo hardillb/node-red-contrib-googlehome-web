@@ -16,7 +16,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
 var mongo_url = (process.env.MONGO_URL || 'mongodb://localhosti:27017/assistant');
-console.log(mongo_url);
 
 var mqtt_url = (process.env.MQTT_URL || 'mqtt://localhost:1883');
 var mqtt_user = (process.env.MQTT_USER || undefined);
@@ -30,7 +29,7 @@ var mqttOptions = {
 	keepAlive: 10,
 	clean: true,
 	clientId: 'homeApp_' + Math.random().toString(16).substr(2, 8),
-	hostname: mqtt_url.hostname,
+	host: mqtt_url.hostname,
 	port: mqtt_url.port,
 	protocol: mqtt_url.protocol
 };
@@ -159,19 +158,33 @@ app.get('/',function(req,res){
 	res.render('pages/index',{user: req.user, home: true, message: req.flash('error')});
 });
 
-app.get('/:page',function(req,res){
+app.get('/:page',function(req,res,next){
 	var opts = {
 		user: req.user, 
 		message: req.flash('error')
 	};
 	opts[req.params.page] = true;
-	res.render('pages/' + req.params.page, opts);
+	try {
+		res.render('pages/' + req.params.page, opts);
+	} catch (err) {
+		err.status = 404;
+		next(err);
+	}
 });
 
+require('./admin-routes.js')(app, passport);
 require('./user-routes.js')(app, passport);
 require('./oauth-routes.js')(app, passport);
 require('./action-route.js')(app, passport, mqttOptions);
 require('./api.js')(app,passport);
+
+app.use(function (err, req,res,next){
+	if (err.status !== 404) {
+		return next();
+	}
+	res.status(404);
+	res.send("File Not Found");
+});
 
 
 var server = http.Server(app);
