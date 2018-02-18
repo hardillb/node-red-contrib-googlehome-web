@@ -25,7 +25,7 @@ module.exports = function(app,passport){
 				var application = Application(req.body);
 				application.save(function(err, application){
 					if (!err) {
-						res..status(201).send(application);
+						res.status(201).send(application);
 					} else {
 						res.status(500).send(error);
 					}
