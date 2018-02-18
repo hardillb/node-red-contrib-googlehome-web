@@ -1,4 +1,4 @@
-var Application = require('./modess/oauth').Application;
+var Application = require('./models/oauth').Application;
 
 var mqtt_user = (process.env.MQTT_USER || undefined);
 
