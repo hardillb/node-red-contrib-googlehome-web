@@ -102,6 +102,7 @@
               var dev = {
                 type: $('input[name=type]:checked').val(),
                 traits: [],
+                roomHint: $('#roomHint').val(),
                 name:{
                   name: name,
                   nicknames: [
@@ -139,7 +140,7 @@
               }
             } else {
               //update
-
+              var device = devices[devID];
             }
           }
         },
@@ -157,6 +158,7 @@
       $('#devID').val("");
       $('#friendlyName').val("");
       $('#friendlyName').prop('readonly', false);
+      $('#roomHint').val("");
       $('input[name=type]').each(function(index){
         this.checked = false;
       });
@@ -175,6 +177,7 @@
       $('#devID').val(device._id);
       $('#friendlyName').val(device.name.name);
       $('#friendlyName').prop('readonly', true);
+      $('#roomHint').val(device.roomHint);
       switchType(device.type);
       $('input[name=type][value="' + device.type + '"]').prop('checked', true);
       device.traits.forEach(function(trait){
@@ -186,6 +189,19 @@
     function addDevice(){
       clearDevice();
       $("#dialog").dialog({title: "Add New Device"}).dialog("open");
+    }
+
+    function deleteDevice(id) {
+      var answer = confirm("Are you sure you want to delete this device?");
+      if (answer) {
+        $.ajax({
+          url:"/user/device/" + id,
+          type: 'DELETE',
+          success: function(data){
+            document.location.reload();
+          }
+        });
+      }
     }
 
     function switchType(type) {

@@ -13,18 +13,19 @@ var Schema = mongoose.Schema;
 //         "name": "Night light",
 //         "nicknames": ["wall plug"]
 //       },
+//       "roomHint": "",
 //       "willReportState": true,
-//         "deviceInfo": {
-//           "manufacturer": "lights-out-inc",
-//           "model": "hs1234",
-//           "hwVersion": "3.2",
-//           "swVersion": "11.4"
-//         },
-//         "customData": {
-//           "fooValue": 74,
-//           "barValue": true,
-//           "bazValue": "foo"
-//         }
+//       "deviceInfo": {
+//         "manufacturer": "lights-out-inc",
+//         "model": "hs1234",
+//         "hwVersion": "3.2",
+//         "swVersion": "11.4"
+//       },
+//       "customData": {
+//         "fooValue": 74,
+//         "barValue": true,
+//         "bazValue": "foo"
+//       }
 //     }
 
 var Device = new Schema({
