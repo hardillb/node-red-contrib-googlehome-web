@@ -15,7 +15,7 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
-var mongo_url = (process.env.MONGO_URL || 'mongodb://localhosti:27017/assistant');
+var mongo_url = (process.env.MONGO_URL || 'mongodb://localhost:27017/assistant');
 
 var mqtt_url = (process.env.MQTT_URL || 'mqtt://localhost:1883');
 var mqtt_user = (process.env.MQTT_USER || undefined);

@@ -195,7 +195,7 @@
       var answer = confirm("Are you sure you want to delete this device?");
       if (answer) {
         $.ajax({
-          url:"/user/device/" + id,
+          url:"/user/devices/" + id,
           type: 'DELETE',
           success: function(data){
             document.location.reload();
