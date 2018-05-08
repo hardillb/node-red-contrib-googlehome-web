@@ -36,7 +36,8 @@ server.exchange(oauth2orize.exchange.code({
 				if (token) {
 					OAuth.RefreshToken.findOne({application:application, user: grant.user},function(error, refreshToken){
 						if (refreshToken){
-							done(null,token.token, refreshToken.token,{token_type: 'standard'});
+							var expires = Math.round((token.expires - (new Date().getTime()))/1000);
+							done(null,token.token, refreshToken.token,{token_type: 'Bearer', expires_in: expires});
 						} else {
 							// Shouldn't get here unless there is an error as there
 							// should be a refresh token if there is an access token
@@ -52,10 +53,11 @@ server.exchange(oauth2orize.exchange.code({
 					});
 
 					token.save(function(error){
+						var expires = Math.round((token.expires - (new Date().getTime()))/1000);
 						//delete old refreshToken or reuse?
 						OAuth.RefreshToken.findOne({application:application, user: grant.user},function(error, refreshToken){
 							if (refreshToken) {
-								done(error, error ? null : token.token, refreshToken.token, error ? null : { token_type: 'standard' });
+								done(error, error ? null : token.token, refreshToken.token, error ? null : { token_type: 'Bearer', expires_in: expires, scope: token.scope});
 							} else if (!error) {
 								var refreshToken = new OAuth.RefreshToken({
 									user: grant.user,
@@ -63,7 +65,7 @@ server.exchange(oauth2orize.exchange.code({
 								});
 
 								refreshToken.save(function(error){
-									done(error, error ? null : token.token, refreshToken.token, error ? null : { token_type: 'standard' });
+									done(error, error ? null : token.token, refreshToken.token, error ? null : { token_type: 'Bearer', expires_in: expires, scope: token.scope});
 								});
 							} else {
 								done(error);
@@ -97,8 +99,9 @@ server.exchange(oauth2orize.exchange.refreshToken({
 					});
 
 					newToken.save(function(error){
+						var expires = Math.round((newToken.expires - (new Date().getTime()))/1000);
 						if (!error) {
-							done(null, newToken.token);
+							done(null, newToken.token, refresh.token, {token_type: 'Bearer', expires_in: expires, scope: newToken.scope});
 						} else {
 							done(error,false);
 						}

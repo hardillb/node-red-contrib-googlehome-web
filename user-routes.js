@@ -142,7 +142,7 @@ module.exports = function(app, passport) {
 		ensureAuthenticated,
 		function(req,res) {
 			var user = req.user.username;
-			var id = req.params.dev_id;
+			var id = req.params.dev_id;				
 			Devices.remove({_id: id, username: user },
 				function(err) {
 					if (err) {
