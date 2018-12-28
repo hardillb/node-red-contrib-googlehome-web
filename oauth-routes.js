@@ -3,6 +3,8 @@ var oauthServer = require('./oauth');
 
 module.exports = function(app, passport, logger) {
 
+	logger.debug("loading oAuth endpoints");
+
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
 			if (application) {
