@@ -6,7 +6,11 @@ var Account = new Schema({
     username: String,
     password: String,
     agentUserId: {type: Number, get: function(value){
-        return value.toString();
+        if (value) {
+            return value.toString();
+        } else {
+            return "-1";
+        }
     }},
     email: String,
     validated: { type: Boolean, default: false},
