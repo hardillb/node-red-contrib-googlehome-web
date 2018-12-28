@@ -29,7 +29,7 @@ var loggingOptions = {
 
 var logger = SimpleNodeLogger.createRollingFileLogger(loggingOptions);
 
-var logLevel (process.env.LOG_LEVEL || "info");
+var logLevel = (process.env.LOG_LEVEL || "info");
 logger.setLevel(logLevel);
 
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
