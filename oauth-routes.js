@@ -1,11 +1,13 @@
 var oauth2orize = require('oauth2orize');
 var oauthServer = require('./oauth');
+var oauthModels = require('./models/oauth');
 
 module.exports = function(app, passport, logger) {
 
 	logger.debug("loading oAuth endpoints");
 
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
+		logger.debug("Starting oAuth start");
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
 			if (application) {
 				logger.info("Starting oAuth flow for " + application.title);
@@ -23,9 +25,10 @@ module.exports = function(app, passport, logger) {
 					done(new Error("You must supply a redirect_uri that is a domain or url scheme owned by your app."), false);
 				}
 			} else if (!error) {
-				logger.debug("No Application found");
+				logger.debug("No oAuth Application found");
 				done(new Error("There is no app with the client_id you supplied."), false);
 			} else {
+				logger.debug("Error getting oAuth application ",error);
 				done(error);
 			}
 		});
