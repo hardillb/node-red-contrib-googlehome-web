@@ -64,10 +64,11 @@ module.exports = function(app, passport, logger) {
 	});
 
 	app.post('/auth/finish',function(req,res,next) {
-		logger.info("/auth/finish user: ", req.user);
+		logger.info("/auth/finish");
 		logger.debug(req.body);
 		logger.debug(req.params);
 		if (req.user) {
+			logger.debug("oAuth user: ", req.user);
 			next();
 		} else {
 			passport.authenticate('local', {
@@ -77,11 +78,14 @@ module.exports = function(app, passport, logger) {
 				if (user) {
 					//console.log(user.username);
 					req.user = user;
+					logger.debug("oAuth user: ", req.user);
 					next();
 				} else if (!error){
 					//console.log("not authed");
 					req.flash('error', 'Your email or password was incorrect. Please try again.');
 					res.redirect(req.body['auth_url'])
+				} else if (error) {
+					logger.debug("oAuth finish error: ",error)
 				}
 	 		})(req,res,next);
 		}
