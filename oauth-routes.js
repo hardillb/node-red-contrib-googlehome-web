@@ -6,6 +6,7 @@ module.exports = function(app, passport, logger) {
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
 			if (application) {
+				logger.info("Starting Outh flow for " + application.title);
 				var match = false, uri = url.parse(redirectURI || '');
 				for (var i = 0; i < application.domains.length; i++) {
 					if (uri.host == application.domains[i] || (uri.protocol == application.domains[i] && uri.protocol != 'http' && uri.protocol != 'https')) {
@@ -44,9 +45,9 @@ module.exports = function(app, passport, logger) {
 	});
 
 	app.post('/auth/finish',function(req,res,next) {
-		console.log("/auth/finish user: ", req.user);
-		console.log(req.body);
-		console.log(req.params);
+		logger.info("/auth/finish user: ", req.user);
+		logger.debug(req.body);
+		logger.debug(req.params);
 		if (req.user) {
 			next();
 		} else {
@@ -66,7 +67,7 @@ module.exports = function(app, passport, logger) {
 	 		})(req,res,next);
 		}
 	}, oauthServer.decision(function(req,done){
-		//console.log("decision user: ", req);
+		logger.debug("decision user: ", req);
 		done(null, { scope: req.oauth2.req.scope });
 	}));
 
@@ -76,6 +77,7 @@ module.exports = function(app, passport, logger) {
 
 		oauthModels.Application.findOne({ oauth_id: appID, oauth_secret: appSecret }, function(error, application) {
 			if (application) {
+				logger.debug("oAuth exchange ", application.title);
 				req.appl = application;
 				next();
 			} else if (!error) {

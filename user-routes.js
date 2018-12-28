@@ -82,7 +82,7 @@ module.exports = function(app, passport, logger) {
 
 			Devices.find({username:user}, function(err, data){
 				if (!err) {
-					console.log(data);
+					logger.debug(data);
 					res.render('pages/devices',{user: req.user ,devices: data, devs: true});
 				}
 			});
