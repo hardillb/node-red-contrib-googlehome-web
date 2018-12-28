@@ -1,6 +1,8 @@
 var fs = require('fs');
 var url = require('url');
+var rfs = require('rotating-file-stream');
 var http = require('http');
+var path = require('path');
 var https = require('https');
 var flash = require('connect-flash');
 var morgan = require('morgan');
@@ -12,6 +14,16 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var BasicStrategy = require('passport-http').BasicStrategy;
 var LocalStrategy = require('passport-local').Strategy;
+var SimpleNodeLogger = require('simple-node-logger');
+
+var loggingOptions = {
+	logDirectory: 'log',
+	fileNamePattern:'debug-<DATE>.log',
+	timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS',
+	dateFormat:'YYYY.MM.DD'
+};
+
+var logger = SimpleNodeLogger.createRollingFileLogger(loggingOptions);
 
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
@@ -108,11 +120,21 @@ Account.findOne({username: mqtt_user}, function(error, account){
 //Should be passed in as a env var
 var cookieSecret = 'ihytsrf334';
 
+var logDirectory = path.join(__dirname, 'log');
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+
+var accessLogStream = rfs('access.log', {
+  interval: '1d', // rotate daily
+  compress: 'gzip', // compress rotated files
+  maxFiles: 30,
+  path: logDirectory
+});
+
 var app = express();
 
 app.set('view engine', 'ejs');
 app.enable('trust proxy');
-app.use(morgan("combined"));
+app.use(morgan("combined", {stream: accessLogStream}));
 app.use(cookieParser(cookieSecret));
 app.use(flash());
 app.use(session({
@@ -172,10 +194,10 @@ app.get('/:page',function(req,res,next){
 	}
 });
 
-require('./admin-routes.js')(app, passport);
-require('./user-routes.js')(app, passport);
-require('./oauth-routes.js')(app, passport);
-require('./action-route.js')(app, passport, mqttOptions);
+require('./admin-routes.js')(app, passport, logger);
+require('./user-routes.js')(app, passport, logger);
+require('./oauth-routes.js')(app, passport, logger);
+require('./action-route.js')(app, passport, mqttOptions, logger);
 require('./api.js')(app,passport);
 
 app.use(function (err, req,res,next){

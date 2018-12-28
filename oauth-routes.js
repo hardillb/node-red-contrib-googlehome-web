@@ -1,7 +1,7 @@
 var oauth2orize = require('oauth2orize');
 var oauthServer = require('./oauth');
 
-module.exports = function(app, passport) {
+module.exports = function(app, passport, logger) {
 
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {

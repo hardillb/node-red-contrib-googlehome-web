@@ -1,12 +1,13 @@
 var device = require('./models/device');
+var state = require('./models/state');
 var mqtt = require('mqtt');
 
-module.exports = function(app, passport, mqttOptions){
+module.exports = function(app, passport, mqttOptions, logger){
 
 	var mqttClient = mqtt.connect(mqttOptions);
 
 	mqttClient.on('error',function(err){
-		console.log(err);
+		logger.info(err);
 	});
 
 	mqttClient.on('reconnect', function(){
@@ -34,17 +35,17 @@ module.exports = function(app, passport, mqttOptions){
 		//passport.authenticate('bearer', { session: false }), 
 		function(req,res){
 			var request = req.body;
-			console.log(request);
+			logger.debug(request);
 			var requestId = request.requestId;
 			var intent = request.inputs[0].intent;
-			console.log("user: %j", req.user.username);
+			logger.debug("user: %j", req.user.username);
 			var user = req.user.username;
-			console.log(intent);
+			logger.debug(intent);
 
 			var response = {};
 			switch(intent) {
 				case 'action.devices.SYNC':
-					console.log("Sync");
+					logger.info("Sync");
 					device.find({username: user},
 						{"_id": 0, "__v": 0, username: 0 },
 						function(error, data){
@@ -61,11 +62,29 @@ module.exports = function(app, passport, mqttOptions){
 							//console.log("%j",response);
 							res.send(response);
 						} else {
-							console.log(error);
+							logger.info(error);
 						}
 					});
 					break;
 				case 'action.devices.QUERY':
+					var deviceList = [];
+					for(var i in request.inputs[0].payload.devices) {
+						deviceList.push(request.inputs[0].payload.devices[i].id);
+					}
+					state.find({id: { $in: deviceList}},function(error,data){
+						if (!error) {
+							var response = {devices: {}};
+							if (Array.isArray(data)) {
+								for (var i in data) {
+									response.devices[data[i].id] = data[i].status;
+								}
+							} else {
+								response.devices[data.id] = data.status;
+							}
+						} else {
+							logger.debug("Problem with status, ", error)
+						}
+					});
 					break;
 				case 'action.devices.EXECUTE':
 					//send MQTT message to control device
@@ -84,9 +103,10 @@ module.exports = function(app, passport, mqttOptions){
 
 					}
 					break;
+				case 'action.devices.DISCONNECT':
+					res.send({});
+					break;
 			}
-
-			
 		}
 	);
 

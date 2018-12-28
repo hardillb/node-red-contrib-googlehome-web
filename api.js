@@ -1,6 +1,6 @@
 var Devices = require('./models/device');
 
-module.exports = function(app, passport) {
+module.exports = function(app, passport, logger) {
 	app.get('/api/v1/devices',
 		passport.authenticate('basic', {session: false}),
 		function(req, res, next) {

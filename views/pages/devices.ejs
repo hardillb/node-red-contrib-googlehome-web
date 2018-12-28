@@ -73,6 +73,11 @@
         <label for="Scene">Scene: </label>
         <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
       </fieldset>
+      <fieldset id="reportState" hidden>
+        <legend>Report State</legend>
+        <label for="willReportState">Will Report State: </label>
+        <input type="checkbox" id="willReportState" name="willReportState">
+      </fieldset>
     </fieldset>
   </div>
 
@@ -111,6 +116,7 @@
                 }
               };
               if (dev.type === "action.devices.types.SCENE") {
+                dev.willReportState = false;
                 dev.attributes = {
                   "sceneReversible": true
                 };
@@ -219,6 +225,7 @@
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
+          $('#reportState').removeAttr('disabled');
           
           break;
         case 'action.devices.types.LIGHT':
@@ -230,6 +237,7 @@
           $('#lightTraits').removeAttr('disabled');
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
+          $('#reportState').removeAttr('disabled');
           break;
         case 'action.devices.types.THERMOSTAT':
           $('#OnOff').prop('checked',false);
@@ -243,6 +251,7 @@
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').removeAttr('disabled');
           $('#sceneTraits').attr('disabled','');
+          $('#reportState').removeAttr('disabled');
           break;
         case 'action.devices.types.SCENE':
           $('#OnOff').prop('checked',false);
@@ -251,6 +260,9 @@
           $('#ColorSpectrum').prop('checked', false);
           $('#TemperatureSetting').prop('checked',false);
           $('#Scene').prop('checked',true);
+
+          $('#willReportState').prop('checked', false);
+          $('#reportState').attr('disabled','');
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');

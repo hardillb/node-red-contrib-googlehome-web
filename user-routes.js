@@ -2,7 +2,7 @@ var Account = require('./models/account');
 var Topics = require('./models/topics');
 var Devices = require('./models/device');
 
-module.exports = function(app, passport) {
+module.exports = function(app, passport, logger) {
 
 	app.get('/login', function(req,res){
 		res.render('page/login',{user: req.user, message: req.flash('error')});
@@ -129,8 +129,7 @@ module.exports = function(app, passport) {
 							data.save(function(err, d) {
 								res.status(201);
 								res.send(d);
-							}
-							);
+							});
 						}
 					}
 				)
@@ -142,7 +141,7 @@ module.exports = function(app, passport) {
 		ensureAuthenticated,
 		function(req,res) {
 			var user = req.user.username;
-			var id = req.params.dev_id;				
+			var id = req.params.dev_id;
 			Devices.remove({_id: id, username: user },
 				function(err) {
 					if (err) {

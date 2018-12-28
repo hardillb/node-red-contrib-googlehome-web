@@ -131,7 +131,7 @@
       xhr.onreadystatechange = function () {
         if( xhr.readyState == 4 && xhr.status == 201) {
           //new user created
-          window.location = '/devices';
+          window.location = '/user/devices';
         } else if (xhr.readyState == 4 && xhr.status == 400) {
           //show error
           alert(xhr.responseText);
