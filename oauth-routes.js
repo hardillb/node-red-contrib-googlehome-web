@@ -8,6 +8,9 @@ module.exports = function(app, passport, logger) {
 
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 		logger.debug("Starting oAuth start");
+		if (typeof applicationID == "string") {
+			applicationID = parseInt(applicationID)
+		}
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
 			if (application) {
 				logger.info("Starting oAuth flow for " + application.title);
