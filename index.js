@@ -16,6 +16,10 @@ var BasicStrategy = require('passport-http').BasicStrategy;
 var LocalStrategy = require('passport-local').Strategy;
 var SimpleNodeLogger = require('simple-node-logger');
 
+
+var logDirectory = path.join(__dirname, 'log');
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+
 var loggingOptions = {
 	logDirectory: 'log',
 	fileNamePattern:'debug-<DATE>.log',
@@ -119,9 +123,6 @@ Account.findOne({username: mqtt_user}, function(error, account){
 
 //Should be passed in as a env var
 var cookieSecret = 'ihytsrf334';
-
-var logDirectory = path.join(__dirname, 'log');
-fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 var accessLogStream = rfs('access.log', {
   interval: '1d', // rotate daily
