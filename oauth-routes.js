@@ -8,6 +8,8 @@ module.exports = function(app, passport, logger) {
 
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 		logger.debug("Starting oAuth start");
+		logger.debug("applicationID: ", applicationID)
+		logger.debug("applicationID type: ", (typeof applicationID))
 		if (typeof applicationID == "string") {
 			applicationID = parseInt(applicationID)
 		}
