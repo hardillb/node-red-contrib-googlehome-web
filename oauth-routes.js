@@ -11,8 +11,10 @@ module.exports = function(app, passport, logger) {
 		logger.debug("applicationID: ", applicationID)
 		logger.debug("applicationID type: ", (typeof applicationID))
 		if (typeof applicationID == "string") {
+			logger.debug("converting");
 			applicationID = parseInt(applicationID)
 		}
+		logger.debug("applicationID type: ", (typeof applicationID))
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
 			if (application) {
 				logger.info("Starting oAuth flow for " + application.title);
