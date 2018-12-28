@@ -74,18 +74,18 @@ module.exports = function(app, passport, logger) {
 			passport.authenticate('local', {
 				session: false
 			}, function(error,user,info){
-				//console.log("/auth/finish authenting");
+				logger.debug("oAuth finish authenticating");
 				if (user) {
-					//console.log(user.username);
+					logger.debug(user.username);
 					req.user = user;
 					logger.debug("oAuth user: ", req.user);
 					next();
 				} else if (!error){
-					//console.log("not authed");
+					logger.debug("Wrong username/password oAuth");
 					req.flash('error', 'Your email or password was incorrect. Please try again.');
 					res.redirect(req.body['auth_url'])
 				} else if (error) {
-					logger.debug("oAuth finish error: ",error)
+					logger.debug("oAuth finish error: ", error)
 				}
 	 		})(req,res,next);
 		}
