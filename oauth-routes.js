@@ -1,3 +1,4 @@
+var url = require('url');
 var oauth2orize = require('oauth2orize');
 var oauthServer = require('./oauth');
 var oauthModels = require('./models/oauth');
@@ -7,6 +8,7 @@ module.exports = function(app, passport, logger) {
 	logger.debug("loading oAuth endpoints");
 
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
+
 		logger.debug("Starting oAuth start");
 		logger.debug("applicationID: ", applicationID)
 		logger.debug("applicationID type: ", (typeof applicationID))
@@ -14,8 +16,11 @@ module.exports = function(app, passport, logger) {
 			logger.debug("converting");
 			applicationID = parseInt(applicationID)
 		}
+		logger.debug("applicationID: ", applicationID)
 		logger.debug("applicationID type: ", (typeof applicationID))
+
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
+			logger.debug(application)
 			if (application) {
 				logger.info("Starting oAuth flow for " + application.title);
 				var match = false, uri = url.parse(redirectURI || '');
