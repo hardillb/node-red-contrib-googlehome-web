@@ -6,7 +6,7 @@ module.exports = function(app, passport, logger) {
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 		oauthModels.Application.findOne({ oauth_id: applicationID }, function(error, application) {
 			if (application) {
-				logger.info("Starting Outh flow for " + application.title);
+				logger.info("Starting oAuth flow for " + application.title);
 				var match = false, uri = url.parse(redirectURI || '');
 				for (var i = 0; i < application.domains.length; i++) {
 					if (uri.host == application.domains[i] || (uri.protocol == application.domains[i] && uri.protocol != 'http' && uri.protocol != 'https')) {
@@ -17,9 +17,11 @@ module.exports = function(app, passport, logger) {
 				if (match && redirectURI && redirectURI.length > 0) {
 					done(null, application, redirectURI);
 				} else {
+					logger.debug("redirect URI does not match ", redirectURI, application.domains);
 					done(new Error("You must supply a redirect_uri that is a domain or url scheme owned by your app."), false);
 				}
 			} else if (!error) {
+				logger.debug("No Application found");
 				done(new Error("There is no app with the client_id you supplied."), false);
 			} else {
 				done(error);
