@@ -65,10 +65,10 @@ module.exports = function(app, passport, logger) {
 
 	app.post('/auth/finish',function(req,res,next) {
 		logger.info("/auth/finish");
-		logger.debug(req.body);
-		logger.debug(req.params);
+		logger.debug("body: ", req.body);
+		logger.debug("params: ", req.params);
 		if (req.user) {
-			logger.debug("oAuth user: ", req.user);
+			logger.debug("oAuth, already logged in");
 			next();
 		} else {
 			passport.authenticate('local', {
