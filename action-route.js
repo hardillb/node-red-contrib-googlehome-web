@@ -37,7 +37,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 			logger.debug(req.headers);
 			next()
 		},
-		passport.authenticate('bearer' { session: false }), 
+		passport.authenticate('bearer', { session: false }), 
 		function(req,res, next){
 			var request = req.body;
 			logger.debug(request);
