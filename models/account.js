@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var AutoIncrement = require('mongoose-sequence');
 var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
@@ -6,11 +7,7 @@ var Account = new Schema({
     username: String,
     password: String,
     agentUserId: {type: Number, get: function(value){
-        if (value) {
-            return value.toString();
-        } else {
-            return "-1";
-        }
+        return value.toString();
     }},
     email: String,
     validated: { type: Boolean, default: false},
@@ -21,6 +18,8 @@ var Account = new Schema({
         return new Date();
     }}
 });
+
+Account.plugin(AutoIncrement, {inc_field: 'agentUserId'});
 
 var options = {
 	usernameUnique: true,

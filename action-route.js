@@ -32,7 +32,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 	}, 500);
 
 	app.post('/action',
-		//passport.authenticate('bearer', { session: false }), 
+		passport.authenticate('bearer', { session: false }), 
 		function(req,res){
 			var request = req.body;
 			logger.debug(request);
@@ -60,6 +60,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 								}
 							};
 							//console.log("%j",response);
+							logger.debug(response);
 							res.send(response);
 						} else {
 							logger.info(error);
