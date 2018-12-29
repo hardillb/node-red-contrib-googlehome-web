@@ -14,15 +14,13 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	});
 
-	console.log("action-route");
-
 	mqttClient.on('connect', function(){
 		console.log("connected");
 		mqttClient.subscribe('response/#');
 	});
 
 	mqttClient.on('message',function(topic, message){
-
+		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"))
 	});
 
 	var inflightRequests = {};
@@ -32,11 +30,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 	}, 500);
 
 	app.post('/action',
-		function(req,res,next){
-			logger.debug("action");
-			logger.debug(req.headers);
-			next()
-		},
 		passport.authenticate('bearer', { session: false }), 
 		function(req,res, next){
 			var request = req.body;
@@ -93,21 +86,41 @@ module.exports = function(app, passport, mqttOptions, logger){
 					});
 					break;
 				case 'action.devices.EXECUTE':
+					logger.debug("Execute");
 					//send MQTT message to control device
 					var payload = request.inputs[0].payload;
-					var devices = payload.commands[0];
-					var execution = payload.execution[0];
+					logger.debug(payload);
+					var devices = payload.commands[0].devices;
+					logger.debug(devices);
+					var execution = payload.commands[0].execution[0];
+					logger.debug(execution);
+					var params = execution.params;
+					params.online = true;
 					inflightRequests[requestId] = {
 						devices: devices,
 						execution: execution
 					};
 					var topic = "command/" +req.user.username;
-					var message = JSON.stringify({foo: "bar"});
+					var message = JSON.stringify({
+						id: devices[0].id,
+						execution: execution
+					});
+					logger.debug(message);
 					try {
 						mqttClient.publish(topic, message);
 					} catch (err) {
-
+						logger.debug(err);
 					}
+					res.send({
+						requestId: requestId,
+						payload: {
+							commands: [{
+								ids: [devices[0].id],
+								status: "SUCCESS",
+								state: params
+							}]
+						}
+					});
 					break;
 				case 'action.devices.DISCONNECT':
 					res.send({});

@@ -15,6 +15,7 @@ var cookieParser = require('cookie-parser');
 var BasicStrategy = require('passport-http').BasicStrategy;
 var LocalStrategy = require('passport-local').Strategy;
 var SimpleNodeLogger = require('simple-node-logger');
+var PassportOAuthBearer = require('passport-http-bearer');
 
 
 var logDirectory = path.join(__dirname, 'log');
@@ -177,6 +178,28 @@ passport.use(new BasicStrategy(Account.authenticate()));
 
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
+
+var accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
+	oauthModels.AccessToken.findOne({ token: token }).populate('user').populate('grant').exec(function(error, token) {
+		if (!error && token) {
+			logger.info("db token: ", token.active);
+			logger.info("db token.grant : ", token.grant.active);
+			logger.info("db token.user: ", token.user);
+		}
+		if (!error && token && token.active && token.grant && token.grant.active && token.user) {
+			// console.log("Token is GOOD!");
+			done(null, token.user, { scope: token.scope });
+		} else if (!error) {
+			// console.log("TOKEN PROBLEM");
+			done(null, false);
+		} else {
+			// console.log("TOKEN PROBLEM 2");
+			done(error);
+		}
+	});
+});
+
+passport.use(accessTokenStrategy);
 
 app.use('/',express.static('static'));
 
