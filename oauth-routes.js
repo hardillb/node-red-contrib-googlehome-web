@@ -78,7 +78,7 @@ module.exports = function(app, passport, logger) {
 				if (user) {
 					logger.debug(user.username);
 					req.user = user;
-					logger.debug("oAuth user: ", req.user);
+					logger.debug("oAuth user logged in: ", req.user);
 					next();
 				} else if (!error){
 					logger.debug("Wrong username/password oAuth");
@@ -90,7 +90,7 @@ module.exports = function(app, passport, logger) {
 	 		})(req,res,next);
 		}
 	}, oauthServer.decision(function(req,done){
-		logger.debug("decision user: ", req);
+		//logger.debug("decision user: ", req);
 		done(null, { scope: req.oauth2.req.scope });
 	}));
 

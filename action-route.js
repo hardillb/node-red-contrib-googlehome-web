@@ -32,13 +32,18 @@ module.exports = function(app, passport, mqttOptions, logger){
 	}, 500);
 
 	app.post('/action',
-		passport.authenticate('bearer', { session: false }), 
-		function(req,res){
+		function(req,res,next){
+			logger.debug("action");
+			logger.debug(req.headers);
+			next()
+		},
+		passport.authenticate('bearer' { session: false }), 
+		function(req,res, next){
 			var request = req.body;
 			logger.debug(request);
 			var requestId = request.requestId;
 			var intent = request.inputs[0].intent;
-			logger.debug("user: %j", req.user.username);
+			logger.debug("user: ", req.user.username);
 			var user = req.user.username;
 			logger.debug(intent);
 
