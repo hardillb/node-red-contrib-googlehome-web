@@ -180,7 +180,7 @@ module.exports = function(app, passport, logger) {
 				}
 			},
 			function(err, resp, body) {
-				if !(err) {
+				if (!err) {
 					logger.debug("trigger sync for ", userAgentId, " ",  resp && resp.statusCode)
 				} else {
 					logger.debug("error triggering sync for ", userAgentId, " ", err);
