@@ -25,8 +25,18 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	var inflightRequests = {};
 
-	var timeout = setTimeout(function() {
-
+	var timeout = setInterval(function() {
+		var now = Date.now();
+		var keys = Object.keys(inflightRequests);
+		for (var key in keys) {
+			logger.debug("checking inflight")
+			var waiting = inflightRequests[keys[key]];
+			var diff = now - waiting.timestamp;
+			if (diff > 3000) {
+				logger.debug("inflight timed out - ", waiting);
+				delete(inflightRequests[keys[key]])
+			}
+		}
 	}, 500);
 
 	app.post('/action',
@@ -66,20 +76,28 @@ module.exports = function(app, passport, mqttOptions, logger){
 					});
 					break;
 				case 'action.devices.QUERY':
+					logger.debug("Query");
 					var deviceList = [];
 					for(var i in request.inputs[0].payload.devices) {
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
 					state.find({id: { $in: deviceList}},function(error,data){
 						if (!error) {
-							var response = {devices: {}};
+							var response = {
+								requestId: requestId,
+								payload: {
+									devices: {}
+								}
+							};
 							if (Array.isArray(data)) {
 								for (var i in data) {
-									response.devices[data[i].id] = data[i].status;
+									response.payload.devices[data[i].id] = data[i].status;
 								}
 							} else {
-								response.devices[data.id] = data.status;
+								response.payload.devices[data.id] = data.status;
 							}
+
+							res.send(response);
 						} else {
 							logger.debug("Problem with status, ", error)
 						}
@@ -98,10 +116,12 @@ module.exports = function(app, passport, mqttOptions, logger){
 					params.online = true;
 					inflightRequests[requestId] = {
 						devices: devices,
-						execution: execution
+						execution: execution,
+						timestamp: Date.now()
 					};
 					var topic = "command/" +req.user.username;
 					var message = JSON.stringify({
+						requestId: requestId,
 						id: devices[0].id,
 						execution: execution
 					});

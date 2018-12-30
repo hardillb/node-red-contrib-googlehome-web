@@ -182,9 +182,9 @@ passport.deserializeUser(Account.deserializeUser());
 var accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
 	oauthModels.AccessToken.findOne({ token: token }).populate('user').populate('grant').exec(function(error, token) {
 		if (!error && token) {
-			logger.info("db token: ", token.active);
-			logger.info("db token.grant : ", token.grant.active);
-			logger.info("db token.user: ", token.user);
+			logger.debug("db token: ", token.active);
+			logger.debug("db token.grant : ", token.grant.active);
+			logger.debug("db token.user: ", token.user);
 		}
 		if (!error && token && token.active && token.grant && token.grant.active && token.user) {
 			// console.log("Token is GOOD!");

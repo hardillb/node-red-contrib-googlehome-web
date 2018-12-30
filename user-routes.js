@@ -1,8 +1,12 @@
 var Account = require('./models/account');
 var Topics = require('./models/topics');
 var Devices = require('./models/device');
+var request = require('request');
 
 module.exports = function(app, passport, logger) {
+
+	const API_KEY = (process.env.API_KEY);
+	const SYNC_URL = "https://homegraph.googleapis.com/v1/devices:requestSync?key=" + API_KEY;
 
 	app.get('/login', function(req,res){
 		res.render('page/login',{user: req.user, message: req.flash('error')});
@@ -163,6 +167,26 @@ module.exports = function(app, passport, logger) {
 		} else {
 			res.redirect('/login');
 		}
+	}
+
+	function triggerSync(userAgentId) {
+		// make HTTP call
+		request(
+			{
+				url: SYNC_URL,
+				method: "POST",
+				json: {
+					userAgentId: userAgentId
+				}
+			},
+			function(err, resp, body) {
+				if !(err) {
+					logger.debug("trigger sync for ", userAgentId, " ",  resp && resp.statusCode)
+				} else {
+					logger.debug("error triggering sync for ", userAgentId, " ", err);
+				}
+			}
+		);
 	}
 
 }
