@@ -249,11 +249,4 @@ if (app_id.match(/^https:\/\/localhost:/)) {
 server.listen(port, host, function(){
 	console.log('App listening on  %s:%d!', host, port);
 	console.log("App_ID -> %s", app_id);
-
-	setTimeout(function(){
-		//started?
-	},5000);
-	
-	
-	
 });

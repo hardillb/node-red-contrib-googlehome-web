@@ -1,12 +1,14 @@
-var Account = require('./models/account');
-var Topics = require('./models/topics');
-var Devices = require('./models/device');
-var request = require('request');
+const Account = require('./models/account');
+const Topics = require('./models/topics');
+const Devices = require('./models/device');
+const Oauth = require('./models/oauth');
+const request = require('request');
+const ObjectId = require('mongoose').Types.ObjectId; 
 
 module.exports = function(app, passport, logger) {
 
 	const API_KEY = (process.env.API_KEY);
-	const SYNC_URL = "https://homegraph.googleapis.com/v1/devices:requestSync?key=" + API_KEY;
+	const SYNC_URL = (process.env.SYNC_URL || "https://homegraph.googleapis.com/v1/devices:requestSync?key=" + API_KEY);
 
 	app.get('/login', function(req,res){
 		res.render('page/login',{user: req.user, message: req.flash('error')});
@@ -105,6 +107,7 @@ module.exports = function(app, passport, logger) {
 				if(!err) {
 					res.status(201);
 					res.send(data);
+					triggerSync(req.user._id);
 				} else {
 					res.status(500);
 					res.send(err);
@@ -123,6 +126,7 @@ module.exports = function(app, passport, logger) {
 				Devices.findOne({_id: id, username: user},
 					function( err, data) {
 						if (err) {
+							logger.debug(err);
 							res.status(500);
 							res.send(err);
 						} else {
@@ -133,6 +137,7 @@ module.exports = function(app, passport, logger) {
 							data.save(function(err, d) {
 								res.status(201);
 								res.send(d);
+								triggerSync(req.user._id);
 							});
 						}
 					}
@@ -155,6 +160,7 @@ module.exports = function(app, passport, logger) {
 					} else {
 						res.status(202);
 						res.send();
+						triggerSync(req.user._id);
 					}
 				}
 			);
@@ -171,22 +177,27 @@ module.exports = function(app, passport, logger) {
 
 	function triggerSync(userAgentId) {
 		// make HTTP call
-		request(
-			{
-				url: SYNC_URL,
-				method: "POST",
-				json: {
-					userAgentId: userAgentId
-				}
-			},
-			function(err, resp, body) {
-				if (!err) {
-					logger.debug("trigger sync for ", userAgentId, " ",  resp && resp.statusCode)
-				} else {
-					logger.debug("error triggering sync for ", userAgentId, " ", err);
-				}
+		//need to check if currently live
+		Oauth.AccessToken.find({user: new ObjectId(userAgentId)},function(err, data){
+			if (!err && data.length > 0) {
+				request(
+					{
+						url: SYNC_URL,
+						method: "POST",
+						json: {
+							userAgentId: userAgentId
+						}
+					},
+					function(err, resp, body) {
+						if (!err) {
+							logger.debug("trigger sync for ", userAgentId, " ",  resp && resp.statusCode)
+						} else {
+							logger.debug("error triggering sync for ", userAgentId, " ", err);
+						}
+					}
+				);
 			}
-		);
+		});
 	}
 
 }

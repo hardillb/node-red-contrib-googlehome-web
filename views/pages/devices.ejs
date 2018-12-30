@@ -146,7 +146,30 @@
               }
             } else {
               //update
-              var device = devices[devID];
+              console.log("update");
+              var dev = devices[devID];
+              console.log(dev);
+              dev.type = $('input[name=type]:checked').val();
+              dev.roomHint = $('#roomHint').val();
+              dev.traits = [];
+              $('input[name=trait]').each(function(index){
+                if (this.checked) {
+                  dev.traits.push(this.value);
+                }
+              });
+              $.ajax({
+                url: '/user/devices/' + dev._id,
+                method: 'POST',
+                data: JSON.stringify(dev),
+                contentType: "application/json",
+                success: function(data){
+                  document.location.reload();
+                },
+                dataType: 'json'
+              }).fail(function(){
+                alert('failed to update device')
+              });
+              $(this).dialog("close");
             }
           }
         },

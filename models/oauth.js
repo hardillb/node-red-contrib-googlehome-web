@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var AutoIncrement = require('mongoose-sequence');
 
+var tokenLife = 60 * 24 * 90 * 60000;
+
 var ApplicationSchema = new Schema({
 	title: { type: String, required: true },
 	oauth_id: { type: Number, unique: true },
@@ -33,12 +35,14 @@ var AccessTokenSchema = new Schema({
 	application: { type: Schema.Types.ObjectId, ref: 'Application' },
 	grant: { type: Schema.Types.ObjectId, ref: 'GrantCode' },
 	scope: [ { type: String }],
-	expires: { type: Date, default: function(){
-		var today = new Date();
-		var length = 60 * 24 * 90; // Length (in minutes) of our access token
-		//var length = 60 * 24 * 365 * 100; // Length (in minutes) of our access token
-		return new Date(today.getTime() + length*60000);
-	} },
+	expires: { 
+		type: Date, 
+		default: function(){
+			var today = new Date();
+			return new Date(today.getTime() + tokenLife);
+		},
+		expires: tokenLife
+	},
 	active: { type: Boolean, get: function(value) {
 		if (this.expires < new Date() || !value) {
 			return false;
