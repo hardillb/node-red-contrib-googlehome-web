@@ -3,7 +3,9 @@ const Topics = require('./models/topics');
 const Devices = require('./models/device');
 const Oauth = require('./models/oauth');
 const request = require('request');
-const ObjectId = require('mongoose').Types.ObjectId; 
+const ObjectId = require('mongoose').Types.ObjectId;
+
+const mailer = require('./sendemail');
 
 module.exports = function(app, passport, logger) {
 
@@ -79,6 +81,49 @@ module.exports = function(app, passport, logger) {
 	        });
 		});
 	});
+
+	app.get('/user/verifyEmail', function(req,res){
+	})
+
+	app.get('/user/lostPassword', function(req, res){
+		res.render('pages/lostPassword', { user: req.user});
+	})
+
+	app.post('/user/lostPassword', function(req, res, next){
+		var email = req.body.email;
+		Account.findOne({email: email}, function(error, user){
+			if (!error){
+				if (user){
+					var lostPassword = new LostPassword({user: user});
+					lostPassword.save(function(err){
+						if (!err) {
+							res.status(200).send();
+						}
+						var body = mailer.buildLostPasswordBody(lostPassword.uuid, lostPassword.user.username);
+						mailer.send(email, 'alexa-node-red@hardill.me.uk', 'Password Reset for Alexa Node-RED', body.text, body.html);
+					});
+				} else {
+					res.status(404).send("No user found with that email address");
+				}
+			}
+		});
+	});
+
+	app.get('/user/api/devices',
+		passport.authenticate(['basic'], { session: false }),
+		function (req,res){
+			var user = req.user.username;
+
+			Devices.find({username:user}, function(err, data){
+				if (!err) {
+					logger.debug(data);
+					res.send(data);
+				} else {
+					res.status(500);
+					res.send();
+				}
+			});
+		});
 
 
 	app.get('/user/devices', 
