@@ -29,7 +29,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				var response = {
 					requestId: payload.requestId
 				};
-				if (msg.status == true) {
+				if (payload.status == true) {
 					response.payload = {
 						commands: [
 							{
