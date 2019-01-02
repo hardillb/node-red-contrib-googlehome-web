@@ -20,7 +20,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 	});
 
 	mqttClient.on('message',function(topic, message){
-		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"))
+		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"), " ", topic.startsWith("response/"))
 		if (topic.startsWith('response/')) {
 			logger.debug("respose")
 			var payload = JSON.parse(message);
