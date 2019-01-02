@@ -21,6 +21,40 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	mqttClient.on('message',function(topic, message){
 		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"))
+		if (topic.startsWith('response/')) {
+			var payload = JSON.parse(message);
+			var waiting = inflightRequests[payload.requestId];
+			if (waiting) {
+				delete inflightRequests[msg.requestId];
+				var response = {
+					requestId: requestId
+				}
+				if (msg.status == true) {
+					response.payload = {
+						commands: [
+							{
+								ids: [msg.id],
+								status: "SUCCESS",
+								state: msg.params
+							}
+						]
+					}
+				} else {
+					logger.debug("Need to send a failure");
+					//need more here
+					response.payload = {
+						commands: [
+							{
+								ids: [msg.id],
+								status: "ERROR"
+							}
+						]
+					}
+				}
+				logger.debug("response ", response);
+				waiting.resp.send(response);
+			}
+		}
 	});
 
 	var inflightRequests = {};
@@ -34,6 +68,13 @@ module.exports = function(app, passport, mqttOptions, logger){
 			var diff = now - waiting.timestamp;
 			if (diff > 3000) {
 				logger.debug("inflight timed out - ", waiting);
+				var response = {
+					requestId: waiting.requestId,
+					payload: {
+						errorCode: "timeout"
+					}
+				}
+				waiting.resp.send(response);
 				delete(inflightRequests[keys[key]])
 			}
 		}
@@ -115,6 +156,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					var params = execution.params;
 					params.online = true;
 					inflightRequests[requestId] = {
+						resp: res,
 						devices: devices,
 						execution: execution,
 						timestamp: Date.now()
@@ -131,16 +173,16 @@ module.exports = function(app, passport, mqttOptions, logger){
 					} catch (err) {
 						logger.debug(err);
 					}
-					res.send({
-						requestId: requestId,
-						payload: {
-							commands: [{
-								ids: [devices[0].id],
-								status: "SUCCESS",
-								state: params
-							}]
-						}
-					});
+					// res.send({
+					// 	requestId: requestId,
+					// 	payload: {
+					// 		commands: [{
+					// 			ids: [devices[0].id],
+					// 			status: "SUCCESS",
+					// 			state: params
+					// 		}]
+					// 	}
+					// });
 					break;
 				case 'action.devices.DISCONNECT':
 					res.send({});
