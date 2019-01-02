@@ -25,17 +25,17 @@ module.exports = function(app, passport, mqttOptions, logger){
 			var payload = JSON.parse(message);
 			var waiting = inflightRequests[payload.requestId];
 			if (waiting) {
-				delete inflightRequests[msg.requestId];
+				delete inflightRequests[payload.requestId];
 				var response = {
-					requestId: requestId
-				}
+					requestId: payload.requestId
+				};
 				if (msg.status == true) {
 					response.payload = {
 						commands: [
 							{
-								ids: [msg.id],
+								ids: [payload.id],
 								status: "SUCCESS",
-								state: msg.params
+								state: payload.params
 							}
 						]
 					}
@@ -45,7 +45,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					response.payload = {
 						commands: [
 							{
-								ids: [msg.id],
+								ids: [payload.id],
 								status: "ERROR"
 							}
 						]
