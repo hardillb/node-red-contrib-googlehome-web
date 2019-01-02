@@ -22,14 +22,17 @@ module.exports = function(app, passport, mqttOptions, logger){
 	mqttClient.on('message',function(topic, message){
 		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"))
 		if (topic.startsWith('response/')) {
+			logger.debug("respose")
 			var payload = JSON.parse(message);
 			var waiting = inflightRequests[payload.requestId];
 			if (waiting) {
+				console.log("found waiting");
 				delete inflightRequests[payload.requestId];
 				var response = {
 					requestId: payload.requestId
 				};
 				if (payload.status == true) {
+					logger.debug("sucess")
 					response.payload = {
 						commands: [
 							{
