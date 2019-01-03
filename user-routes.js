@@ -230,7 +230,7 @@ module.exports = function(app, passport, logger) {
 						url: SYNC_URL,
 						method: "POST",
 						json: {
-							userAgentId: userAgentId
+							agentUserId: userAgentId
 						}
 					},
 					function(err, resp, body) {
