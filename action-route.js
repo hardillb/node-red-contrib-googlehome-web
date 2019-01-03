@@ -20,11 +20,13 @@ module.exports = function(app, passport, mqttOptions, logger){
 	});
 
 	mqttClient.on('message',function(topic, message){
+		console.log("MQTT message on %s - %s", topic, message.toString("utf8"));
 		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"), " ", topic.startsWith("response/"))
 		if (topic.startsWith('response/')) {
 			logger.debug("respose")
 			var payload = JSON.parse(message);
 			var waiting = inflightRequests[payload.requestId];
+			logger.debug(inflightRequests)
 			if (waiting) {
 				console.log("found waiting");
 				delete inflightRequests[payload.requestId];
