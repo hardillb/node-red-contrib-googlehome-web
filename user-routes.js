@@ -13,7 +13,7 @@ module.exports = function(app, passport, logger) {
 	const SYNC_URL = (process.env.SYNC_URL || "https://homegraph.googleapis.com/v1/devices:requestSync?key=" + API_KEY);
 
 	app.get('/login', function(req,res){
-		res.render('page/login',{user: req.user, message: req.flash('error')});
+		res.render('pages/login',{user: req.user, message: req.flash('error')});
 	});
 
 	app.post('/login', 

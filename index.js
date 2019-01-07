@@ -207,18 +207,12 @@ app.get('/',function(req,res){
 	res.render('pages/index',{user: req.user, home: true, message: req.flash('error')});
 });
 
-app.get('/:page',function(req,res,next){
-	var opts = {
-		user: req.user, 
-		message: req.flash('error')
-	};
-	opts[req.params.page] = true;
-	try {
-		res.render('pages/' + req.params.page, opts);
-	} catch (err) {
-		err.status = 404;
-		next(err);
-	}
+app.get('/about', function(req,res){
+	res.render('pages/about',{user: req.user, message: req.flash('error')});
+});
+
+app.get('/docs', function(req,res){
+	res.render('pages/docs',{user: req.user, message: req.flash('error')});
 });
 
 require('./admin-routes.js')(app, passport, logger);
