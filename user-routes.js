@@ -37,6 +37,10 @@ module.exports = function(app, passport, logger) {
 		}
 	});
 
+	app.get('/register', function(req,res){
+		res.render('pages/register',{user: req.user, message: req.flash('error')});
+	});
+
 	app.post('/register', function(req,res){
 		Account.register(new Account({ username : req.body.username, email: req.body.email, mqttPass: "foo" }), req.body.password, function(err, account) {
 			if(err) {

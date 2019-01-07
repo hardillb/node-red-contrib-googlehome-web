@@ -215,6 +215,7 @@ app.get('/docs', function(req,res){
 	res.render('pages/docs',{user: req.user, message: req.flash('error')});
 });
 
+
 require('./admin-routes.js')(app, passport, logger);
 require('./user-routes.js')(app, passport, logger);
 require('./oauth-routes.js')(app, passport, logger);

@@ -7,6 +7,11 @@ module.exports = function(app, passport, logger) {
 
 	logger.debug("loading oAuth endpoints");
 
+
+	app.get('/oauth', function(req,res){
+		res.render('pages/oauth',{user: req.user, message: req.flash('error')});
+	});
+
 	app.get('/auth/start',oauthServer.authorize(function(applicationID, redirectURI,done) {
 
 		logger.debug("Starting oAuth start");
