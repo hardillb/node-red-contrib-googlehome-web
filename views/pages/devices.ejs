@@ -121,6 +121,19 @@
                   "sceneReversible": true
                 };
               }
+              if (dev.type === "action.devices.traits.ColorSpectrum") {
+                dev.willReportState = false;
+                dev.attributes = {
+                  "colorModel": "rgb"
+                }
+              }
+              if (dev.type === "action.devices.traits.ColorTemperature") {
+                dev.willReportState = false;
+                dev.attributes = {
+                  temperatureMinK: 2000,
+                  temperatureMaxK: 6500
+                }
+              }
               $('input[name=trait]').each(function(index){
                 if (this.checked) {
                   dev.traits.push(this.value);
