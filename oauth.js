@@ -31,8 +31,8 @@ server.exchange(oauth2orize.exchange.code({
 }, function(application, code, redirectURI, done) {
 	OAuth.GrantCode.findOne({ code: code }, function(error, grant) {
 		if (grant && grant.active && grant.application == application.id) {
-
-			OAuth.AccessToken.findOne({application:application, user: grant.user, active: true}, function(error,token){
+			var now = (new Date().getTime())
+			OAuth.AccessToken.findOne({application:application, user: grant.user, expires: {$lt: now}}, function(error,token){
 				if (token) {
 					OAuth.RefreshToken.findOne({application:application, user: grant.user},function(error, refreshToken){
 						if (refreshToken){
