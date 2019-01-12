@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var stateLife = 60 * 24 * 90 * 60000;
 
 var State = new Schema({
-	device: { type: Schema.Types.ObjectId, ref: 'Device' },
+	device: { type: Number },
 	state: {type: Schema.Types.Mixed},
 	updated: {
 		type: Date,
