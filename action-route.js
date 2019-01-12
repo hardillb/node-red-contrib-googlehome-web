@@ -63,10 +63,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 						logger.debug("Existing status for device ", payload.id, " ", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
 						data.state = Object.assign(data.state, payload.execution.params);
-						logger.debug("Updating status for device ", payload.id, " to ", data);
-						data.save(function(error){
+						logger.debug("Updated status objejct for device ", payload.id, " to ", data);
+						data.save(function(error, d){
 							if (!error) {
-								logger.debug("updated status");
+								logger.debug("updated status - ", d);
 							} else {
 								logger.debug("error updating status - ", error);
 							}
