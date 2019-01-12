@@ -61,8 +61,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 				State.findOne({device: payload.id}, function(err, data){
 					if (!err && data) {
 						//update
-						logger.debug("updating status for device ", payload.id);
+						logger.debug("Existing status for device ", payload.id, " ", data);
+						logger.debug("Updating status for device ", payload.id, " with ", payload.params);
 						data.state = payload.params;
+						logger.debug("Updating status for device ", payload.id, " to ", data);
 						data.save(function(error){
 							if (!error) {
 								logger.debug("updated status");
