@@ -174,11 +174,11 @@ module.exports = function(app, passport, mqttOptions, logger){
 							if (Array.isArray(data)) {
 								logger.debug("Query response is array");
 								for (var i in data) {
-									response.payload.devices[data[i].id] = data[i].state;
+									response.payload.devices[data[i].device] = data[i].state;
 								}
 							} else {
 								logger.debug("Query single result");
-								response.payload.devices[data.id] = data.state;
+								response.payload.devices[data.device] = data.state;
 							}
 							logger.debug("Query response",response);
 							res.send(response);
