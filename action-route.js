@@ -21,7 +21,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 	});
 
 	mqttClient.on('message',function(topic, message){
-		console.log("MQTT message on %s - %s", topic, message.toString("utf8"));
 		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"), " ", topic.startsWith("response/"))
 		if (topic.startsWith('response/')) {
 			logger.debug("respose")
@@ -155,13 +154,15 @@ module.exports = function(app, passport, mqttOptions, logger){
 					});
 					break;
 				case 'action.devices.QUERY':
-					logger.debug("Query");
+					logger.debug("Query - ", request);
 					var deviceList = [];
 					for(var i in request.inputs[0].payload.devices) {
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
+					logger.debug("Query - ", deviceList);
 					state.findOne({device: { $in: deviceList}},function(error,data){
 						if (!error && data) {
+							logger.debug("Query status data - " data);
 							var response = {
 								requestId: requestId,
 								payload: {
@@ -178,7 +179,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							logger.debug("Query response",response);
 							res.send(response);
 						} else {
-							logger.debug("Problem with status, ", error)
+							logger.debug("Query Problem with status, ", error)
 						}
 					});
 					break;
