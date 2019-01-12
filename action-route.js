@@ -86,7 +86,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							}
 						})
 					} else {
-						logger.debug("problem getting status entry");
+						logger.debug("problem getting status entry - ", err);
 					}
 				})
 			}
