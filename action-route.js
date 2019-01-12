@@ -162,7 +162,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
 					logger.debug("Query dev list - ", deviceList);
-					State.findOne({device: { $in: deviceList}},function(error,data){
+					State.find({device: { $in: deviceList}},function(error,data){
 						if (!error && data) {
 							logger.debug("Query status data - ", data);
 							var response = {
@@ -172,11 +172,13 @@ module.exports = function(app, passport, mqttOptions, logger){
 								}
 							};
 							if (Array.isArray(data)) {
+								logger.debug("Query response is array");
 								for (var i in data) {
-									response.payload.devices[data[i].id] = data[i].status;
+									response.payload.devices[data[i].id] = data[i].state;
 								}
 							} else {
-								response.payload.devices[data.id] = data.status;
+								logger.debug("Query single result");
+								response.payload.devices[data.id] = data.state;
 							}
 							logger.debug("Query response",response);
 							res.send(response);
