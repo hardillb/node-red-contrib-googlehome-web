@@ -28,7 +28,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 			var waiting = inflightRequests[payload.requestId];
 			logger.debug(inflightRequests)
 			if (waiting) {
-				console.log("found waiting");
 				delete inflightRequests[payload.requestId];
 				var response = {
 					requestId: payload.requestId
@@ -63,7 +62,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						//update
 						logger.debug("Existing status for device ", payload.id, " ", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
-						data.state = payload.execution.params;
+						data.state = Object.assign(data.state, payload.execution.params);
 						logger.debug("Updating status for device ", payload.id, " to ", data);
 						data.save(function(error){
 							if (!error) {
