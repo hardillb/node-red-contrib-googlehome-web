@@ -160,7 +160,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					for(var i in request.inputs[0].payload.devices) {
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
-					state.find({device: { $in: deviceList}},function(error,data){
+					state.findOne({device: { $in: deviceList}},function(error,data){
 						if (!error && data) {
 							var response = {
 								requestId: requestId,
@@ -175,7 +175,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							} else {
 								response.payload.devices[data.id] = data.status;
 							}
-
+							logger.debug("Query response",response);
 							res.send(response);
 						} else {
 							logger.debug("Problem with status, ", error)
