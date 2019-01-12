@@ -2,9 +2,18 @@ var mongoose = require('mongoose');
 var AutoIncrement = require('mongoose-sequence');
 var Schema = mongoose.Schema;
 
+var stateLife = 60 * 24 * 90 * 60000;
+
 var State = new Schema({
 	device: { type: Schema.Types.ObjectId, ref: 'Device' },
-	state: {type: Schema.Types.Mixed}
+	state: {type: Schema.Types.Mixed},
+	updated: {
+		type: Date,
+		default: function(){
+			return new Date();
+		},
+		expires: stateLife
+	}
 });
 
 State.set('toObject', {getters: true});

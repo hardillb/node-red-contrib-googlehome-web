@@ -1,5 +1,5 @@
 var device = require('./models/device');
-var state = require('./models/state');
+var State = require('./models/state');
 var mqtt = require('mqtt');
 
 module.exports = function(app, passport, mqttOptions, logger){
@@ -17,6 +17,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 	mqttClient.on('connect', function(){
 		console.log("connected");
 		mqttClient.subscribe('response/#');
+		mqttClient.subscribe('status/#');
 	});
 
 	mqttClient.on('message',function(topic, message){
@@ -58,7 +59,39 @@ module.exports = function(app, passport, mqttOptions, logger){
 				}
 				logger.debug("response ", response);
 				waiting.resp.send(response);
+				State.findOne({device: payload.id}, function(err, data){
+					if (!err && data) {
+						//update
+						logger.debug("updating status for device ", payload.id);
+						data.state = payload.params;
+						data.save(function(error){
+							if (!error) {
+								logger.debug("updated status");
+							} else {
+								logger.debug("error updating status - ", error);
+							}
+						});
+					} else if (!err && !data) {
+						//create
+						logger.debug("creating status for device ", payload.id);
+						var state = new State({
+							device: payload.id,
+							state: payload.params
+						});
+						state.save(function(error){
+							if (!error) {
+								logger.debug("Saved state");
+							} else {
+								logger.debug("error saving state - ", error);
+							}
+						})
+					} else {
+						logger.debug("problem getting status entry");
+					}
+				})
 			}
+		} else  if (topic.startsWith('status/')) {
+
 		}
 	});
 
@@ -127,8 +160,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 					for(var i in request.inputs[0].payload.devices) {
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
-					state.find({id: { $in: deviceList}},function(error,data){
-						if (!error) {
+					state.find({device: { $in: deviceList}},function(error,data){
+						if (!error && data) {
 							var response = {
 								requestId: requestId,
 								payload: {
@@ -178,16 +211,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 					} catch (err) {
 						logger.debug(err);
 					}
-					// res.send({
-					// 	requestId: requestId,
-					// 	payload: {
-					// 		commands: [{
-					// 			ids: [devices[0].id],
-					// 			status: "SUCCESS",
-					// 			state: params
-					// 		}]
-					// 	}
-					// });
 					break;
 				case 'action.devices.DISCONNECT':
 					res.send({});
