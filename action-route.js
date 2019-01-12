@@ -40,7 +40,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							{
 								ids: [payload.id],
 								status: "SUCCESS",
-								state: payload.params
+								state: payload.execution.params
 							}
 						]
 					}
@@ -62,8 +62,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 					if (!err && data) {
 						//update
 						logger.debug("Existing status for device ", payload.id, " ", data);
-						logger.debug("Updating status for device ", payload.id, " with ", payload.params);
-						data.state = payload.params;
+						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
+						data.state = payload.execution.params;
 						logger.debug("Updating status for device ", payload.id, " to ", data);
 						data.save(function(error){
 							if (!error) {
@@ -77,7 +77,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						logger.debug("creating status for device ", payload.id);
 						var state = new State({
 							device: payload.id,
-							state: payload.params
+							state: payload.execution.params
 						});
 						state.save(function(error){
 							if (!error) {
