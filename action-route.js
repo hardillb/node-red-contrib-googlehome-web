@@ -161,8 +161,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 					for(var i in request.inputs[0].payload.devices) {
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
-					logger.debug("Query - ", deviceList);
-					state.findOne({device: { $in: deviceList}},function(error,data){
+					logger.debug("Query dev list - ", deviceList);
+					State.findOne({device: { $in: deviceList}},function(error,data){
 						if (!error && data) {
 							logger.debug("Query status data - ", data);
 							var response = {
