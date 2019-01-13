@@ -128,19 +128,22 @@
                 dev.attributes["sceneReversible"] = true
               }
 
-              if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
-                dev.attributes["colorModel"] = "rgb";
-              }
+              // if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
+              //   dev.attributes["colorModel"] = "rgb";
+              // }
 
-              if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
-                dev.attributes["temperatureMinK"] = 2000;
-                dev.attributes["temperatureMaxK"] = 6500;
-              }
+              // if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
+              //   dev.attributes["temperatureMinK"] = 2000;
+              //   dev.attributes["temperatureMaxK"] = 6500;
+              // }
 
               if (dev.traits.includes("action.devices.traits.ColorSetting")) {
                 dev.attributes["colorModel"] = "rgb";
-                dev.attributes["temperatureMinK"] = 2000;
-                dev.attributes["temperatureMaxK"] = 6500;
+                dev.attributes["colorTemperatureRange"]= {
+                  temperatureMinK: 2000,
+                  temperatureMaxK: 6500
+                }
+                dev.attributes["commandOnlyColorSetting"] = true
               }
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
@@ -187,19 +190,22 @@
                 dev.attributes["sceneReversible"] = true
               }
 
-              if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
-                dev.attributes["colorModel"] = "rgb";
-              }
+              // if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
+              //   dev.attributes["colorModel"] = "rgb";
+              // }
 
-              if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
-                dev.attributes["temperatureMinK"] = 2000;
-                dev.attributes["temperatureMaxK"] = 6500;
-              }
+              // if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
+              //   dev.attributes["temperatureMinK"] = 2000;
+              //   dev.attributes["temperatureMaxK"] = 6500;
+              // }
 
               if (dev.traits.includes("action.devices.traits.ColorSetting")) {
                 dev.attributes["colorModel"] = "rgb";
-                dev.attributes["temperatureMinK"] = 2000;
-                dev.attributes["temperatureMaxK"] = 6500;
+                dev.attributes["colorTemperatureRange"]= {
+                  temperatureMinK: 2000,
+                  temperatureMaxK: 6500
+                }
+                dev.attributes["commandOnlyColorSetting"] = true
               }
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
