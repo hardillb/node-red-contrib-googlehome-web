@@ -68,16 +68,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 						console.log("after change: %o", data);
 						logger.debug("Updated status objejct for device ", payload.id, " to ", data);
 						State.update({device: payload.id}, data, function(err, raw){
-							console.log(raw)
+							if (!err) {
+								logger.debug("Updated sucessfully");
+							}
 						});
-						// data.save(function(error, d){
-						// 	if (!error) {
-						// 		logger.debug("updated status - ", d);
-						// 		console.log("saved - %o",d);
-						// 	} else {
-						// 		logger.debug("error updating status - ", error);
-						// 	}
-						// });
 					} else if (!err && !data) {
 						//create
 						logger.debug("creating status for device ", payload.id);
@@ -98,7 +92,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				})
 			}
 		} else  if (topic.startsWith('status/')) {
-
+			//need to do very similar to above
 		}
 	});
 
