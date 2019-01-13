@@ -60,10 +60,12 @@
       <fieldset id="lightTraits" disabled>
         <label for="Brightness">Brightness: </label>
         <input type="checkbox" name="trait" id="Brightness" value="action.devices.traits.Brightness"><br/>
-        <label for="ColorSpectrum">RGB: </label>
+        <!-- <label for="ColorSpectrum">RGB: </label>
         <input type="checkbox" name="trait" id="ColorSpectrum" value="action.devices.traits.ColorSpectrum">
         <label for="ColorTemperature">Color Temperature: </label>
-        <input type="checkbox" name="trait" id="ColorTemperature" value="action.devices.traits.ColorTemperature">
+        <input type="checkbox" name="trait" id="ColorTemperature" value="action.devices.traits.ColorTemperature"> -->
+        <label for="ColorTemperature">Color Settings: </label>
+        <input type="checkbox" name="trait" id="ColorSetting" value="action.devices.traits.ColorSetting">
       </fieldset>
       <fieldset id="temperatureTraits" disabled>
         <label for="TemperatureSetting">Temperature: </label>
@@ -135,6 +137,12 @@
                 dev.attributes["temperatureMaxK"] = 6500;
               }
 
+              if (dev.traits.includes("action.devices.traits.ColorSetting")) {
+                dev.attributes["colorModel"] = "rgb";
+                dev.attributes["temperatureMinK"] = 2000;
+                dev.attributes["temperatureMaxK"] = 6500;
+              }
+
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
                 dev.attributes["thermostatTemperatureUnit"] = "C";
@@ -184,6 +192,12 @@
               }
 
               if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
+                dev.attributes["temperatureMinK"] = 2000;
+                dev.attributes["temperatureMaxK"] = 6500;
+              }
+
+              if (dev.traits.includes("action.devices.traits.ColorSetting")) {
+                dev.attributes["colorModel"] = "rgb";
                 dev.attributes["temperatureMinK"] = 2000;
                 dev.attributes["temperatureMaxK"] = 6500;
               }
