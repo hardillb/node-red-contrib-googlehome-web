@@ -115,37 +115,30 @@
                   ]
                 }
               };
-              if (dev.type === "action.devices.types.SCENE") {
-                dev.willReportState = false;
-                dev.attributes = {
-                  "sceneReversible": true
-                };
-              }
-              if (dev.type === "action.devices.traits.ColorSpectrum") {
-                dev.willReportState = false;
-                dev.attributes = {
-                  "colorModel": "rgb"
-                }
-              }
-              if (dev.type === "action.devices.traits.ColorTemperature") {
-                dev.willReportState = false;
-                dev.attributes = {
-                  temperatureMinK: 2000,
-                  temperatureMaxK: 6500
-                }
-              }
-              if (dev.type === "action.devices.traits.TemperatureSetting") {
-                dev.willReportState = false;
-                dev.attributes = {
-                  "availableThermostatModes": "off,on",
-                  "thermostatTemperatureUnit": "C"
-                }
-              }
+
               $('input[name=trait]').each(function(index){
                 if (this.checked) {
                   dev.traits.push(this.value);
                 }
               });
+              if (dev.traits.includes("action.devices.types.SCENE")) {
+                dev.attributes["sceneReversible"] = true
+              }
+
+              if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
+                dev.attributes["colorModel"] = "rgb";
+              }
+
+              if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
+                dev.attributes["temperatureMinK"] = 2000;
+                dev.attributes["temperatureMaxK"] = 6500;
+              }
+
+              if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
+                dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
+                dev.attributes["thermostatTemperatureUnit"] = "C";
+              }
+
               console.log(dev);
               if (name && dev.type && dev.traits.length > 0) {
                 $.ajax({
