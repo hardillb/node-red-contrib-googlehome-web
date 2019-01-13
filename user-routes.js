@@ -186,6 +186,7 @@ module.exports = function(app, passport, logger) {
 							data.save(function(err, d) {
 								res.status(201);
 								res.send(d);
+								logger.debug("Sucessfully updated device ", d.id, " ", d);
 								triggerSync(req.user._id);
 							});
 						}

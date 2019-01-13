@@ -134,6 +134,13 @@
                   temperatureMaxK: 6500
                 }
               }
+              if (dev.type === "action.devices.traits.TemperatureSetting") {
+                dev.willReportState = false;
+                dev.attributes = {
+                  "availableThermostatModes": "off,on",
+                  "thermostatTemperatureUnit": "C"
+                }
+              }
               $('input[name=trait]').each(function(index){
                 if (this.checked) {
                   dev.traits.push(this.value);
@@ -165,11 +172,35 @@
               dev.type = $('input[name=type]:checked').val();
               dev.roomHint = $('#roomHint').val();
               dev.traits = [];
+              dev.attributes = {};
+              dev.willReportState = false;
+
               $('input[name=trait]').each(function(index){
                 if (this.checked) {
                   dev.traits.push(this.value);
                 }
               });
+
+              if (dev.traits.includes("action.devices.types.SCENE")) {
+                dev.attributes["sceneReversible"] = true
+              }
+
+              if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
+                dev.attributes["colorModel"] = "rgb";
+              }
+
+              if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
+                dev.attributes["temperatureMinK"] = 2000;
+                dev.attributes["temperatureMaxK"] = 6500;
+              }
+
+              if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
+                dev.attributes["availableThermostatModes"] = "off,on";
+                dev.attributes["thermostatTemperatureUnit"] = "C";
+              }
+
+              console.log(dev);
+              console.log(dev.attributes);
               $.ajax({
                 url: '/user/devices/' + dev._id,
                 method: 'POST',
