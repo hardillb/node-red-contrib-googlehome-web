@@ -39,7 +39,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							{
 								ids: [payload.id],
 								status: "SUCCESS",
-								state: payload.execution.params
+								states: payload.execution.params
 							}
 						]
 					}
