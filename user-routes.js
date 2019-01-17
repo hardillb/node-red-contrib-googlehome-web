@@ -203,17 +203,36 @@ module.exports = function(app, passport, logger) {
 		function(req,res) {
 			var user = req.user.username;
 			var id = req.params.dev_id;
-			Devices.remove({_id: id, username: user },
-				function(err) {
-					if (err) {
-						console.log(err);
+			Devices.findOne({_id: id, username: user},
+				function(err, data) {
+					if (!err) {
+						logger.debug("found device to be deleted ", id);
+						var devId = data.id;
+						Devices.remove({_id: id, username: user}, function(err2){
+							logger.debug("removing device");
+							if (err2) {
+								logger.debug("Problem deleting device ", id);
+								logger.debug(err2);
+								res.status(500);
+								res.send(err);
+							} else {
+								States.remove({device: devId}, function(err3){
+									if (err3) {
+										logger.debug("problem deleting state for device ", devId);
+									} else {
+										logger.debug("Deleted state for device ", devId);
+									}
+								});
+								res.status(202);
+								res.send();
+							}
+						});
+						
+					} else {
+						logger.debug("Problem deleting device ", id);
+						logger.debug(err);
 						res.status(500);
 						res.send(err);
-					} else {
-						res.status(202);
-						res.send();
-						States.remove({device: id}, function(err){});
-						triggerSync(req.user._id);
 					}
 				}
 			);

@@ -354,8 +354,11 @@
         $.ajax({
           url:"/user/devices/" + id,
           type: 'DELETE',
-          success: function(data){
+          success: function(data, status, jqXHR){
             document.location.reload();
+          },
+          error: function(xhr, status, err) {
+            console.log(err);
           }
         });
       }
