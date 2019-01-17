@@ -129,15 +129,6 @@
                 dev.attributes["sceneReversible"] = true
               }
 
-              // if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
-              //   dev.attributes["colorModel"] = "rgb";
-              // }
-
-              // if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
-              //   dev.attributes["temperatureMinK"] = 2000;
-              //   dev.attributes["temperatureMaxK"] = 6500;
-              // }
-
               if (dev.traits.includes("action.devices.traits.ColorSetting")) {
                 dev.attributes["colorModel"] = "rgb";
                 dev.attributes["colorTemperatureRange"]= {
@@ -150,6 +141,49 @@
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
                 dev.attributes["thermostatTemperatureUnit"] = "C";
+              }
+
+              if (dev.traits.includes("action.devices.traits.FanSetting")) {
+                dev.attributes["availableFanSpeeds"] = {
+                  speeds: [
+                    {
+                      speed_name: "Low",
+                      speed_values: [
+                        {
+                          "speed_synonym": [
+                            "low", "slow"
+                          ],
+                          "lang": "en"
+                        }
+                      ]
+                    },
+                    {
+                      speed_name: "Med",
+                      speed_values: [
+                        {
+                          "speed_synonym": [
+                            "medium", "mid"
+                          ],
+                          "lang": "en"
+                        }
+                      ]
+                    },
+                    {
+                      speed_name: "High",
+                      speed_values: [
+                        {
+                          "speed_synonym": [
+                            "high", "full","max"
+                          ],
+                          "lang": "en"
+                        }
+                      ]
+                    }
+                  ],
+                  "ordered": true
+                };
+                dev.attributes["reversible"] = true;
+
               }
 
               console.log(dev);
@@ -191,14 +225,6 @@
                 dev.attributes["sceneReversible"] = true
               }
 
-              // if (dev.traits.includes("action.devices.traits.ColorSpectrum")) {
-              //   dev.attributes["colorModel"] = "rgb";
-              // }
-
-              // if (dev.traits.includes("action.devices.traits.ColorTemperature")) {
-              //   dev.attributes["temperatureMinK"] = 2000;
-              //   dev.attributes["temperatureMaxK"] = 6500;
-              // }
 
               if (dev.traits.includes("action.devices.traits.ColorSetting")) {
                 dev.attributes["colorModel"] = "rgb";
@@ -212,6 +238,49 @@
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
                 dev.attributes["thermostatTemperatureUnit"] = "C";
+              }
+
+              if (dev.traits.includes("action.devices.traits.FanSetting")) {
+                dev.attributes["availableFanSpeeds"] = {
+                  speeds: [
+                    {
+                      speed_name: "Low",
+                      speed_values: [
+                        {
+                          "speed_synonym": [
+                            "low", "slow"
+                          ],
+                          "lang": "en"
+                        }
+                      ]
+                    },
+                    {
+                      speed_name: "Med",
+                      speed_values: [
+                        {
+                          "speed_synonym": [
+                            "medium", "mid"
+                          ],
+                          "lang": "en"
+                        }
+                      ]
+                    },
+                    {
+                      speed_name: "High",
+                      speed_values: [
+                        {
+                          "speed_synonym": [
+                            "high", "full","max"
+                          ],
+                          "lang": "en"
+                        }
+                      ]
+                    }
+                  ],
+                  "ordered": true
+                };
+                dev.attributes["reversible"] = true;
+
               }
 
               console.log(dev);

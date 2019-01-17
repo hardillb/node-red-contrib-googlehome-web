@@ -61,11 +61,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 					if (!err && data) {
 						//update
 						logger.debug("Existing status for device ", payload.id, " ", data);
-						console.log("before change: %o", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
 						data.state = Object.assign(data.state, payload.execution.params);
 						data.updated = new Date();
-						console.log("after change: %o", data);
 						logger.debug("Updated status objejct for device ", payload.id, " to ", data);
 						State.update({device: payload.id}, data, function(err, raw){
 							if (!err) {
