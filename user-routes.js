@@ -1,9 +1,11 @@
 const Account = require('./models/account');
 const Topics = require('./models/topics');
 const Devices = require('./models/device');
+const States = require('./models/state');
 const Oauth = require('./models/oauth');
 const request = require('request');
 const ObjectId = require('mongoose').Types.ObjectId;
+
 
 const mailer = require('./sendemail');
 
@@ -210,6 +212,7 @@ module.exports = function(app, passport, logger) {
 					} else {
 						res.status(202);
 						res.send();
+						States.remove({device: id}, function(err){});
 						triggerSync(req.user._id);
 					}
 				}
