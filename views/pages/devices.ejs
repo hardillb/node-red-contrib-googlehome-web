@@ -47,6 +47,7 @@
         </div>
         <div class="types">
           <input type="radio" name="type" value="action.devices.types.THERMOSTAT" onclick="switchType(this.value);">Thermostat</input><br/>
+          <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
           <input type="radio" name="type" value="action.devices.types.SCENE" onclick="switchType(this.value);">Scene</input><br/>
         </div>
       </div>
@@ -60,16 +61,16 @@
       <fieldset id="lightTraits" disabled>
         <label for="Brightness">Brightness: </label>
         <input type="checkbox" name="trait" id="Brightness" value="action.devices.traits.Brightness"><br/>
-        <!-- <label for="ColorSpectrum">RGB: </label>
-        <input type="checkbox" name="trait" id="ColorSpectrum" value="action.devices.traits.ColorSpectrum">
-        <label for="ColorTemperature">Color Temperature: </label>
-        <input type="checkbox" name="trait" id="ColorTemperature" value="action.devices.traits.ColorTemperature"> -->
         <label for="ColorTemperature">Color Settings: </label>
         <input type="checkbox" name="trait" id="ColorSetting" value="action.devices.traits.ColorSetting">
       </fieldset>
       <fieldset id="temperatureTraits" disabled>
         <label for="TemperatureSetting">Temperature: </label>
         <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting">
+      </fieldset>
+      <fieldset id="fanTraits" disabled >
+        <label for="Fan">Fan Speed: </label>
+        <input type="checkbox" name="trait" id="FanSetting" value="action.devices.traits.FanSpeed">
       </fieldset>
       <fieldset id="sceneTraits" disabled hidden>
         <label for="Scene">Scene: </label>
@@ -300,24 +301,28 @@
           $('#ColorTemperature').prop('checked', false);
           $('#ColorSpectrum').prop('checked',false);
           $('#TemperatureSetting').prop('checked',false);
+          $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
+          $('#fanTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
           
           break;
         case 'action.devices.types.LIGHT':
           $('#OnOff').prop('checked', true);
           $('#TemperatureSetting').prop('checked', false);
+          $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').removeAttr('disabled');
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
+          $('#fanTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
           break;
         case 'action.devices.types.THERMOSTAT':
@@ -326,13 +331,31 @@
           $('#ColorTemperature').prop('checked', false);
           $('#ColorSpectrum').prop('checked', false);
           $('#TemperatureSetting').prop('checked',true);
+          $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').removeAttr('disabled');
           $('#sceneTraits').attr('disabled','');
+          $('#fanTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
+          break;
+        case 'action.devices.types.FAN':
+          $('#OnOff').prop('checked', true);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',false);
+          $('#FanSetting').prop('checked',true);
+          $('#Scene').prop('checked', false);
+
+          $('#OnOffTraits').removeAttr('disabled');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').attr('disabled','');
+          $('#sceneTraits').attr('disabled','');
+          $('#reportState').removeAttr('disabled');
+          $('#fanTraits').removeAttr('disabled');
           break;
         case 'action.devices.types.SCENE':
           $('#OnOff').prop('checked',false);
@@ -340,6 +363,7 @@
           $('#ColorTemperature').prop('checked', false);
           $('#ColorSpectrum').prop('checked', false);
           $('#TemperatureSetting').prop('checked',false);
+          $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked',true);
 
           $('#willReportState').prop('checked', false);
@@ -348,7 +372,9 @@
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').attr('disabled','');
+          $('#fanTraits').attr('disabled','');
           $('#sceneTraits').removeAttr('disabled');
+          
           break;
       }
     }
