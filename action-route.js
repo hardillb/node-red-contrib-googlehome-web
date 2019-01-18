@@ -1,5 +1,5 @@
-var device = require('./models/device');
-var State = require('./models/state');
+var Devices = require('./models/device');
+var States = require('./models/state');
 var mqtt = require('mqtt');
 
 module.exports = function(app, passport, mqttOptions, logger){
@@ -57,7 +57,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				}
 				logger.debug("response ", response);
 				waiting.resp.send(response);
-				State.findOne({device: payload.id}, function(err, data){
+				States.findOne({device: payload.id}, function(err, data){
 					if (!err && data) {
 						//update
 						logger.debug("Existing status for device ", payload.id, " ", data);
@@ -65,7 +65,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						data.state = Object.assign(data.state, payload.execution.params);
 						data.updated = new Date();
 						logger.debug("Updated status objejct for device ", payload.id, " to ", data);
-						State.update({device: payload.id}, data, function(err, raw){
+						States.update({device: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
 							}
@@ -132,7 +132,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 			switch(intent) {
 				case 'action.devices.SYNC':
 					logger.info("Sync");
-					device.find({username: user},
+					Devices.find({username: user},
 						{"_id": 0, "__v": 0, username: 0 },
 						function(error, data){
 						//console.log("HMM");
@@ -148,6 +148,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							//console.log("%j",response);
 							logger.debug(response);
 							res.send(response);
+							reportStateUser(user);
 						} else {
 							logger.info(error);
 						}
@@ -160,7 +161,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
 					logger.debug("Query dev list - ", deviceList);
-					State.find({device: { $in: deviceList}},function(error,data){
+					States.find({device: { $in: deviceList}},function(error,data){
 						if (!error && data) {
 							logger.debug("Query status data - ", data);
 							var response = {
@@ -221,5 +222,47 @@ module.exports = function(app, passport, mqttOptions, logger){
 			}
 		}
 	);
+
+	function reportStateUser(user) {
+		logger.debug("reportStateUser");
+		Devices.find({username: user},function(err, data){
+			if (!err) {
+				var devIds = [];
+				if (Array.isArray(data)) {
+					for (var i=0; i<data.length; i++) {
+						devIds.push(parseInt(data[i].id))
+					}
+				} else {
+					devIds.push(parseInts(data.id));
+				}
+				logger.debug("reportStateUser dev ids ", devIds);
+				logger.debug("reportStateUser query ", {device: {$in: devIds}});
+				States.find({device: { $in: devIds }}, function(err, states){
+					if (err) {
+						logger.debug("reportStateUser state error-  ", err);
+					} else {
+						var payload = {
+							agentUserId: "",
+							payload: {
+								devices:{
+									states:{}
+								}
+							}
+						}
+						for(var i=0; i<states.length; i++) {
+							payload.payload.devices.states[states.device] = states.state;
+						}
+						logger.debug("reportStateUser states ", payload)
+					}
+				});
+			} else {
+				logger.debug("reportStateUser err ", err);
+			}
+		})
+	}
+
+	function reportStateDevice(user,device,requestId) {
+
+	}
 
 };
