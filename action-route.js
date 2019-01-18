@@ -243,6 +243,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					if (err) {
 						logger.debug("reportStateUser state error-  ", err);
 					} else {
+						logger.debug("reportStateUser states ", states)
 						var payload = {
 							agentUserId: "",
 							payload: {
