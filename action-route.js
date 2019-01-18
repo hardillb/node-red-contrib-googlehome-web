@@ -68,6 +68,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						States.update({device: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
+								reportStateUser(waiting.user);
 							}
 						});
 					} else if (!err && !data) {
@@ -198,6 +199,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					var params = execution.params;
 					params.online = true;
 					inflightRequests[requestId] = {
+						user: user,
 						resp: res,
 						devices: devices,
 						execution: execution,
