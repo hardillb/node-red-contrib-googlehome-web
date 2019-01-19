@@ -24,6 +24,7 @@
     "ejs": "^2.5.6",
     "express": "^4.15.3",
     "express-session": "^1.15.3",
+    "jsonwebtoken": "^8.4.0",
     "mongoose": "^4.10.0",
     "mongoose-sequence": "^3.2.0",
     "morgan": "^1.8.1",

@@ -1,8 +1,24 @@
+var Accounts = require('./models/account');
 var Devices = require('./models/device');
+var request = require('request');
 var States = require('./models/state');
 var mqtt = require('mqtt');
+var path = require('path');
+var jwt = require('jsonwebtoken');
+var fs = require("fs");
+
 
 module.exports = function(app, passport, mqttOptions, logger){
+
+	var reportStateURL = (process.env.REPORT_URL || "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification");
+
+	var jwtPath = path.join(__dirname,"jwt/Node-RED-c27b500a47b4.json");
+	var file = fs.readFileSync(jwtPath);
+	var secrets = JSON.parse(file);
+	var oAuthToken = null;
+
+	var oAuthRefrestInterval = setInterval(getOAuthToken, 3500000);
+	getOAuthToken();
 
 	var mqttClient = mqtt.connect(mqttOptions);
 
@@ -68,13 +84,13 @@ module.exports = function(app, passport, mqttOptions, logger){
 						States.update({device: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
-								reportStateUser(waiting.user);
+								reportStateUser(waiting.username, waiting.user);
 							}
 						});
 					} else if (!err && !data) {
 						//create
 						logger.debug("creating status for device ", payload.id);
-						var state = new State({
+						var state = new States({
 							device: payload.id,
 							state: payload.execution.params
 						});
@@ -199,7 +215,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 					var params = execution.params;
 					params.online = true;
 					inflightRequests[requestId] = {
-						user: user,
+						user:req.user._id,
+						username: user,
 						resp: res,
 						devices: devices,
 						execution: execution,
@@ -225,7 +242,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 		}
 	);
 
-	function reportStateUser(user) {
+	function reportStateUser(user, id) {
 		logger.debug("reportStateUser");
 		Devices.find({username: user},function(err, data){
 			if (!err) {
@@ -245,7 +262,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					} else {
 						logger.debug("reportStateUser states ", states)
 						var payload = {
-							agentUserId: "",
+							agentUserId: id,
 							payload: {
 								devices:{
 									states:{}
@@ -253,9 +270,23 @@ module.exports = function(app, passport, mqttOptions, logger){
 							}
 						}
 						for(var i=0; i<states.length; i++) {
-							payload.payload.devices.states[states.device] = states.state;
+							payload.payload.devices.states[states[i].device] = states[i].state;
 						}
 						logger.debug("reportStateUser states ", payload)
+						// request({
+						// 	url: reportStateURL,
+						// 	method: 'POST',
+						// 	headers:{
+						// 		'Content-Type': 'application/json',
+						// 		'Authorization': 'Bearer ' + oAuthToken,
+						// 		'X-GFE-SSL': 'yes'
+						// 	},
+						// 	json: payload
+						// },
+						// function(err, resp, body){
+						// 	console.log(err);
+						// 	console.log(body);
+						// });
 					}
 				});
 			} else {
@@ -265,7 +296,39 @@ module.exports = function(app, passport, mqttOptions, logger){
 	}
 
 	function reportStateDevice(user,device,requestId) {
+	}
 
+	function getOAuthToken() {
+		var tokenPayload = {
+			iat: new Date().getTime()/1000,
+			exp: new Date().getTime()/1000 + 3600,
+			aud: "https://accounts.google.com/o/oauth2/token",
+			iss: secrets.client_email,
+			scope: "https://www.googleapis.com/auth/homegraph"
+		}
+
+		var cert = secrets.private_key;
+
+		var token = jwt.sign(tokenPayload, cert, { algorithm: 'RS256'});
+
+		request.post({
+			url: 'https://accounts.google.com/o/oauth2/token',
+			form: {
+				grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+				assertion: token
+				}
+			},
+			function(err,httpResp,body){
+				if (err) {
+					logger.info("Problem getting oAuthToken for status push");
+					oAuthToken = null;
+				} else {
+					var jsonBody = JSON.parse(body)
+					oAuthToken = jsonBody.access_token;
+					logger.info("Got new oAuthToken for status push");
+				}
+			}
+		);
 	}
 
 };
