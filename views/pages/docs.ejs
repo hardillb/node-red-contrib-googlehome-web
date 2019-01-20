@@ -17,16 +17,49 @@
 		<h2 id="createAccount">Create Account</h2>
 		<p>Before starting you will need to create an account, if you have not yet done this you can 
 			do this <a href="/register" target="_blank">here</a>.</p>
+		<p>You can now create your first device using the wizard to pick the type and traits you need.</p>
  
 		<h2 id="linkAccount">Link Account</h2>
 		<p>Now you have and account you can enable action in the Google Home app and link the account 
-		you've just created.</p> 
+		you've just created.</p>
+		<ul>
+			<li>
+				<img src="/images/google-home-add.png">
+				<p>First click the "Add" button.</p>
+			</li>
+			<li>
+				<img src="/images/google-home-setup.png">
+				<p>Then "Set up device"</p>
+			</li>
+			<li>
+				<img src="/images/google-home-works.png">
+				<p>And next select "Works with Google" and then finally find Node-RED in the list.</p>
+			</li>
+			<li>
+				<img src="/images/oauth.png">
+				<p>Finally sign in with the username and password you created earlier.</p>
+			</li>
+		</ul>
+
+		<p></p>
 
 		<h2 id="installNodes">Install Nodes</h2>
-		<p></p>
+		<p>There are 2 ways to install the required Node-RED nodes.</p>
+		<ul>
+			<li>First using the pallet manger</li>
+			<li>Second on the command line</li>
+		</ul>
 
 		<h2 id="configNodes">Configure Nodes</h2>
-		<p></p>
+		<p>When you drag the first Google Home node on to the canvas you will need to create a config 
+		node. To do this, click on the pencil icon next to the first input. This will open a new dialog,
+		where you can enter the same username/password from the first step and hit the "Add" button. For
+		all subsequent nodes you should be able to just pick the entry from the drop down that matches
+		your username.</p>
+
+		<p>Once you have picked the right config node, after a second or so the list of devices should
+		be populated. If you have recently created or deleted a new device then you can hit the refresh
+		button to the right of the drop down and the node will update it's list from the service.</p>
 
 		<h2 id="buildFlows">Building Flows</h2>
 		<p></p>
