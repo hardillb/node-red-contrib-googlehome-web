@@ -2,3 +2,4 @@ node_modules/
 testing/
 test-local.sh
 log/
+setup-oauth-apps.txt

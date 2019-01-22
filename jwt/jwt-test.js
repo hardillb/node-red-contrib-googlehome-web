@@ -36,18 +36,18 @@ request.post({
 		  "payload": {
 			    "devices": {
 			      "states": {
-			        "35": {
-			          "on": true,
-			          "brightness": 50,
-			          "color": {
-			          	"name": "daylight",
-			          	"temperature": 5000
-			          }
-			        }
-			        // "45": {
-			        // 	"on": true,
-			        // 	"fanSpeed": "Low"
+			        // "35": {
+			        //   "on": true,
+			        //   "brightness": 50,
+			        //   "color": {
+			        //   	"name": "daylight",
+			        //   	"temperature": 5000
+			        //   }
 			        // }
+			        "45": {
+			        	"on": true,
+			        	"fanSpeed": "Low"
+			        }
 			      }
 			    }
 			  }
