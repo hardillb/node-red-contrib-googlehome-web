@@ -26,13 +26,17 @@ States.find({}, function(err, data){
 		for(var i=0; i<data.length; i++) {
 			console.log("stuff");
 			var d = data[i];
-			Devices.find({id: data[i].device}, function(err, device){
+			Devices.findOne({id: data[i].device}, function(err, device){
 				console.log(device);
 				device.state = d.state;
 				console.log(device);
 				device.save(function(err){
-					if(!err){
-						d.delete()
+					if (!err) {
+						States.deleteOne({_id: d._id}, function(err){
+							if (err) {
+								console.log(err);
+							}
+						})
 					}
 				});
 			})
