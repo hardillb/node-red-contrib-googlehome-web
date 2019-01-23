@@ -1,7 +1,7 @@
 var Accounts = require('./models/account');
 var Devices = require('./models/device');
 var request = require('request');
-var States = require('./models/state');
+//var States = require('./models/state');
 var mqtt = require('mqtt');
 var path = require('path');
 var jwt = require('jsonwebtoken');
@@ -73,38 +73,57 @@ module.exports = function(app, passport, mqttOptions, logger){
 				}
 				logger.debug("response ", response);
 				waiting.resp.send(response);
-				States.findOne({device: payload.id}, function(err, data){
-					if (!err && data) {
-						//update
+				Devices.findOne({id: payload.id}, function(err, data){
+					if (!err) {
 						logger.debug("Existing status for device ", payload.id, " ", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
-						data.state = Object.assign(data.state, payload.execution.params);
-						data.updated = new Date();
-						logger.debug("Updated status objejct for device ", payload.id, " to ", data);
-						States.update({device: payload.id}, data, function(err, raw){
+						if (data.state) {
+							data.state = Object.assign(data.state, payload.execution.params);
+						} else {
+							data.state = payload.execution.params;
+						}
+						Devices.update({id: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
 								reportStateUser(waiting.username, waiting.user);
 							}
 						});
-					} else if (!err && !data) {
-						//create
-						logger.debug("creating status for device ", payload.id);
-						var state = new States({
-							device: payload.id,
-							state: payload.execution.params
-						});
-						state.save(function(error){
-							if (!error) {
-								logger.debug("Saved state");
-							} else {
-								logger.debug("error saving state - ", error);
-							}
-						})
-					} else {
-						logger.debug("problem getting status entry - ", err);
+					} else  {
+						logger.debug("problem getting device to update status - ", err);
 					}
 				})
+				// States.findOne({device: payload.id}, function(err, data){
+				// 	if (!err && data) {
+				// 		//update
+				// 		logger.debug("Existing status for device ", payload.id, " ", data);
+				// 		logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
+				// 		data.state = Object.assign(data.state, payload.execution.params);
+				// 		data.updated = new Date();
+				// 		logger.debug("Updated status objejct for device ", payload.id, " to ", data);
+				// 		States.update({device: payload.id}, data, function(err, raw){
+				// 			if (!err) {
+				// 				logger.debug("Updated sucessfully");
+				// 				reportStateUser(waiting.username, waiting.user);
+				// 			}
+				// 		});
+				// 	} else if (!err && !data) {
+				// 		//create
+				// 		logger.debug("creating status for device ", payload.id);
+				// 		var state = new States({
+				// 			device: payload.id,
+				// 			state: payload.execution.params
+				// 		});
+				// 		state.save(function(error){
+				// 			if (!error) {
+				// 				logger.debug("Saved state");
+				// 			} else {
+				// 				logger.debug("error saving state - ", error);
+				// 			}
+				// 		})
+				// 	} else {
+				// 		logger.debug("problem getting status entry - ", err);
+				// 	}
+				// })
 			}
 		} else  if (topic.startsWith('status/')) {
 			//need to do very similar to above
@@ -150,11 +169,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 				case 'action.devices.SYNC':
 					logger.info("Sync");
 					Devices.find({username: user},
-						{"_id": 0, "__v": 0, username: 0 },
+						{"_id": 0, "__v": 0, username: 0, state: 0 },
 						function(error, data){
-						//console.log("HMM");
 						if(!error) {
-							//console.log("Ben");
 							response = {
 								requestId: requestId,
 								payload: {
@@ -162,7 +179,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 									devices: data
 								}
 							};
-							//console.log("%j",response);
 							logger.debug(response);
 							res.send(response);
 							reportStateUser(user);
@@ -178,7 +194,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						deviceList.push(request.inputs[0].payload.devices[i].id);
 					}
 					logger.debug("Query dev list - ", deviceList);
-					States.find({device: { $in: deviceList}},function(error,data){
+					Devices.find({id: { $in: deviceList}}, {id: true, state: true}, function(error,data){
 						if (!error && data) {
 							logger.debug("Query status data - ", data);
 							var response = {
@@ -201,7 +217,31 @@ module.exports = function(app, passport, mqttOptions, logger){
 						} else {
 							logger.debug("Query Problem with status, ", error)
 						}
-					});
+					})
+					// States.find({device: { $in: deviceList}},function(error,data){
+					// 	if (!error && data) {
+					// 		logger.debug("Query status data - ", data);
+					// 		var response = {
+					// 			requestId: requestId,
+					// 			payload: {
+					// 				devices: {}
+					// 			}
+					// 		};
+					// 		if (Array.isArray(data)) {
+					// 			logger.debug("Query response is array");
+					// 			for (var i in data) {
+					// 				response.payload.devices[data[i].device] = data[i].state;
+					// 			}
+					// 		} else {
+					// 			logger.debug("Query single result");
+					// 			response.payload.devices[data.device] = data.state;
+					// 		}
+					// 		logger.debug("Query response",response);
+					// 		res.send(response);
+					// 	} else {
+					// 		logger.debug("Query Problem with status, ", error)
+					// 	}
+					// });
 					break;
 				case 'action.devices.EXECUTE':
 					logger.debug("Execute");
@@ -256,7 +296,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				}
 				logger.debug("reportStateUser dev ids ", devIds);
 				logger.debug("reportStateUser query ", {device: {$in: devIds}});
-				States.find({device: { $in: devIds }}, function(err, states){
+				Devices.find({id: { $in: devIds }}, function(err, states){
 					if (err) {
 						logger.debug("reportStateUser state error-  ", err);
 					} else {

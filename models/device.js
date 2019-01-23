@@ -48,7 +48,8 @@ var Device = new Schema({
 		swVersion: {type: String, default: "1.0"}
 	},
 	attributes: Schema.Types.Mixed,
-	customData: Schema.Types.Mixed
+	customData: Schema.Types.Mixed,
+	state: Schema.Types.Mixed
 
 });
 

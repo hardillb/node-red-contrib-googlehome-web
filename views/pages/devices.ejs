@@ -117,7 +117,10 @@
                     name
                   ]
                 },
-                attributes: {}
+                attributes: {},
+                state: {
+                  online: true
+                }
               };
 
               $('input[name=trait]').each(function(index){
@@ -127,6 +130,12 @@
               });
               if (dev.traits.includes("action.devices.types.SCENE")) {
                 dev.attributes["sceneReversible"] = true
+              }
+
+              if (dev.traits.includes("action.devices.traits.OnOff")) {
+                Object.assign(dev.state, {
+                  on: false
+                });
               }
 
               if (dev.traits.includes("action.devices.traits.ColorSetting")) {
@@ -141,6 +150,11 @@
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
                 dev.attributes["thermostatTemperatureUnit"] = "C";
+                dev.state = Object.assign(dev.state, {
+                  thermostatMode: "heat",
+                  thermostatTemperatureSetpoint: 20,
+                  thermostatTemperatureAmbient: 20
+                });
               }
 
               if (dev.traits.includes("action.devices.traits.FanSpeed")) {
@@ -183,7 +197,9 @@
                   ordered: true
                 };
                 dev.attributes["reversible"] = true;
-
+                dev.state = Object.assign(dev.state, {
+                  fanSpeed: "Low"
+                })
               }
 
               console.log(dev);
@@ -238,6 +254,11 @@
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
                 dev.attributes["thermostatTemperatureUnit"] = "C";
+                dev.state = Object.assign({
+                  thermostatMode: "heat",
+                  thermostatTemperatureSetpoint: 20,
+                  thermostatTemperatureAmbient: 20
+                }, dev.state);
               }
 
               if (dev.traits.includes("action.devices.traits.FanSpeed")) {
@@ -280,6 +301,9 @@
                   ordered: true
                 };
                 dev.attributes["reversible"] = true;
+                dev.state = Object.assign({
+                  fanSpeed: "Low"
+                }, dev.state)
 
               }
 
