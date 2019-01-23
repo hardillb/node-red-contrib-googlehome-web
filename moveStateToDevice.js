@@ -27,18 +27,20 @@ States.find({}, function(err, data){
 			console.log("stuff");
 			var d = data[i];
 			Devices.findOne({id: data[i].device}, function(err, device){
-				console.log(device);
-				device.state = d.state;
-				console.log(device);
-				device.save(function(err){
-					if (!err) {
-						States.deleteOne({_id: d._id}, function(err){
-							if (err) {
-								console.log(err);
-							}
-						})
-					}
-				});
+				if (!err && device) {
+					console.log(device);
+					device.state = d.state;
+					console.log(device);
+					device.save(function(err){
+						if (!err) {
+							States.deleteOne({_id: d._id}, function(err){
+								if (err) {
+									console.log(err);
+								}
+							})
+						}
+					});
+				}
 			})
 		}
 		setTimeout(function(){
