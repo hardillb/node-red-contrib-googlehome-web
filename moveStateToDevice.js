@@ -21,28 +21,31 @@ mongoose.connect(mongo_url, mongoose_options);
 
 States.find({}, function(err, data){
 	if (!err && data) {
-		console.log("hmmm")
 		console.log(data);
-		for(var i=0; i<data.length; i++) {
-			console.log("stuff");
-			var d = data[i];
-			Devices.findOne({id: data[i].device}, function(err, device){
+		console.log("--------------")
+		data.forEach(function(d){
+			console.log()
+			Devices.findOne({id: d.device}, function(err, device){
+				console.log("updating - ", d);
 				if (!err && device) {
-					console.log(device);
+					console.log("pre - ",device);
 					device.state = d.state;
-					console.log(device);
+					console.log("post - ", device);
 					device.save(function(err){
-						if (!err) {
-							States.deleteOne({_id: d._id}, function(err){
-								if (err) {
-									console.log(err);
-								}
-							})
-						}
+						// if (!err) {
+						// 	States.deleteOne({_id: d._id}, function(err){
+						// 		if (err) {
+						// 			console.log(err);
+						// 		}
+						// 	})
+						// }
 					});
+				} else {
+					console.log("err - ", err);
+					console.log("device - ", device);
 				}
-			})
-		}
+			});
+		});
 		setTimeout(function(){
 			mongoose.disconnect();
 		}, 5000);
