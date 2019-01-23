@@ -310,7 +310,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							}
 						}
 						for(var i=0; i<states.length; i++) {
-							payload.payload.devices.states[states[i].device] = states[i].state;
+							payload.payload.devices.states[states[i].id] = states[i].state;
 						}
 						logger.debug("reportStateUser states ", payload)
 						// request({
