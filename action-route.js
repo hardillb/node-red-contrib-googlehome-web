@@ -312,7 +312,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 			}
 		}
 		Devices.findOne({id: device}, function(err, state){
-			payload.payload.state[device] = state.state;
+			payload.payload.devices.state[device] = state.state;
 			// request({
 			// 	url: reportStateURL,
 			// 	method: 'POST',
