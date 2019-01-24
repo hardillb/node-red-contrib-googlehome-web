@@ -248,65 +248,47 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	function reportStateUser(user, requestId) {
 		logger.debug("reportStateUser for ", user.username);
-		// Devices.find({username: user},function(err, data){
-		// 	if (!err) {
-		// 		var devIds = [];
-		// 		if (Array.isArray(data)) {
-		// 			for (var i=0; i<data.length; i++) {
-		// 				devIds.push(parseInt(data[i].id))
-		// 			}
-		// 		} else {
-		// 			devIds.push(parseInts(data.id));
-		// 		}
-		// 		logger.debug("reportStateUser dev ids ", devIds);
-		// 		logger.debug("reportStateUser query ", {device: {$in: devIds}});
-				// Devices.find({id: { $in: devIds }}, function(err, states){
-				Devices.find({username: user.username}, function(err, states){	
-					if (err) {
-						logger.debug("reportStateUser state error-  ", err);
-					} else {
-						//logger.debug("reportStateUser states ", states)
-						var payload = {
-							agentUserId: user._id,
-							payload: {
-								devices:{
-									states:{}
-								}
-							}
+			Devices.find({username: user.username}, function(err, states){	
+			if (err) {
+				logger.debug("reportStateUser state error-  ", err);
+			} else {
+				//logger.debug("reportStateUser states ", states)
+				var payload = {
+					agentUserId: user._id,
+					payload: {
+						devices:{
+							states:{}
 						}
-						if (requestId) {
-							payload.requestId = requestId;
-						}
-						for(var i=0; i<states.length; i++) {
-							payload.payload.devices.states[states[i].id] = states[i].state;
-						}
-						logger.debug("reportStateUser states ", payload)
-						// request({
-						// 	url: reportStateURL,
-						// 	method: 'POST',
-						// 	headers:{
-						// 		'Content-Type': 'application/json',
-						// 		'Authorization': 'Bearer ' + oAuthToken,
-						// 		'X-GFE-SSL': 'yes'
-						// 	},
-						// 	json: payload
-						// },
-						// function(err, resp, body){
-						// 	console.log(err);
-						// 	console.log(body);
-						// });
 					}
-				});
-			// } else {
-			// 	logger.debug("reportStateUser err ", err);
-			// }
-		// })
+				}
+				if (requestId) {
+					payload.requestId = requestId;
+				}
+				for(var i=0; i<states.length; i++) {
+					payload.payload.devices.states[states[i].id] = states[i].state;
+				}
+				logger.debug("reportStateUser states ", payload)
+				// request({
+				// 	url: reportStateURL,
+				// 	method: 'POST',
+				// 	headers:{
+				// 		'Content-Type': 'application/json',
+				// 		'Authorization': 'Bearer ' + oAuthToken,
+				// 		'X-GFE-SSL': 'yes'
+				// 	},
+				// 	json: payload
+				// },
+				// function(err, resp, body){
+				// 	console.log(err);
+				// 	console.log(body);
+				// });
+			}
+		});
 	}
 
 	function reportStateDevice(user,device,requestId) {
 		logger.debug("reportStateDevice - ", device);
 		var payload = {
-			requestId: requestId,
 			agentUserId: user._id,
 			payload: {
 				devices: {
@@ -314,6 +296,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 					}
 				}
 			}
+		}
+		if (requestId) {
+			payload.requestId: requestId,
 		}
 		Devices.findOne({id: device}, function(err, state){
 			payload.payload.devices.states[device] = state.state;
