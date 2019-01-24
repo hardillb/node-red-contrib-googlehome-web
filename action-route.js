@@ -105,7 +105,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						Devices.update({id: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
-								reportStateUser(waiting.user);
+								//reportStateUser(waiting.user);
 								reportStateDevice(waiting.user, payload.id, payload.requestId);
 							}
 						});
@@ -170,7 +170,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							};
 							logger.debug(response);
 							res.send(response);
-							reportStateUser(req.user);
+							reportStateUser(req.user, requestId);
 						} else {
 							logger.info(error);
 						}
@@ -246,7 +246,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 		}
 	);
 
-	function reportStateUser(user) {
+	function reportStateUser(user, requestId) {
 		logger.debug("reportStateUser for ", user.username);
 		// Devices.find({username: user},function(err, data){
 		// 	if (!err) {
@@ -265,7 +265,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					if (err) {
 						logger.debug("reportStateUser state error-  ", err);
 					} else {
-						logger.debug("reportStateUser states ", states)
+						//logger.debug("reportStateUser states ", states)
 						var payload = {
 							agentUserId: user._id,
 							payload: {
@@ -273,6 +273,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 									states:{}
 								}
 							}
+						}
+						if (requestId) {
+							payload.requestId = requestId;
 						}
 						for(var i=0; i<states.length; i++) {
 							payload.payload.devices.states[states[i].id] = states[i].state;
