@@ -170,7 +170,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							};
 							logger.debug(response);
 							res.send(response);
-							reportStateUser(user);
+							reportStateUser(req.user);
 						} else {
 							logger.info(error);
 						}
@@ -247,7 +247,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 	);
 
 	function reportStateUser(user) {
-		logger.debug("reportStateUser");
+		logger.debug("reportStateUser for ", user.username);
 		// Devices.find({username: user},function(err, data){
 		// 	if (!err) {
 		// 		var devIds = [];
@@ -301,6 +301,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 	}
 
 	function reportStateDevice(user,device,requestId) {
+		logger.debug("reportStateDevice - ", device);
 		var payload = {
 			requestId: requestId,
 			agentUserId: user._id,
@@ -313,6 +314,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 		}
 		Devices.findOne({id: device}, function(err, state){
 			payload.payload.devices.states[device] = state.state;
+			logger.debug("reportStateDevice - ", payload);
 			// request({
 			// 	url: reportStateURL,
 			// 	method: 'POST',
