@@ -46,7 +46,7 @@ request.post({
 			        // }
 			        "45": {
 			        	"on": true,
-			        	"fanSpeed": "Low"
+			        	"currentFanSpeedSetting": "Low"
 			        }
 			      }
 			    }

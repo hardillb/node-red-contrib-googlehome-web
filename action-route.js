@@ -59,6 +59,26 @@ module.exports = function(app, passport, mqttOptions, logger){
 							}
 						]
 					}
+					switch (waiting.execution.command){
+						case "action.devices.commands.SetFanSpeed":
+							response.payload.commands[0].states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
+							delete response.payload.commands[0].states.fanSpeed;
+							break;
+						case "action.devices.commands.ColorAbsolute":
+							if (response.payload.commands[0].states.color.spectrumRGB){
+								response.payload.commands[0].states.color.spectrumRgb = response.payload.commands[0].states.color.spectrumRGB;
+								delete response.payload.commands[0].states.color.spectrumRGB;
+							}
+							if (response.payload.commands[0].states.color.temperature) {
+								response.payload.commands[0].states.color.temperatureK = response.payload.commands[0].states.color.temperature;
+								delete response.payload.commands[0].states.color.temperature;
+							}
+							break;
+						case "action.devices.commands.SetModes":
+							response.payload.commands[0].states.currentModeSettings = response.payload.commands[0].states.updateModeSettings;
+							delete response.payload.commands[0].states.updateModeSettings
+							break;
+					}
 				} else {
 					logger.debug("Need to send a failure");
 					//need more here
@@ -85,45 +105,14 @@ module.exports = function(app, passport, mqttOptions, logger){
 						Devices.update({id: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
-								reportStateUser(waiting.username, waiting.user);
+								reportStateUser(waiting.user);
+								reportStateDevice(waiting.user, payload.id, payload.requestId);
 							}
 						});
 					} else  {
 						logger.debug("problem getting device to update status - ", err);
 					}
 				})
-				// States.findOne({device: payload.id}, function(err, data){
-				// 	if (!err && data) {
-				// 		//update
-				// 		logger.debug("Existing status for device ", payload.id, " ", data);
-				// 		logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
-				// 		data.state = Object.assign(data.state, payload.execution.params);
-				// 		data.updated = new Date();
-				// 		logger.debug("Updated status objejct for device ", payload.id, " to ", data);
-				// 		States.update({device: payload.id}, data, function(err, raw){
-				// 			if (!err) {
-				// 				logger.debug("Updated sucessfully");
-				// 				reportStateUser(waiting.username, waiting.user);
-				// 			}
-				// 		});
-				// 	} else if (!err && !data) {
-				// 		//create
-				// 		logger.debug("creating status for device ", payload.id);
-				// 		var state = new States({
-				// 			device: payload.id,
-				// 			state: payload.execution.params
-				// 		});
-				// 		state.save(function(error){
-				// 			if (!error) {
-				// 				logger.debug("Saved state");
-				// 			} else {
-				// 				logger.debug("error saving state - ", error);
-				// 			}
-				// 		})
-				// 	} else {
-				// 		logger.debug("problem getting status entry - ", err);
-				// 	}
-				// })
 			}
 		} else  if (topic.startsWith('status/')) {
 			//need to do very similar to above
@@ -218,30 +207,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 							logger.debug("Query Problem with status, ", error)
 						}
 					})
-					// States.find({device: { $in: deviceList}},function(error,data){
-					// 	if (!error && data) {
-					// 		logger.debug("Query status data - ", data);
-					// 		var response = {
-					// 			requestId: requestId,
-					// 			payload: {
-					// 				devices: {}
-					// 			}
-					// 		};
-					// 		if (Array.isArray(data)) {
-					// 			logger.debug("Query response is array");
-					// 			for (var i in data) {
-					// 				response.payload.devices[data[i].device] = data[i].state;
-					// 			}
-					// 		} else {
-					// 			logger.debug("Query single result");
-					// 			response.payload.devices[data.device] = data.state;
-					// 		}
-					// 		logger.debug("Query response",response);
-					// 		res.send(response);
-					// 	} else {
-					// 		logger.debug("Query Problem with status, ", error)
-					// 	}
-					// });
 					break;
 				case 'action.devices.EXECUTE':
 					logger.debug("Execute");
@@ -255,8 +220,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					var params = execution.params;
 					params.online = true;
 					inflightRequests[requestId] = {
-						user:req.user._id,
-						username: user,
+						user:req.user,
 						resp: res,
 						devices: devices,
 						execution: execution,
@@ -282,27 +246,28 @@ module.exports = function(app, passport, mqttOptions, logger){
 		}
 	);
 
-	function reportStateUser(user, id) {
+	function reportStateUser(user) {
 		logger.debug("reportStateUser");
-		Devices.find({username: user},function(err, data){
-			if (!err) {
-				var devIds = [];
-				if (Array.isArray(data)) {
-					for (var i=0; i<data.length; i++) {
-						devIds.push(parseInt(data[i].id))
-					}
-				} else {
-					devIds.push(parseInts(data.id));
-				}
-				logger.debug("reportStateUser dev ids ", devIds);
-				logger.debug("reportStateUser query ", {device: {$in: devIds}});
-				Devices.find({id: { $in: devIds }}, function(err, states){
+		// Devices.find({username: user},function(err, data){
+		// 	if (!err) {
+		// 		var devIds = [];
+		// 		if (Array.isArray(data)) {
+		// 			for (var i=0; i<data.length; i++) {
+		// 				devIds.push(parseInt(data[i].id))
+		// 			}
+		// 		} else {
+		// 			devIds.push(parseInts(data.id));
+		// 		}
+		// 		logger.debug("reportStateUser dev ids ", devIds);
+		// 		logger.debug("reportStateUser query ", {device: {$in: devIds}});
+				// Devices.find({id: { $in: devIds }}, function(err, states){
+				Devices.find({username: user.username}, function(err, states){	
 					if (err) {
 						logger.debug("reportStateUser state error-  ", err);
 					} else {
 						logger.debug("reportStateUser states ", states)
 						var payload = {
-							agentUserId: id,
+							agentUserId: user._id,
 							payload: {
 								devices:{
 									states:{}
@@ -329,13 +294,40 @@ module.exports = function(app, passport, mqttOptions, logger){
 						// });
 					}
 				});
-			} else {
-				logger.debug("reportStateUser err ", err);
-			}
-		})
+			// } else {
+			// 	logger.debug("reportStateUser err ", err);
+			// }
+		// })
 	}
 
 	function reportStateDevice(user,device,requestId) {
+		var payload = {
+			requestId: requestId,
+			agentUserId: user._id,
+			payload: {
+				devices: {
+					states: {
+					}
+				}
+			}
+		}
+		Devices.findOne({id: device}, function(err, state){
+			payload.payload.state[device] = state.state;
+			// request({
+			// 	url: reportStateURL,
+			// 	method: 'POST',
+			// 	headers:{
+			// 		'Content-Type': 'application/json',
+			// 		'Authorization': 'Bearer ' + oAuthToken,
+			// 		'X-GFE-SSL': 'yes'
+			// 	},
+			// 	json: payload
+			// },
+			// function(err, resp, body){
+			// 	console.log(err);
+			// 	console.log(body);
+			// });
+		})
 	}
 
 	function getOAuthToken() {
