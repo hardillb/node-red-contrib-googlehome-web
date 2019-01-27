@@ -102,9 +102,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 							data.state = Object.assign(data.state, payload.execution.params);
 
-							if (payload.execution.params.color.spectrumRgb) {
+							if (payload.execution.params.color && payload.execution.params.color.spectrumRgb) {
 								delete data.state.color.temperatureK
-							} else if (payload.execution.params.color.temperatureK) {
+							} else if (payload.execution.params.color && payload.execution.params.color.temperatureK) {
 								delete data.state.color.spectrumRgb
 							}
 
