@@ -92,20 +92,28 @@ module.exports = function(app, passport, mqttOptions, logger){
 					}
 				}
 				logger.debug("response ", response);
-				waiting.resp.send(response);
+				waiting.resp.send(response); // http response
 				Devices.findOne({id: payload.id}, function(err, data){
 					if (!err) {
 						logger.debug("Existing status for device ", payload.id, " ", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
+
 						if (data.state) {
+
 							data.state = Object.assign(data.state, payload.execution.params);
+
+							if (payload.execution.params.color.spectrumRgb) {
+								delete data.state.color.temperatureK
+							} else if (payload.execution.params.color.temperatureK) {
+								delete data.state.color.spectrumRgb
+							}
+
 						} else {
 							data.state = payload.execution.params;
 						}
 						Devices.update({id: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
-								//reportStateUser(waiting.user);
 								reportStateDevice(waiting.user, payload.id, payload.requestId);
 							}
 						});
@@ -265,7 +273,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 					payload.requestId = requestId;
 				}
 				for(var i=0; i<states.length; i++) {
-					payload.payload.devices.states[states[i].id] = states[i].state;
+					if (states[i].willReportState) {
+						payload.payload.devices.states[states[i].id] = states[i].state;
+					}
 				}
 				logger.debug("reportStateUser states ", payload)
 				// request({
@@ -298,25 +308,28 @@ module.exports = function(app, passport, mqttOptions, logger){
 			}
 		}
 		if (requestId) {
-			payload.requestId: requestId,
+			payload.requestId = requestId
 		}
 		Devices.findOne({id: device}, function(err, state){
 			payload.payload.devices.states[device] = state.state;
 			logger.debug("reportStateDevice - ", payload);
-			// request({
-			// 	url: reportStateURL,
-			// 	method: 'POST',
-			// 	headers:{
-			// 		'Content-Type': 'application/json',
-			// 		'Authorization': 'Bearer ' + oAuthToken,
-			// 		'X-GFE-SSL': 'yes'
-			// 	},
-			// 	json: payload
-			// },
-			// function(err, resp, body){
-			// 	console.log(err);
-			// 	console.log(body);
-			// });
+			if (state.willReportState) {
+				logger.debug("should report state")
+				// request({
+				// 	url: reportStateURL,
+				// 	method: 'POST',
+				// 	headers:{
+				// 		'Content-Type': 'application/json',
+				// 		'Authorization': 'Bearer ' + oAuthToken,
+				// 		'X-GFE-SSL': 'yes'
+				// 	},
+				// 	json: payload
+				// },
+				// function(err, resp, body){
+				// 	console.log(err);
+				// 	console.log(body);
+				// });
+			}
 		})
 	}
 

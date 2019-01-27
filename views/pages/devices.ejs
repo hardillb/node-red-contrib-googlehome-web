@@ -32,7 +32,7 @@
 
   <div id="dialog" hidden>
     <input id="devID" type="hidden">
-    <label for="friendlyName">Name: </label>
+    <label for="friendlyName">Name: </label><br>
     <input id="friendlyName" type="text">
     <label for="roomHint">Room (optional): </label>
     <input id="roomHint" type="text">
@@ -50,37 +50,52 @@
           <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
           <input type="radio" name="type" value="action.devices.types.SCENE" onclick="switchType(this.value);">Scene</input><br/>
         </div>
+        <div class="types">
+          <input type="radio" name="type" value="action.devices.types.VACUUM" disabled onclick="switchType(this.value);">Vacuum</input><br/>
+        </div>
       </div>
     </fieldset>
     <fieldset id="deviceTraits">
       <legend>Traits</legend>
-      <fieldset id="OnOffTraits">
-        <label for="OnOff">On/Off: </label>
-        <input type="checkbox" name="trait" id="OnOff" value="action.devices.traits.OnOff" checked="true">
-      </fieldset>
-      <fieldset id="lightTraits" disabled>
-        <label for="Brightness">Brightness: </label>
-        <input type="checkbox" name="trait" id="Brightness" value="action.devices.traits.Brightness"><br/>
-        <label for="ColorTemperature">Color Settings: </label>
-        <input type="checkbox" name="trait" id="ColorSetting" value="action.devices.traits.ColorSetting">
-      </fieldset>
-      <fieldset id="temperatureTraits" disabled>
-        <label for="TemperatureSetting">Temperature: </label>
-        <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting">
-      </fieldset>
-      <fieldset id="fanTraits" disabled >
-        <label for="Fan">Fan Speed: </label>
-        <input type="checkbox" name="trait" id="FanSetting" value="action.devices.traits.FanSpeed">
-      </fieldset>
-      <fieldset id="sceneTraits" disabled hidden>
-        <label for="Scene">Scene: </label>
-        <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
-      </fieldset>
+      <div style="display: flex; width: 100%">
+        <div class="traits">
+          <fieldset id="OnOffTraits">
+            <label for="OnOff">On/Off: </label>
+            <input type="checkbox" name="trait" id="OnOff" value="action.devices.traits.OnOff" checked="true">
+          </fieldset>
+          <fieldset id="lightTraits" disabled>
+            <label for="Brightness">Brightness: </label>
+            <input type="checkbox" name="trait" id="Brightness" value="action.devices.traits.Brightness"><br/>
+            <label for="ColorTemperature">Color Settings: </label>
+            <input type="checkbox" name="trait" id="ColorSetting" value="action.devices.traits.ColorSetting">
+          </fieldset>
+        </div>
+        <div class="traits">
+          <fieldset id="temperatureTraits" disabled>
+            <label for="TemperatureSetting">Temperature: </label>
+            <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting">
+          </fieldset>
+          <fieldset id="fanTraits" disabled >
+            <label for="Fan">Fan Speed: </label>
+            <input type="checkbox" name="trait" id="FanSetting" value="action.devices.traits.FanSpeed">
+          </fieldset>
+          <fieldset id="sceneTraits" disabled hidden>
+            <label for="Scene">Scene: </label>
+            <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
+          </fieldset>
+           <fieldset id="vacuumTraits" disabled>
+            <label for="Scene">Start/Stop: </label>
+            <input type="checkbox" name="trait" id="StartStop" value="action.devices.traits.StartStop"><br>
+            <label for="Scene">Run Cycle: </label>
+            <input type="checkbox" name="trait" id="RunCycle" value="action.devices.traits.RunCycle">
+          </fieldset>
+        </div>
+      </div>
       <fieldset id="reportState" hidden>
-        <legend>Report State</legend>
-        <label for="willReportState">Will Report State: </label>
-        <input type="checkbox" id="willReportState" name="willReportState">
-      </fieldset>
+          <legend>Report State</legend>
+          <label for="willReportState">Will Report State: </label>
+          <input type="checkbox" id="willReportState" name="willReportState">
+        </fieldset>
     </fieldset>
   </div>
 
@@ -96,10 +111,11 @@
         using: function( pos ) {
           $(this).css("top", '55px');
           $(this).css("left", pos.left);
-            }
+        }
       },
       title: "Add New Device",
       dialogClass: "no-close",
+      width: "350px",
       buttons:[
         {
           text: 'OK',

@@ -28,6 +28,16 @@ body {
 	flex-basis: 100px;
 }
 
+.traits {
+	width: 100px;
+	flex-shrink: 0;
+	flex-basis: 150px;
+}
+
+label {
+	width: 120px;
+}
+
 .devicerow {
 	padding: 5px;
 	margin: 1px;
