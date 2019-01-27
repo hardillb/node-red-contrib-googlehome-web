@@ -278,20 +278,23 @@ module.exports = function(app, passport, mqttOptions, logger){
 					}
 				}
 				logger.debug("reportStateUser states ", payload)
-				// request({
-				// 	url: reportStateURL,
-				// 	method: 'POST',
-				// 	headers:{
-				// 		'Content-Type': 'application/json',
-				// 		'Authorization': 'Bearer ' + oAuthToken,
-				// 		'X-GFE-SSL': 'yes'
-				// 	},
-				// 	json: payload
-				// },
-				// function(err, resp, body){
-				// 	console.log(err);
-				// 	console.log(body);
-				// });
+				request({
+					url: reportStateURL,
+					method: 'POST',
+					headers:{
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer ' + oAuthToken,
+						'X-GFE-SSL': 'yes'
+					},
+					json: payload
+				},
+				function(err, resp, body){
+					if (err) {
+						logger.debug("Problem reporting state - ", err, " - ", ,body);
+					} else {
+						logger.debug();
+					}
+				});
 			}
 		});
 	}
@@ -314,21 +317,24 @@ module.exports = function(app, passport, mqttOptions, logger){
 			payload.payload.devices.states[device] = state.state;
 			logger.debug("reportStateDevice - ", payload);
 			if (state.willReportState) {
-				logger.debug("should report state")
-				// request({
-				// 	url: reportStateURL,
-				// 	method: 'POST',
-				// 	headers:{
-				// 		'Content-Type': 'application/json',
-				// 		'Authorization': 'Bearer ' + oAuthToken,
-				// 		'X-GFE-SSL': 'yes'
-				// 	},
-				// 	json: payload
-				// },
-				// function(err, resp, body){
-				// 	console.log(err);
-				// 	console.log(body);
-				// });
+				logger.debug("should report state HTTP")
+				request({
+					url: reportStateURL,
+					method: 'POST',
+					headers:{
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer ' + oAuthToken,
+						'X-GFE-SSL': 'yes'
+					},
+					json: payload
+				},
+				function(err, resp, body){
+					if (err) {
+						logger.debug("Problem reporting state - ", err, " - ", ,body);
+					} else {
+						logger.debug();
+					}
+				});
 			}
 		})
 	}
