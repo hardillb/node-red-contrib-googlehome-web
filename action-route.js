@@ -290,7 +290,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				},
 				function(err, resp, body){
 					if (err) {
-						logger.debug("Problem reporting state - ", err, " - ", ,body);
+						logger.debug("Problem reporting state - ", err, " - ", body);
 					} else {
 						logger.debug();
 					}
@@ -330,7 +330,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				},
 				function(err, resp, body){
 					if (err) {
-						logger.debug("Problem reporting state - ", err, " - ", ,body);
+						logger.debug("Problem reporting state - ", err, " - ", body);
 					} else {
 						logger.debug();
 					}
