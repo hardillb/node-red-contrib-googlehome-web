@@ -184,16 +184,18 @@ var accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
 		if (!error && token) {
 			logger.debug("db token: ", token.active);
 			logger.debug("db token.grant : ", token.grant.active);
-			logger.debug("db token.user: ", token.user);
+			logger.debug("db token.user.username: ", token.user.username);
 		}
 		if (!error && token && token.active && token.grant && token.grant.active && token.user) {
 			// console.log("Token is GOOD!");
 			done(null, token.user, { scope: token.scope });
 		} else if (!error) {
 			// console.log("TOKEN PROBLEM");
+			logger.debug("TOKEN PROBLEM");
 			done(null, false);
 		} else {
 			// console.log("TOKEN PROBLEM 2");
+			logger.debug("TOKEN PROBLEM 2");
 			done(error);
 		}
 	});

@@ -40,8 +40,8 @@ request.post({
 			          "on": true,
 			          "brightness": 50,
 			          "color": {
-			          	"name": "green",
-			          	"temperature": 3000
+			          	"name": "blue",
+			          	"spectrumRGB": 255
 			          }
 			        }
 			        // "45": {
