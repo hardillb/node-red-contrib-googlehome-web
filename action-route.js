@@ -134,6 +134,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 								delete data.state.color.spectrumRgb
 							}
 
+							if (!payload.execution.params.isRunning && !payload.execution.params.isPaused) {
+								delete data.state.activeZones;
+							}
+
 						} else {
 							data.state = payload.execution.params;
 						}
