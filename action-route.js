@@ -78,6 +78,32 @@ module.exports = function(app, passport, mqttOptions, logger){
 							response.payload.commands[0].states.currentModeSettings = response.payload.commands[0].states.updateModeSettings;
 							delete response.payload.commands[0].states.updateModeSettings
 							break;
+						case "action.devices.commands.StartStop":
+
+							if (payload.execution.params.start) {
+								response.payload.commands[0].states.isRunning = true;
+								response.payload.commands[0].states.isPaused = false;
+								if (payload.execution.params.zone) {
+									response.payload.commands[0].activeZones = [payload.execution.params.zone];
+									delete payload.execution.params.zone;
+								}
+							} else {
+								response.payload.commands[0].states.isRunning = false;
+								response.payload.commands[0].states.isPaused = false;
+							}
+							delete payload.execution.params.start;
+							break;
+						case "action.devices.commands.PauseUnpause":
+							if (payload.execution.params.pause) {
+								response.payload.commands[0].states.isRunning = false;
+								response.payload.commands[0].states.isPaused = true;
+							} else {
+								response.payload.commands[0].states.isRunning = true;
+								response.payload.commands[0].states.isPaused = false;
+							}
+							delete payload.execution.params.pause;
+							break;
+						case "action.devices.commands.SetToggles":
 					}
 				} else {
 					logger.debug("Need to send a failure");
