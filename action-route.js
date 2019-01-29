@@ -84,7 +84,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 								response.payload.commands[0].states.isRunning = true;
 								response.payload.commands[0].states.isPaused = false;
 								if (payload.execution.params.zone) {
-									response.payload.commands[0].activeZones = [payload.execution.params.zone];
+									response.payload.commands[0].states.activeZones = [payload.execution.params.zone];
 									delete payload.execution.params.zone;
 								}
 							} else {
