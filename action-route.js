@@ -104,6 +104,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 							delete payload.execution.params.pause;
 							break;
 						case "action.devices.commands.SetToggles":
+							response.payload.commands[0].states.currentToggleSettings = response.payload.commands[0].states.updateToggleSettings;
+							delete response.payload.commands[0].states.updateToggleSettings;
+							break;
 					}
 				} else {
 					logger.debug("Need to send a failure");
