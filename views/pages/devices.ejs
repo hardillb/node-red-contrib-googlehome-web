@@ -10,7 +10,10 @@
     <% devices.forEach(function(device){ %>
     <div class="deviceRow">
       <div class="device">
-      <div class="deviceName"><%= device.name.nicknames %></div>
+      <div class="deviceName">
+        <strong></strong>><%= device.name.name %></strong><br>
+        <small><%= device.name.nicknames %></small>
+      </div>
       <div class="room"><%= device.roomHint %></div>
       <div class="deviceDescription"><img src="/images/<%= device.type %>.png" title="<%= device.type %>"></div>
       <div class="deviceActions">
@@ -127,6 +130,7 @@
                 type: $('input[name=type]:checked').val(),
                 traits: [],
                 roomHint: $('#roomHint').val(),
+                willReportState: true,
                 name:{
                   name: name,
                   nicknames: [
@@ -245,7 +249,7 @@
               dev.roomHint = $('#roomHint').val();
               dev.traits = [];
               dev.attributes = {};
-              dev.willReportState = false;
+              dev.willReportState = true;
 
               $('input[name=trait]').each(function(index){
                 if (this.checked) {

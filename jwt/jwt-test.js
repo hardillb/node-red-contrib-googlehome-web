@@ -41,7 +41,7 @@ request.post({
 			          "brightness": 50,
 			          "color": {
 			          	"name": "blue",
-			          	"spectrumRGB": 255
+			          	"spectrumRgb": 255
 			          }
 			        }
 			        // "45": {

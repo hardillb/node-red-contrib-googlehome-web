@@ -40,7 +40,7 @@ var Device = new Schema({
 	type: String,
 	roomHint: String,
 	traits: [String],
-	willReportState: { type: Boolean, default: false},
+	willReportState: { type: Boolean, default: true},
 	deviceInfo: {
 		manufacturer: {type: String, default: "Node-RED"},
 		model: {type: String, default: "virtual" },
