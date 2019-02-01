@@ -52,7 +52,8 @@ module.exports = function(app, passport, logger) {
 			var topics = new Topics({topics: [
 				'command/' + account.username +'/#', 
 				'presence/'+ account.username + '/#',
-				'response/' + account.username + '/#'
+				'response/' + account.username + '/#',
+				'status/' + account.username + "/#"
 			]});
 			topics.save(function(err){
 				if (!err) {

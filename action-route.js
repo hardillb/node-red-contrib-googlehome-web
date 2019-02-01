@@ -157,6 +157,37 @@ module.exports = function(app, passport, mqttOptions, logger){
 			}
 		} else  if (topic.startsWith('status/')) {
 			//need to do very similar to above
+			var payload = JSON.parse(message);
+			if (payload.id) {
+				Devices.findOne({id: payload.id},function (err, data){
+					if (!err && data) {
+						if (data.sate){
+							data.state = Object.assign(data.state, payload.execution.params);
+
+							if (payload.execution.params.color && payload.execution.params.color.spectrumRgb) {
+								delete data.state.color.temperatureK
+							} else if (payload.execution.params.color && payload.execution.params.color.temperatureK) {
+								delete data.state.color.spectrumRgb
+							}
+
+							if (!payload.execution.params.isRunning && !payload.execution.params.isPaused) {
+								delete data.state.activeZones;
+							}
+
+						} else {
+							data.state = payload.execution.params;
+						}
+						Devices.update({id: payload.id}, data, function(err, raw){
+							if (!err) {
+								logger.debug("Updated sucessfully");
+								reportStateDevice(waiting.user, payload.id);
+							}
+						});
+					} else {
+						logger.debug("problem getting device to report status - ", err);
+					}
+				});
+			}
 		}
 	});
 
