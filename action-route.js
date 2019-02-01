@@ -184,7 +184,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 						Devices.update({id: payload.id}, data, function(err, raw){
 							if (!err) {
 								logger.debug("Updated sucessfully");
-								reportStateDevice(waiting.user, payload.id);
+								Accounts.findOne({username: data.username}, function(err, user){
+									reportStateDevice(user, payload.id);
+								})
 							}
 						});
 					} else {
