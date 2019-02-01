@@ -161,6 +161,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 			if (payload.id) {
 				Devices.findOne({id: payload.id},function (err, data){
 					if (!err && data) {
+						logger.debug("status update");
+						logger.debug("Existing status for device ", payload.id, " ", data);
+						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
+
 						if (data.sate){
 							data.state = Object.assign(data.state, payload.execution.params);
 
@@ -376,6 +380,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 		}
 		if (requestId) {
 			payload.requestId = requestId
+		} else {
+			logger.debug("out of band update");
 		}
 		Devices.findOne({id: device}, function(err, state){
 			payload.payload.devices.states[device] = state.state;
