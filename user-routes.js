@@ -107,7 +107,7 @@ module.exports = function(app, passport, logger) {
 							res.status(200).send();
 						}
 						var body = mailer.buildLostPasswordBody(lostPassword.uuid, lostPassword.user.username);
-						mailer.send(email, 'alexa-node-red@hardill.me.uk', 'Password Reset for Alexa Node-RED', body.text, body.html);
+						mailer.send(email, 'google-home@hardill.me.uk', 'Password Reset for Google Home Node-RED', body.text, body.html);
 					});
 				} else {
 					res.status(404).send("No user found with that email address");
@@ -115,6 +115,60 @@ module.exports = function(app, passport, logger) {
 			}
 		});
 	});
+
+
+	app.get('/user/changePassword/:key', function(req, res){
+		var uuid = req.params.key;
+		LostPassword.findOne({uuid: uuid}).populate('user').exec(function(error, lostPassword){
+			if (!error && lostPassword) {
+				req.login(lostPassword.user, function(err){
+					if (!err){
+						lostPassword.remove();
+						res.redirect('/user/changePassword');
+					} else {
+						console.log(err);
+						res.redirect('/');
+					}
+				})
+			} else {
+				res.redirect('/');
+			}
+		});
+	});
+
+	app.get('/user/changePassword',
+		ensureAuthenticated,
+		function(req,res){
+			res.render('pages/changePassword', {user: req.user});
+		});
+
+	app.post('/user/changePassword', 
+		ensureAuthenticated,
+		function(req, res){
+			Account.findOne({username: req.user.username}, function (err, user){
+				if (!err && user) {
+					user.setPassword(req.body.password, function(e,u){
+						// var s = Buffer.from(account.salt, 'hex').toString('base64');
+						// var h = Buffer.from(account.hash, 'hex').toString(('base64'));
+						var mqttPass = "PBKDF2$sha256$901$" + user.salt + "$" + user.hash;
+						u.mqttPass = mqttPass;
+						u.save(function(error){
+							if (!error) {
+								//console.log("Chagned %s's password", u.username);
+								res.status(200).send();
+							} else {
+								logger.info("Error changing ", u.username, "'s password");
+								logger.debug(error);
+								res.status(400).send("Problem setting new password");
+							}
+						});
+					});
+				} else {
+					console.log(err);
+					res.status(400).send("Problem setting new password");
+				}
+			});
+	})
 
 	app.get('/user/api/devices',
 		passport.authenticate(['basic'], { session: false }),
