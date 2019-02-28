@@ -318,6 +318,7 @@ module.exports = function(app, passport, logger) {
 					function(err, resp, body) {
 						if (!err) {
 							logger.debug("trigger sync for ", userAgentId, " ",  resp && resp.statusCode)
+							logger.debug("sync response body ", body)
 						} else {
 							logger.debug("error triggering sync for ", userAgentId, " ", err);
 						}
