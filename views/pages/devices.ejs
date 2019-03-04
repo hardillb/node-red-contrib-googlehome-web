@@ -50,11 +50,13 @@
         </div>
         <div class="types">
           <input type="radio" name="type" value="action.devices.types.THERMOSTAT" onclick="switchType(this.value);">Thermostat</input><br/>
-          <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
+          <input type="radio" name="type" value="action.devices.types.VACUUM" disabled onclick="switchType(this.value);">Vacuum</input><br/>
           <input type="radio" name="type" value="action.devices.types.SCENE" onclick="switchType(this.value);">Scene</input><br/>
         </div>
         <div class="types">
-          <input type="radio" name="type" value="action.devices.types.VACUUM" disabled onclick="switchType(this.value);">Vacuum</input><br/>
+          <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
+          <input type="radio" name="type" value="action.devices.types.HEATER" onclick="switchType(this.value);">Heater</input><br/>
+          <input type="radio" name="type" value="action.devices.types.AIRPURIFIER" onclick="switchType(this.value);">Pureifier</input><br/>
         </div>
       </div>
     </fieldset>
@@ -458,6 +460,7 @@
           $('#reportState').removeAttr('disabled');
           break;
         case 'action.devices.types.FAN':
+        case 'action.devices.types.AIRPURIFIER':
           $('#OnOff').prop('checked', true);
           $('#Brightness').prop('checked', false);
           $('#ColorTemperature').prop('checked', false);
@@ -490,7 +493,22 @@
           $('#temperatureTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
           $('#sceneTraits').removeAttr('disabled');
-          
+          break;
+        case 'action.devices.types.HEATER':
+          $('#OnOff').prop('checked', true);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',true);
+          $('#FanSetting').prop('checked',true);
+          $('#Scene').prop('checked', false);
+
+          $('#OnOffTraits').removeAttr('disabled');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').removeAttr('disabled');
+          $('#sceneTraits').attr('disabled','');
+          $('#reportState').removeAttr('disabled');
+          $('#fanTraits').removeAttr('disabled');
           break;
       }
     }
