@@ -76,7 +76,12 @@ label {
 	flex-wrap: wrap;
 }
 
-.action .deviceTypeIcon {
+.action {
+	width: 40px;
+	height: 40px;
+}
+
+.deviceTypeIcon {
 	width: 40px;
 	height: 40px;
 }

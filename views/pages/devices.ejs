@@ -17,7 +17,7 @@
         <%});%>
       </div>
       <div class="room"><%= device.roomHint %></div>
-      <div class="deviceDescription"><img src="/images/<%= device.type %>.png" title="<%= device.type %>"></div>
+      <div class="deviceDescription"><img class="deviceTypeIcon" src="/images/<%= device.type %>.png" title="<%= device.type %>"></div>
       <div class="deviceActions">
         <% device.traits.forEach(function(action){ %>
           <img class="action" src="/images/<%= action %>.png" title="<%= action %>">
