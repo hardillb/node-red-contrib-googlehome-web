@@ -318,6 +318,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					}
 					break;
 				case 'action.devices.DISCONNECT':
+					logging.debug("Disconnecting user" );
 					res.send({});
 					break;
 			}

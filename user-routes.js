@@ -307,6 +307,7 @@ module.exports = function(app, passport, logger) {
 		//need to check if currently live
 		Oauth.AccessToken.find({user: new ObjectId(userAgentId)},function(err, data){
 			if (!err && data.length > 0) {
+				logger.debug("requesting sync with", {agentUserId: userAgentId});
 				request(
 					{
 						url: SYNC_URL,
