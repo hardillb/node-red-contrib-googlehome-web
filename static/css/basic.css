@@ -23,9 +23,9 @@ body {
 }
 
 .types {
-	width: 100px;
+	width: 105px;
 	flex-shrink: 0;
-	flex-basis: 100px;
+	flex-basis: 105px;
 }
 
 .traits {
@@ -74,4 +74,12 @@ label {
 	order: 4;
 	display: flex;
 	flex-wrap: wrap;
+}
+
+#friendlyName {
+	width: 280px;
+}
+
+#roomHint {
+	width: 280px;
 }
