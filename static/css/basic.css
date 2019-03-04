@@ -76,6 +76,11 @@ label {
 	flex-wrap: wrap;
 }
 
+.action {
+	width: 40px;
+	height: 40px;
+}
+
 #friendlyName {
 	width: 280px;
 }
