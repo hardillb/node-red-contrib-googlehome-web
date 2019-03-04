@@ -12,7 +12,9 @@
       <div class="device">
       <div class="deviceName">
         <strong><%= device.name.name %></strong><br>
-        <small><%= device.name.nicknames %></small>
+        <% device.name.nicknames.forEach(function(nick){ %>
+        <small><%= nick %><br></small>
+        <%});%>
       </div>
       <div class="room"><%= device.roomHint %></div>
       <div class="deviceDescription"><img src="/images/<%= device.type %>.png" title="<%= device.type %>"></div>
