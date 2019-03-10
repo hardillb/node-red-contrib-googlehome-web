@@ -123,7 +123,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 				logger.debug("response ", response);
 				waiting.resp.send(response); // http response
 				Devices.findOne({id: payload.id}, function(err, data){
-					if (!err) {
+					if (!err && data) {
 						logger.debug("Existing status for device ", payload.id, " ", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
 
@@ -151,7 +151,11 @@ module.exports = function(app, passport, mqttOptions, logger){
 							}
 						});
 					} else  {
-						logger.debug("problem getting device to update status - ", err);
+						if (err) {
+							logger.debug("problem getting device to update status - ", err);
+						} else {
+							logger.debug("device not found - ", payload.id);
+						}
 					}
 				})
 			}
