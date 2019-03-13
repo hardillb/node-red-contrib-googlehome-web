@@ -49,6 +49,7 @@
           <input type="radio" name="type" value="action.devices.types.SWITCH" checked="true" onclick="switchType(this.value);">Switch</input><br/>
           <input type="radio" name="type" value="action.devices.types.OUTLET" onclick="switchType(this.value);">Outlet</input><br/>
           <input type="radio" name="type" value="action.devices.types.LIGHT" onclick="switchType(this.value);">Light</input><br/>
+          <input type="radio" name="type" value="action.devices.types.BLINDS" onclick="switchType(this.value);">Blinds</input><br/>
         </div>
         <div class="types">
           <input type="radio" name="type" value="action.devices.types.THERMOSTAT" onclick="switchType(this.value);">Thermostat</input><br/>
@@ -76,13 +77,19 @@
             <label for="ColorTemperature">Color Settings: </label>
             <input type="checkbox" name="trait" id="ColorSetting" value="action.devices.traits.ColorSetting">
           </fieldset>
+          <fieldset id="vacuumTraits" disabled>
+            <label for="StartStop">Start/Stop: </label>
+            <input type="checkbox" name="trait" id="StartStop" value="action.devices.traits.StartStop"><br>
+            <label for="RunCycle">Run Cycle: </label>
+            <input type="checkbox" name="trait" id="RunCycle" value="action.devices.traits.RunCycle">
+          </fieldset>
         </div>
         <div class="traits">
           <fieldset id="temperatureTraits" disabled>
             <label for="TemperatureSetting">Temperature: </label>
             <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting">
           </fieldset>
-          <fieldset id="fanTraits" disabled >
+          <fieldset id="fanTraits" disabled>
             <label for="Fan">Fan Speed: </label>
             <input type="checkbox" name="trait" id="FanSetting" value="action.devices.traits.FanSpeed">
           </fieldset>
@@ -90,11 +97,15 @@
             <label for="Scene">Scene: </label>
             <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
           </fieldset>
-           <fieldset id="vacuumTraits" disabled>
-            <label for="Scene">Start/Stop: </label>
-            <input type="checkbox" name="trait" id="StartStop" value="action.devices.traits.StartStop"><br>
-            <label for="Scene">Run Cycle: </label>
-            <input type="checkbox" name="trait" id="RunCycle" value="action.devices.traits.RunCycle">
+          <fieldset id="modeToggleTraits" disabled>
+            <label for="Scene">Toggles: </label>
+            <input type="checkbox" name="trait" id="Toggles" value="action.devices.traits.Toggles">
+            <label for="Scene">Modes: </label>
+            <input type="checkbox" name="trait" id="Modes" value="action.devices.traits.Modes">
+          </fieldset> 
+          <fieldset id="blindsTraits" disabled>
+            <label for="OpenClose">Open/Close: </label>
+            <input type="checkbox" name="trait" id="OpenClose" value="action.devices.traits.OpenClose">
           </fieldset>
         </div>
       </div>
@@ -181,6 +192,13 @@
                 });
               }
 
+              if (dev.traits.includes("action.devices.traits.OpenClose")) {
+                dev.attributes["openDirection"] = ["UP"];
+                dev.state = Object.assign(dev.state, {
+                  "openPercent": 0
+                })
+              }
+
               if (dev.traits.includes("action.devices.traits.FanSpeed")) {
                 dev.attributes["availableFanSpeeds"] = {
                   speeds: [
@@ -242,7 +260,7 @@
                 });
                 $(this).dialog( "close" );
               } else {
-                alert('You need to set a name');
+                alert('You need to set a name, device type and at least one trait');
               }
             } else {
               //update
@@ -504,6 +522,7 @@
           $('#TemperatureSetting').prop('checked',true);
           $('#FanSetting').prop('checked',true);
           $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -511,6 +530,25 @@
           $('#sceneTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
           $('#fanTraits').removeAttr('disabled');
+          $('#blindsTraits').attr('disabled','');
+          break;
+        case 'action.devices.types.BLINDS':
+          $('#OnOff').prop('checked', false);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',false);
+          $('#FanSetting').prop('checked',false);
+          $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', true);
+
+          $('#OnOffTraits').removeAttr('disabled');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').removeAttr('disabled');
+          $('#sceneTraits').attr('disabled','');
+          $('#reportState').removeAttr('disabled');
+          $('#fanTraits').attr('disabled','');
+          $('#blindsTraits').removeAttr('disabled');
           break;
       }
     }
@@ -528,6 +566,8 @@
       $('#lightTraits').attr('disabled','');
       $('#temperatureTraits').attr('disabled','');
       $('#sceneTraits').attr('disabled','');
+      $('#fanTraits').attr('disabled','');
+      $('#blindTraits').attr('disabled','');
 
       $('input[name=type]').each(function(index){
         if (this.value === 'action.devices.types.SWITCH') {
