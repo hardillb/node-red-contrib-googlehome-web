@@ -1,0 +1,31 @@
+<% include ../fragments/header.ejs %>
+  <script src="/js/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+  <div class="container main-content">
+  	<div id="wrapper">
+  		<div id="leftHandSide">
+  			<h3>Expert Mode</h3>
+  			<p>This allows you to build the JSON that will be passed to the Google Assistant to descrcibe the device. 
+  				You and read the documentation for the Device <a href="https://developers.google.com/actions/smarthome/guides/">Types</a>
+  				and <a href="https://developers.google.com/actions/smarthome/traits/">Traits</a> to help craft custom devices.</p>
+  				<p><strong>Warning</strong> there is only basic JSON syntax checking, there is currently no checking to make sure the 
+  				structure is correct.</p>
+  				<button onclick="save()">Save</button>
+  		</div>
+  		<div id="rightHandSide">
+  			<input type="text" name="id" value="<%= id %>" hidden>
+  			<input type="text" name="user" value="<%= user.username %>" hidden>
+  			<pre id="editor"><%- JSON.stringify(device, null, "\t") %></pre>
+			</div>
+  	</div>
+	</div>
+  <script type="text/javascript">
+  	var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/eclipse");
+    editor.session.setMode("ace/mode/json");
+    editor.session.setOptions({ tabSize: 2, useSoftTabs: true});
+
+    function save() {
+    	alert("not implemented just yet")
+    }
+  </script>
+<% include ../fragments/footer.ejs %>

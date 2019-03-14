@@ -93,3 +93,28 @@ label {
 #roomHint {
 	width: 280px;
 }
+
+#editor {
+	margin: 0px;
+	width: 450px;
+	height: 500px;
+}
+
+#wrapper {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-evenly;
+}
+
+#leftHandSide {
+	order: -1;
+	flex-basis: 400px;
+	flex-shrink: 0;
+}
+
+#rightHandSize {
+	order: 1;
+	flex-basis: 500px;
+	flex-shrink: 0;
+}

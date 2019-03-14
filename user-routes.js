@@ -195,7 +195,7 @@ module.exports = function(app, passport, logger) {
 			Devices.find({username:user}, function(err, data){
 				if (!err) {
 					logger.debug(data);
-					res.render('pages/devices',{user: req.user ,devices: data, devs: true});
+					res.render('pages/devices',{user: req.user, devices: data, devs: true});
 				}
 			});
 		}
@@ -293,6 +293,21 @@ module.exports = function(app, passport, logger) {
 			);
 		}
 	);
+
+	app.get('/user/expert-mode/:dev_id',
+		ensureAuthenticated,
+		function(req,res) {
+			var user = req.user.username;
+			var id = req.params.dev_id;
+
+			Devices.findOne({_id: id, username:user}, {_id:0, __v:0, username:0}, function(err, data){
+				if (!err) {
+					logger.debug(data);
+					res.render('pages/expert-mode',{user: req.user, device: data, devs: true, id: id});
+				}
+			});
+		}
+	)
 
 	function ensureAuthenticated(req,res,next) {
 		if (req.isAuthenticated()) {

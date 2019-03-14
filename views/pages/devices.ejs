@@ -25,7 +25,7 @@
       </div>
       </div>
       <div>
-      <button onclick="edit('<%= device._id %>')">Edit</button>
+      <button onclick="edit(event, '<%= device._id %>')">Edit</button>
       <button onclick="deleteDevice('<%= device._id%>')">Delete</button>
       </div>
     </div>
@@ -391,22 +391,27 @@
       $("#dialog")
     }
 
-    function edit(id) {
-      clearDevice();
-      $("#dialog").dialog({
-        title: "Edit Device"
-      }).dialog("open");
-      var device = devices[id];
-      $('#devID').val(device._id);
-      $('#friendlyName').val(device.name.name);
-      $('#friendlyName').prop('readonly', true);
-      $('#roomHint').val(device.roomHint);
-      switchType(device.type);
-      $('input[name=type][value="' + device.type + '"]').prop('checked', true);
-      device.traits.forEach(function(trait){
-        var stuff = trait.split('\.');
-        $('#'+stuff[stuff.length-1]).prop('checked',true);
-      });
+    function edit(event, id) {
+      if (event.shiftKey) {
+        console.log(location);
+        window.location.href = '/user/expert-mode/' + id;
+      } else {
+        clearDevice();
+        $("#dialog").dialog({
+          title: "Edit Device"
+        }).dialog("open");
+        var device = devices[id];
+        $('#devID').val(device._id);
+        $('#friendlyName').val(device.name.name);
+        $('#friendlyName').prop('readonly', true);
+        $('#roomHint').val(device.roomHint);
+        switchType(device.type);
+        $('input[name=type][value="' + device.type + '"]').prop('checked', true);
+        device.traits.forEach(function(trait){
+          var stuff = trait.split('\.');
+          $('#'+stuff[stuff.length-1]).prop('checked',true);
+        });
+      }
     }
 
     function addDevice(){
