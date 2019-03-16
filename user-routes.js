@@ -309,6 +309,38 @@ module.exports = function(app, passport, logger) {
 		}
 	)
 
+	app.get('/user/expert-mode',
+		ensureAuthenticated,
+		function(req,res) {
+			var user = req.user.username;
+
+			var data = {
+				type: "action.devices.types.",
+				name:{
+					name: "",
+					nicknames: []
+				},
+				roomHint: "",
+				traits: [
+				  "action.devices.traits."
+				],
+				attributes: {
+				},
+				state: {},
+				willReportState: true,
+				deviceInfo: {
+					swVersion: "1.0",
+					hwVersion: "1.0",
+					model: "virtual",
+					manufacturer: "Node-RED"
+				},
+				customData: {}
+			}
+
+			res.render('pages/expert-mode',{user: req.user, device: data, devs: true, id: -1});
+		}
+	)
+
 	function ensureAuthenticated(req,res,next) {
 		if (req.isAuthenticated()) {
 	    	return next();

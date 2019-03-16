@@ -31,7 +31,7 @@
     </div>
     <% }); %>
     <div style="padding-top: 10px;">
-      <button onclick="addDevice();">Add Device</button>
+      <button onclick="addDevice(event);">Add Device</button>
     </div>
   </div>
 
@@ -414,9 +414,13 @@
       }
     }
 
-    function addDevice(){
-      clearDevice();
-      $("#dialog").dialog({title: "Add New Device"}).dialog("open");
+    function addDevice(event){
+      if (event.shiftKey) {
+        window.location.href = '/user/expert-mode';
+      } else {
+        clearDevice();
+        $("#dialog").dialog({title: "Add New Device"}).dialog("open");
+      }
     }
 
     function deleteDevice(id) {

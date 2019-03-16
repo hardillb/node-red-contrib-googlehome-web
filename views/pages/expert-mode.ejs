@@ -10,10 +10,11 @@
   				<p><strong>Warning</strong> there is only basic JSON syntax checking, there is currently no checking to make sure the 
   				structure is correct.</p>
   				<button onclick="save()">Save</button>
+  				<button onclick="window.location.href = '/user/devices'">Cancel</button>
   		</div>
   		<div id="rightHandSide">
-  			<input type="text" name="id" value="<%= id %>" hidden>
-  			<input type="text" name="user" value="<%= user.username %>" hidden>
+  			<input id="id" type="text" name="id" value="<%= id %>" hidden>
+  			<input id="user" type="text" name="user" value="<%= user.username %>" hidden>
   			<pre id="editor"><%- JSON.stringify(device, null, "\t") %></pre>
 			</div>
   	</div>
@@ -25,7 +26,63 @@
     editor.session.setOptions({ tabSize: 2, useSoftTabs: true});
 
     function save() {
-    	alert("not implemented just yet")
+    	var id = document.getElementById("id").value;
+    	var user = document.getElementById("user").value;
+
+			var annotations = editor.getSession().getAnnotations();
+    	console.log(annotations);
+    	for (var i = 0 ; i<annotations.length; i++) {
+    		if (annotations[i].type == "error") {
+    			alert(annotations[i].text + " on line " + (annotations[i].row +1));
+    			return;
+    		}
+    	}
+
+    	var dev;
+
+    	try {
+    		dev = JSON.parse(editor.getValue());
+    	} catch (ex) {
+    		alert("not valid JSON");
+    		return;
+    	}
+
+    	dev.username = user;
+    	console.log(dev);
+
+    	if (id != -1) {
+    		dev._id = id;
+    		console.log("update");
+
+    		$.ajax({
+          url: '/user/devices/' + dev._id,
+          method: 'POST',
+          data: JSON.stringify(dev),
+          contentType: "application/json",
+          success: function(data){
+            window.location.href = "/user/devices";
+          },
+          dataType: 'json'
+        }).fail(function(){
+          alert('failed to update device')
+        });
+
+    	} else {
+    		console.log("new device");
+    		
+    		$.ajax({
+        	url: '/user/devices',
+          method: 'PUT',
+          data: JSON.stringify(dev),
+          contentType: "application/json",
+          success: function(data){
+            window.location.href = "/user/devices";
+          },
+          dataType: 'json'
+        }).fail(function(){
+          alert('failed to create device');
+        });
+    	}
     }
   </script>
 <% include ../fragments/footer.ejs %>
