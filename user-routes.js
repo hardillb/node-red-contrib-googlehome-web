@@ -324,11 +324,14 @@ module.exports = function(app, passport, logger) {
 				},
 				roomHint: "",
 				traits: [
-				  "action.devices.traits."
+				  "action.devices.traits.OnOff"
 				],
 				attributes: {
 				},
-				state: {},
+				state: {
+					online: true,
+					on: true
+				},
 				willReportState: true,
 				deviceInfo: {
 					swVersion: "1.0",
