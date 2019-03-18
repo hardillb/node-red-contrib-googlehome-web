@@ -12,7 +12,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	var reportStateURL = (process.env.REPORT_URL || "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification");
 
-	var jwtPath = path.join(__dirname,"jwt/Node-RED-c27b500a47b4.json");
+	var jwtFile = (process.env.JTW_FILE || "jwt/Node-RED-c27b500a47b4.json" )
+
+	var jwtPath = path.join(__dirname, jwtFile);
 	var file = fs.readFileSync(jwtPath);
 	var secrets = JSON.parse(file);
 	var oAuthToken = null;
