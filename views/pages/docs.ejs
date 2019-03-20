@@ -5,8 +5,9 @@
       <li><a href="#createAccount">Create Account</a></li>
       <li><a href="#linkAccount">Link Account</a></li>
       <li><a href="#installNodes">Install Nodes</a></li>
+      <li><a href="#buildFlows">Building Flows</a></li>
       <li><a href="#configNodes">Configure Nodes</a></li>
-    	<li><a href="#buildFlows">Building Flows</a></li>
+      <li><a href="#outofband">Updating Google Homegraph without a command</a></li>
   	</ul>
   </nav>
 
@@ -50,7 +51,14 @@
 			<li>Second on the command line</li>
 		</ul>
 
-		<h2 id="configNodes">Configure Nodes</h2>
+		<h2 id="buildFlows">Building Flows</h2>
+		<p>There are 2 nodes available in the pallet, <em>google home</em> and <em>google home response</em>.
+		For most situations you can get away with using the <em>google home</em> as this is the node that
+	  output the commands when you ask Google Assistant to do something.</p>
+
+		<img src="images/nodes.png">
+
+		<h3 id="configNodes">Configure Nodes</h3>
 		<p>When you drag the first Google Home node on to the canvas you will need to create a config 
 		node. To do this, click on the pencil icon next to the first input. This will open a new dialog,
 		where you can enter the same username/password from the first step and hit the "Add" button. For
@@ -61,8 +69,31 @@
 		be populated. If you have recently created or deleted a new device then you can hit the refresh
 		button to the right of the drop down and the node will update it's list from the service.</p>
 
-		<h2 id="buildFlows">Building Flows</h2>
-		<p></p>
+		<img src="images/NewAccount.png">
+
+		<p>To start with you should leave the <em>Auto Acknowledge</em> box ticked. This will assume that 
+		any incoming command has succeed and report that back to the Google Homegraph<sup>1</sup>.</p>
+
+		<p>The Google Home node will output a message object that looks like the following when a command 
+		arrives:</p>
+
+		<pre>{
+  topic: "",
+  raw: {},
+  payload: {
+    command: "action.devices.commands.OnOff",
+    params: {
+      on: true
+    }
+  }
+}</pre>
+
+    <p>The <em>msg.payload.command</em> value will be one of the commands identified in the 
+    <a href="https://developers.google.com/actions/smarthome/traits/">traits</a> identifiers from the 
+    Google Smart Home Action API. The <em>msg.payload.params</em> will hold the settings to be updated
+    on the device.</p>
+
+		<h3 id="outofband">Changing Google Homegraph state without a command</h3>
 
 	</div>
 </div>
