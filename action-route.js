@@ -77,7 +77,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 									delete response.payload.commands[0].states.color.temperature;
 								}
 								if (response.payload.commands[0].states.color.name) {
-									delete response.payload.commands.states.color.name;
+									delete response.payload.commands[0].states.color.name;
 								}
 							}
 							break;
