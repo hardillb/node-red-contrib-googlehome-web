@@ -1,3 +1,4 @@
+const LostPassword = require('./models/lostPassword')
 const Account = require('./models/account');
 const Topics = require('./models/topics');
 const Devices = require('./models/device');
@@ -280,6 +281,7 @@ module.exports = function(app, passport, logger) {
 										logger.debug("Deleted state for device ", devId);
 									}
 								});
+								triggerSync(req.user._id);
 								res.status(202);
 								res.send();
 							}
