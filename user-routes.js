@@ -47,46 +47,49 @@ module.exports = function(app, passport, logger) {
 	app.post('/register', function(req,res){
 		Account.register(new Account({ username : req.body.username, email: req.body.email, mqttPass: "foo" }), req.body.password, function(err, account) {
 			if(err) {
+				logger.debug("error in account creation - ", err);
 				res.status(500).send(err.message);
-			}
+				return;
+			} else {
+				var topics = new Topics({topics: [
+					'command/' + account.username +'/#', 
+					'presence/'+ account.username + '/#',
+					'response/' + account.username + '/#',
+					'status/' + account.username + "/#"
+				]});
+				topics.save(function(err){
+					if (!err) {
+						var s = Buffer.from(account.salt, 'hex').toString('base64');
+						var h = Buffer.from(account.hash, 'hex').toString(('base64'));
 
-			var topics = new Topics({topics: [
-				'command/' + account.username +'/#', 
-				'presence/'+ account.username + '/#',
-				'response/' + account.username + '/#',
-				'status/' + account.username + "/#"
-			]});
-			topics.save(function(err){
-				if (!err) {
-					var s = Buffer.from(account.salt, 'hex').toString('base64');
-					var h = Buffer.from(account.hash, 'hex').toString(('base64'));
+						var mqttPass = "PBKDF2$sha256$901$" + account.salt + "$" + account.hash;
 
-					var mqttPass = "PBKDF2$sha256$901$" + account.salt + "$" + account.hash;
-
-					Account.update(
-						{username: account.username}, 
-						{$set: {mqttPass: mqttPass, topics: topics._id}}, 
-						{ multi: false },
-						function(err, count){
-							if (err) {
-								console.log(err);
+						Account.update(
+							{username: account.username}, 
+							{$set: {mqttPass: mqttPass, topics: topics._id}}, 
+							{ multi: false },
+							function(err, count){
+								if (err) {
+									console.log(err);
+								}
 							}
-						}
-					);
-				} else {
-					res.status(500).send(err.message);
-				}
-			});
-			passport.authenticate('local')(req, res, function () {
-				console.log("created new user %s", req.body.username);
-				// measurement.send({
-				// 	t:'event', 
-				// 	ec:'System', 
-				// 	ea: 'NewUser',
-				// 	uid: req.body.username
-				// });
-	            res.status(201).send();
-	        });
+						);
+					} else {
+						res.status(500).send(err.message);
+					}
+				});
+			
+				passport.authenticate('local')(req, res, function () {
+					console.log("created new user %s", req.body.username);
+					// measurement.send({
+					// 	t:'event', 
+					// 	ec:'System', 
+					// 	ea: 'NewUser',
+					// 	uid: req.body.username
+					// });
+		      res.status(201).send();
+	      });
+			}
 		});
 	});
 
