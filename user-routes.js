@@ -8,7 +8,8 @@ const request = require('request');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 
-const mailer = require('./sendemail');
+const sendemail = require('./sendemail');
+const mailer = new sendemail();
 
 module.exports = function(app, passport, logger) {
 
