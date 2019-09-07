@@ -49,7 +49,12 @@ var Device = new Schema({
 	},
 	attributes: Schema.Types.Mixed,
 	customData: Schema.Types.Mixed,
-	state: Schema.Types.Mixed
+	state: Schema.Types.Mixed,
+	otherDeviceIds: {type: [
+			{type: Schema.Types.Mixed}
+		],
+		default: undefined
+	}
 
 });
 
