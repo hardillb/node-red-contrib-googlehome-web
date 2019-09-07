@@ -193,13 +193,16 @@ module.exports = function(app, passport, mqttOptions, logger){
 						logger.debug("Existing status for device ", payload.id, " ", data);
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
 
-						if (data.sate){
+						if (data.state){
 							data.state = Object.assign(data.state, payload.execution.params);
 
-							if (payload.execution.params.color && payload.execution.params.color.spectrumRgb) {
-								delete data.state.color.temperatureK
+							if (payload.execution.params.color && payload.execution.params.color.spectrumRGB) {
+								data.state.spectrumRGB = data.state.color.spectrumRGB
+								delete data.state.color
+								delete data.state.temperatureK
 							} else if (payload.execution.params.color && payload.execution.params.color.temperatureK) {
-								delete data.state.color.spectrumRgb
+								delete data.state.color
+								delete data.state.spectrumRGB
 							}
 
 							if (!payload.execution.params.isRunning && !payload.execution.params.isPaused) {
@@ -208,6 +211,14 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 						} else {
 							data.state = payload.execution.params;
+							if (data.state.color && data.state.color.spectrumRGB) {
+								data.state.spectrumRGB = data.state.color.spectrumRGB;
+								delete data.state.color;
+							}
+							if (data.state.color && data.state.color.temperatureK) {
+								data.state.temperatureK = data.state.color.temperatureK;
+								delete data.state.color;
+							}
 						}
 						Devices.update({id: payload.id}, data, function(err, raw){
 							if (!err) {
