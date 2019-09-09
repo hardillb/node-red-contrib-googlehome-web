@@ -38,7 +38,7 @@
   <div id="dialog" hidden>
     <input id="devID" type="hidden">
     <label for="friendlyName">Name: </label><br>
-    <input id="friendlyName" type="text">
+    <input id="friendlyName" type="text" onchange="checkName(this.value)">
     <label for="roomHint">Room (optional): </label>
     <input id="roomHint" type="text">
     <!-- <span>Optional</span> -->
@@ -584,6 +584,13 @@
         }
       });
 
+    }
+
+    function checkName(name) {
+      var reg = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
+      if (name.match(reg)) {
+        alert("Using emoji in device names is not a good idea\n and discouraged by Google");
+      }
     }
 
     var devices = {};
