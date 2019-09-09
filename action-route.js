@@ -186,7 +186,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 		} else  if (topic.startsWith('status/')) {
 			//need to do very similar to above
 			var payload = JSON.parse(message);
-			if (payload.id) {
+			if (payload.id && payload.execution && payload.execution.params) {
 				Devices.findOne({id: payload.id},function (err, data){
 					if (!err && data) {
 						logger.debug("status update");
