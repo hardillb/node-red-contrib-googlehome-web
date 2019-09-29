@@ -245,7 +245,9 @@ module.exports = function(app, passport, logger) {
 							data.traits = device.traits;
 							data.attributes = device.attributes;
 							data.roomHint = device.roomHint;
-							data.state = Object.assign(device.state, data.state);
+							if (device.state) {
+								data.state = Object.assign(device.state, data.state);
+							}
 							data.name = device.name;
 							if (device.otherDeviceIds) {
 								data.otherDeviceIds = device.otherDeviceIds;
