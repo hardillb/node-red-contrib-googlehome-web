@@ -1,0 +1,23 @@
+{
+  "name": "localcontrol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "b.hardill@gamil.com",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "ts-loader": "^6.2.1",
+    "ts-lodash": "^4.0.11",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3",
+    "webpack": "^4.41.3",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "@google/local-home-sdk": "^0.2.1"
+  }
+}
