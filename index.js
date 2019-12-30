@@ -44,6 +44,8 @@ console.log(mqtt_url);
 
 mqtt_url = url.parse(mqtt_url);
 
+var cookieSecret = (process.env.COOKIE_SECRET || 'ihytsrf334');
+
 var mqttOptions = {
 	reconnectPeriod: 3000,
 	keepAlive: 10,
@@ -124,9 +126,6 @@ Account.findOne({username: mqtt_user}, function(error, account){
 		console.log("MQTT account already exists");
 	}
 });
-
-//Should be passed in as a env var
-var cookieSecret = 'ihytsrf334';
 
 var accessLogStream = rfs('access.log', {
   interval: '1d', // rotate daily
