@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
-  "author": "b.hardill@gamil.com",
+  "author": "hardillb@gmail.com",
   "license": "Apache-2.0",
   "devDependencies": {
     "ts-loader": "^6.2.1",
