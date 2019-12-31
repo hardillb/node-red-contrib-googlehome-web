@@ -70,11 +70,6 @@ if (process.env.VCAP_APPLICATION) {
 	app_id = 'https://' + app_uri;
 }
 
-// Determine if we have to use the repo provided SSL certificate.
-var skip_ssl = (process.env.SKIP_SSL || undefined);
-skip_ssl = (skip_ssl !== undefined && skip_ssl == true);
-skip_ssl = (!skip_ssl && app_id.match(/^https:\/\/localhost:/));
-
 mongoose.Promise = global.Promise;
 var mongoose_options = {
 	server: {
@@ -235,6 +230,11 @@ app.use(function (err, req,res,next){
 });
 
 var server = http.Server(app);
+
+// Determine if we have to use the repo provided SSL certificate.
+var skip_ssl = (process.env.SKIP_SSL || undefined);
+skip_ssl = (skip_ssl !== undefined && skip_ssl == true);
+skip_ssl = (!skip_ssl && app_id.match(/^https:\/\/localhost:/));
 if (!skip_ssl) {
 	var options = {
 		key: fs.readFileSync('server.key'),
