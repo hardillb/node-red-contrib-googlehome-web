@@ -229,7 +229,7 @@ app.use(function (err, req,res,next){
 	res.send("File Not Found");
 });
 
-var server = http.Server(app);
+var server = http.createServer(app);
 
 // Determine if we have to use the repo provided SSL certificate.
 var skip_ssl = (process.env.SKIP_SSL || undefined);
