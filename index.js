@@ -35,7 +35,6 @@ logger.setLevel(logLevel);
 
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
-var skip_ssl = (process.env.SKIP_SSL || undefined);
 
 var mongo_url = (process.env.MONGO_URL || 'mongodb://localhost:27017/assistant');
 logger.debug("Mongo url: ", mongo_url);
@@ -65,14 +64,16 @@ if (mqtt_user) {
 }
 
 var app_id = 'https://localhost:' + port;
-
 if (process.env.VCAP_APPLICATION) {
 	var application = JSON.parse(process.env.VCAP_APPLICATION);
-
 	var app_uri = application['application_uris'][0];
-
 	app_id = 'https://' + app_uri;
 }
+
+// Determine if we have to use the repo provided SSL certificate.
+var skip_ssl = (process.env.SKIP_SSL || undefined);
+skip_ssl = (skip_ssl !== undefined && skip_ssl == true);
+skip_ssl = (!skip_ssl && app_id.match(/^https:\/\/localhost:/));
 
 mongoose.Promise = global.Promise;
 var mongoose_options = {
@@ -184,7 +185,7 @@ var accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
 	oauthModels.AccessToken.findOne({ token: token }).populate('user').populate('grant').exec(function(error, token) {
 		if (!error && token) {
 			logger.debug("db token: ", token.active);
-			logger.debug("db token.grant : ", token.grant.active);
+			logger.debug("db token.grant: ", token.grant.active);
 			logger.debug("db token.user.username: ", token.user.username);
 		}
 		if (!error && token && token.active && token.grant && token.grant.active && token.user) {
@@ -233,20 +234,17 @@ app.use(function (err, req,res,next){
 	res.send("File Not Found");
 });
 
-
 var server = http.Server(app);
-skip_ssl = (skip_ssl !== undefined && skip_ssl == true);
-if (!skip_ssl && app_id.match(/^https:\/\/localhost:/)) {
+if (!skip_ssl) {
 	var options = {
 		key: fs.readFileSync('server.key'),
 		cert: fs.readFileSync('server.crt')
 	};
 	server = https.createServer(options, app);
-	console.log('Notice: Using repo provided SSL key and certificate.')
 } 
 
-
 server.listen(port, host, function(){
-	console.log('App listening on  %s:%d!', host, port);
-	console.log("App_ID -> %s", app_id);
+	console.log('App listening on %s:%d!', host, port);
+	console.log('App_ID: %s', app_id);
+	console.log('Using HTTPS?: ', skip_ssl ? 'false' : 'true');
 });
