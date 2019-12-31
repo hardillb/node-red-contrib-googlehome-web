@@ -246,5 +246,5 @@ if (!skip_ssl) {
 server.listen(port, host, function(){
 	console.log('App listening on %s:%d!', host, port);
 	console.log('App_ID: %s', app_id);
-	console.log('Using HTTPS?: ', skip_ssl ? 'false' : 'true');
+	console.log('Using HTTPS?:', skip_ssl ? 'false' : 'true');
 });
