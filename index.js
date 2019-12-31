@@ -235,6 +235,7 @@ app.use(function (err, req,res,next){
 
 
 var server = http.Server(app);
+skip_ssl = (skip_ssl !== undefined && skip_ssl == true);
 if (!skip_ssl && app_id.match(/^https:\/\/localhost:/)) {
 	var options = {
 		key: fs.readFileSync('server.key'),
