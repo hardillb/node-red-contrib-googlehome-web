@@ -36,11 +36,12 @@ logger.setLevel(logLevel);
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
 var mongo_url = (process.env.MONGO_URL || 'mongodb://localhost:27017/assistant');
+logger.debug("Mongo url: ", mongo_url);
 
 var mqtt_url = (process.env.MQTT_URL || 'mqtt://localhost:1883');
 var mqtt_user = (process.env.MQTT_USER || undefined);
 var mqtt_password = (process.env.MQTT_PASSWORD || undefined);
-console.log(mqtt_url);
+logger.debug("MQTT url: ", mqtt_url);
 
 mqtt_url = url.parse(mqtt_url);
 
@@ -71,7 +72,6 @@ if (process.env.VCAP_APPLICATION) {
 	app_id = 'https://' + app_uri;
 }
 
-console.log(mongo_url);
 mongoose.Promise = global.Promise;
 var mongoose_options = {
 	server: {
