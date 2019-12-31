@@ -30,9 +30,7 @@ var Schema = mongoose.Schema;
 
 var Device = new Schema({
 	username: String,
-	id: {type: Number, get: function(value){
-		return value.toString();
-	}},
+	id: Number,
 	name: {
 		name: String,
 		nicknames: [String]
