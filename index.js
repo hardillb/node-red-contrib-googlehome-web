@@ -241,6 +241,7 @@ if ((skip_ssl !== true) && app_id.match(/^https:\/\/localhost:/)) {
 		cert: fs.readFileSync('server.crt')
 	};
 	server = https.createServer(options, app);
+	console.log('Notice: Using repo provided SSL key and certificate.')
 } 
 
 
