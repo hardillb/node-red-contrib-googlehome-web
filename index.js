@@ -35,6 +35,8 @@ logger.setLevel(logLevel);
 
 var port = (process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0');
+var skip_ssl = (process.env.SKIP_SSL || false);
+
 var mongo_url = (process.env.MONGO_URL || 'mongodb://localhost:27017/assistant');
 logger.debug("Mongo url: ", mongo_url);
 
@@ -233,7 +235,7 @@ app.use(function (err, req,res,next){
 
 
 var server = http.Server(app);
-if (app_id.match(/^https:\/\/localhost:/)) {
+if ((skip_ssl !== true) && app_id.match(/^https:\/\/localhost:/)) {
 	var options = {
 		key: fs.readFileSync('server.key'),
 		cert: fs.readFileSync('server.crt')
