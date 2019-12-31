@@ -44,7 +44,7 @@ module.exports = function(app,passport, logger){
 					if (err) {
 						res.status(500).end();
 					} else {
-						data.tile = application.title;
+						data.title = application.title;
 						data.oauth_secret = application.oauth_secret;
 						data.domains = application.domains;
 						data.save(function(err, d){
