@@ -19,6 +19,22 @@
 		<p>Before starting you will need to create an account, if you have not yet done this you can 
 			do this <a href="/register" target="_blank">here</a>.</p>
 		<p>You can now create your first device using the wizard to pick the type and traits you need.</p>
+		<p>When you create the account please use a real email address. This address will only ever be 
+		used to allow you to reset your password and to send you messages about the state of the service.</p>
+
+		<!--
+		<h2 id="googleGroup">Join the Google Group</h2>
+		<p>To be able to access the Action you will need to join the following Google Group with the same 
+		Google ID that you use with Google Assistant.</p>
+
+		<p><a href="https://groups.google.com/forum/#!forum/node-red-google-home-bridge">
+		https://groups.google.com/forum/#!forum/node-red-google-home-bridge</a></p>
+
+		<p>Any email addresses linked to Google accounts will never be used or released to any 3rd parties.
+		Only if they match the email address linked to the account created in the previous step, and then
+	  only for the reasons already stated.</p>
+
+		-->
  
 		<h2 id="linkAccount">Link Account</h2>
 		<p>Now you have and account you can enable action in the Google Home app and link the account 
@@ -34,7 +50,7 @@
 			</li>
 			<li>
 				<img src="/images/google-home-works.png">
-				<p>And next select "Works with Google" and then finally find Node-RED in the list.</p>
+				<p>And next select "Works with Google" and then finally find "NR-GAB" in the list.</p>
 			</li>
 			<li>
 				<img src="/images/oauth.png">
@@ -47,8 +63,11 @@
 		<h2 id="installNodes">Install Nodes</h2>
 		<p>There are 2 ways to install the required Node-RED nodes.</p>
 		<ul>
-			<li>First using the pallet manger</li>
-			<li>Second on the command line</li>
+			<li>First using the pallet manger
+				<p>Search for node-red-contrib-googlehome</p></li>
+			<li>Second on the command line
+				<p>Make sure you are in the Node-RED userDir (normally ~/.node-red) and then run</p>
+				<code>npm install node-red-contrib-googlehome</code></li>
 		</ul>
 
 		<h2 id="buildFlows">Building Flows</h2>

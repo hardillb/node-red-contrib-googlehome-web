@@ -55,6 +55,7 @@
           <input type="radio" name="type" value="action.devices.types.THERMOSTAT" onclick="switchType(this.value);">Thermostat</input><br/>
           <input type="radio" name="type" value="action.devices.types.VACUUM" disabled onclick="switchType(this.value);">Vacuum</input><br/>
           <input type="radio" name="type" value="action.devices.types.SCENE" onclick="switchType(this.value);">Scene</input><br/>
+          <input type="radio" name="type" value="action.devices.types.DOOR" onclick="switchType(this.value);">Door</input><br/>
         </div>
         <div class="types">
           <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
@@ -193,10 +194,14 @@
               }
 
               if (dev.traits.includes("action.devices.traits.OpenClose")) {
-                dev.attributes["openDirection"] = ["UP"];
-                dev.state = Object.assign(dev.state, {
-                  "openPercent": 0
-                })
+                if (dev.type == "action.devices.types.BLINDS") {
+                  dev.attributes["openDirection"] = ["UP"];
+                  dev.state = Object.assign(dev.state, {
+                    "openPercent": 0
+                  })
+                } else if (dev.type == "action.devices.types.DOOR") {
+                  dev.attributes["discreteOnlyOpenClose"] = true;
+                }
               }
 
               if (dev.traits.includes("action.devices.traits.FanSpeed")) {
@@ -450,6 +455,7 @@
           $('#TemperatureSetting').prop('checked',false);
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -464,6 +470,7 @@
           $('#TemperatureSetting').prop('checked', false);
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').removeAttr('disabled');
@@ -480,6 +487,7 @@
           $('#TemperatureSetting').prop('checked',true);
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
@@ -497,6 +505,7 @@
           $('#TemperatureSetting').prop('checked',false);
           $('#FanSetting').prop('checked',true);
           $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -513,6 +522,7 @@
           $('#TemperatureSetting').prop('checked',false);
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked',true);
+          $('#OpenClose').prop('checked', false);
 
           $('#willReportState').prop('checked', false);
           $('#reportState').attr('disabled','');
@@ -542,6 +552,7 @@
           $('#blindsTraits').attr('disabled','');
           break;
         case 'action.devices.types.BLINDS':
+        case 'action.devices.types.DOOR':
           $('#OnOff').prop('checked', false);
           $('#Brightness').prop('checked', false);
           $('#ColorTemperature').prop('checked', false);

@@ -225,9 +225,10 @@ require('./action-route.js')(app, passport, mqttOptions, logger);
 require('./api.js')(app,passport);
 
 app.use(function (err, req,res,next){
-	if (err.status !== 404) {
+	if (!err) {
+		console.log("should be next");
 		return next();
-	}
+	} 
 	res.status(404);
 	res.send("File Not Found");
 });
