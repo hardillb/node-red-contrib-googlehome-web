@@ -112,7 +112,7 @@ module.exports = function(app, passport, logger) {
 							res.status(200).send();
 						}
 						var body = mailer.buildLostPasswordBody(lostPassword.uuid, lostPassword.user.username);
-						mailer.send(email, 'google-home@hardill.me.uk', 'Password Reset for Google Home Node-RED', body.text, body.html);
+						mailer.send(email, 'google-home@hardill.me.uk', 'Password Reset for Node-RED Google Assistant Bridge', body.text, body.html);
 					});
 				} else {
 					res.status(404).send("No user found with that email address");
@@ -128,7 +128,8 @@ module.exports = function(app, passport, logger) {
 			if (!error && lostPassword) {
 				req.login(lostPassword.user, function(err){
 					if (!err){
-						lostPassword.remove();
+						// take this out so link works more than once
+						//lostPassword.remove();
 						res.redirect('/user/changePassword');
 					} else {
 						console.log(err);
