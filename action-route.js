@@ -1,5 +1,6 @@
 var Accounts = require('./models/account');
 var Devices = require('./models/device');
+var OAuth = require('./models/oauth');
 var request = require('request');
 //var States = require('./models/state');
 var mqtt = require('mqtt');
@@ -358,6 +359,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 					break;
 				case 'action.devices.DISCONNECT':
 					logging.debug("Disconnecting user" );
+					//Need to remove access tokens here.
+					// OAuth.AccessToken.deleteMany({user: req.user});
+					// OAuth.RefreshToken.deleteMany({user: req.user});
+					// OAuth.GrantCode.deleteMany({user: req.user});
 					res.send({});
 					break;
 			}

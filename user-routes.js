@@ -128,7 +128,7 @@ module.exports = function(app, passport, logger) {
 			if (!error && lostPassword) {
 				req.login(lostPassword.user, function(err){
 					if (!err){
-						// take this out so link works more than once
+						// take this out so link works more than once (for those email clients that follow links)
 						//lostPassword.remove();
 						res.redirect('/user/changePassword');
 					} else {
@@ -161,6 +161,11 @@ module.exports = function(app, passport, logger) {
 						u.save(function(error){
 							if (!error) {
 								//console.log("Chagned %s's password", u.username);
+								LostPassword.deleteOne({user: u._id}, function(err){
+									if (err) {
+										logger.debug("Problem removing lost password obj for %s", u.username);
+									}
+								});
 								res.status(200).send();
 							} else {
 								logger.info("Error changing ", u.username, "'s password");
