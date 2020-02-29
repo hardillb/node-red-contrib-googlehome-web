@@ -119,3 +119,7 @@ label {
 	flex-basis: 500px;
 	flex-shrink: 0;
 }
+
+.toggle {
+	cursor: context-menu;
+}

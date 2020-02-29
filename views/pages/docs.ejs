@@ -3,6 +3,7 @@
 	<nav class="side-menu">
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#createAccount">Create Account</a></li>
+      <li><a href="#createDevices">Create Devices</a></li>
       <li><a href="#linkAccount">Link Account</a></li>
       <li><a href="#installNodes">Install Nodes</a></li>
       <li><a href="#buildFlows">Building Flows</a></li>
@@ -35,6 +36,36 @@
 	  only for the reasons already stated.</p>
 
 		-->
+
+		<h2 id="createDevices">Create Devices</h2>
+		<p>Once you have an account you can start creating devices to expose to the Goolge Assistant.</p>
+
+		<p>Device Types:</p>
+		<ul>
+			<li>Light</li>
+			<li>Switch</li>
+			<li>Outlet</li>
+			<li>Blind</li>
+			<li>Door</li>
+			<li>Thermostat</li>
+			<li>Fan</li>
+			<li>Heater</li>
+			<li>Pureifier</li>
+			<li>Scene</li>
+		</ul>
+
+		<p>Traits:</p>
+		<ul>
+    	<li>OnOff</li>
+    	<li>Brightness</li>
+    	<li>ColorSetting</li>
+    	<li>FanSpeed</li>
+    	<li>TemperatureSetting</li>
+    	<li>OpenClose</li>
+    </ul>
+
+    <p>There are some extras in the lists in the wizard for creating devices that are disabled, they are 
+		there while I work out a good way to expose their triats so they can be easily configured.</p>
  
 		<h2 id="linkAccount">Link Account</h2>
 		<p>Now you have and account you can enable action in the Google Home app and link the account 
@@ -81,9 +112,9 @@
 		<h3 id="configNodes">Configure Nodes</h3>
 		<p>When you drag the first Google Home node on to the canvas you will need to create a config 
 		node. To do this, click on the pencil icon next to the first input. This will open a new dialog,
-		where you can enter the same username/password from the first step and hit the "Add" button. For
-		all subsequent nodes you should be able to just pick the entry from the drop down that matches
-		your username.</p>
+		where you can enter the same username/password from the first step and hit the "Add" button. <strong>For
+		all subsequent nodes you should just pick the entry from the drop down that matches
+		your username.</strong></p>
 
 		<p>Once you have picked the right config node, after a second or so the list of devices should
 		be populated. If you have recently created or deleted a new device then you can hit the refresh
@@ -99,6 +130,7 @@
 
 		<pre>{
   topic: "",
+  name: "Light"
   raw: {},
   payload: {
     command: "action.devices.commands.OnOff",
@@ -113,7 +145,101 @@
     Google Smart Home Action API. The <em>msg.payload.params</em> will hold the settings to be updated
     on the device.</p>
 
-		<h3 id="outofband">Changing Google Homegraph state without a command</h3>
+    <p>Example messages from the supported triats (click on trait name to expand):</p>
+    <ul>
+    	<li><span class="toggle" data-toggle="collapse" data-target="#OnOFF">OnOff</span>
+    	<div id="OnOFF" class="collapse">
+        <pre>{
+  topic: "",
+  name: "Light"
+  raw: {},
+  payload: {
+    command: "action.devices.commands.OnOff",
+    params: {
+      on: true
+    }
+  }
+}</pre>
+        </div>
+    	</li>
+    	<li><span class="toggle" data-toggle="collapse" data-target="#Brightness">Brightness</span>
+    		<div id="Brightness" class="collapse">
+    			<pre>{
+  topic: "",
+  name: "Light"
+  raw: {},
+  payload: {
+    command: "action.devices.commands.BrightnessAbsolute",
+    params: {
+      brightness: 30
+    }
+  }
+}</pre>
+    		</div>
+    	</li>
+    	<li><span class="toggle" data-toggle="collapse" data-target="#ColorSetting">ColorSetting</span>
+    		<div id="ColorSetting" class="collapse">
+    		  <p>Colours in RGB</p>
+    			<pre>{
+  topic: "",
+  name: "Light"
+  raw: {},
+  payload: {
+    command: "action.devices.commands.ColorAbsolute",
+    params: {
+      "color": {
+       	"name": "magenta",
+        "spectrumRGB": 16711935
+      }
+    }
+  }
+}</pre>
+<p>Colour Temperature in K</p>
+<pre>{
+  topic: "",
+  name: "Light"
+  raw: {},
+  payload: {
+    command: "action.devices.commands.ColorAbsolute",
+    params: {
+      "color": {
+       	"name": "warm white",
+        "temperature": 4000
+      }
+    }
+  }
+}</pre>
+    		</div>
+    	</li>
+    	<li>FanSpeed</li>
+    	<li>TemperatureSetting</li>
+    	<li>OpenClose</li>
+    </ul>
+
+    <p>More traits and configuration options for traits when I get time to work out how to nicely expose them.</p>
+
+    <h3 id="response">Sending a response</h3>
+    <p>If you are triggering an action that may fail, then you can untick the <em>Auto Acknowledge</em> box.
+    When you do this you will have to terminate the flow with a Google Home Response node.</p>
+    <p>You need to configure the response node to point to the same device as the input node it is connected
+    to by selecting the account name and device name from the dropdowns provided.</p>
+
+		<img src="images/response-config.png">
+
+    <p>This node takes the same <code>msg.payload</code> format as output by the input node. The 
+    <code>msg.payload.params</code> should be updated to match the new state of the device.</p>
+
+		<h3 id="outofband">Updating Google Homegraph state without a command</h3>
+		<p>Google Assistant keeps track of the state of all devices to allow it to keep the GUI in the App or
+		on devices with screens up to date. This informaton is kept in something called the Homegraph.</p>
+		<p>If you are updating the device state without using Google Assistant you can  can update the Homegraph
+		 using the Google Home Response node.</p>
+
+		<img style="width: 75%" src="images/flow-with-response.png">
+
+		<p>In the case above the light is turned on, and the state sent back to the Home Graph, but 5 mins later
+		the trigger node turns the light back off and updates the Home Graph again with out the need for a new
+	  input message.</p>
 
 	</div>
 </div>

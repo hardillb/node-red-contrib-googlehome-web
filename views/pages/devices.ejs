@@ -462,6 +462,7 @@
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
+          $('#OpenClose').attr('disabled');
           $('#reportState').removeAttr('disabled');
           
           break;
@@ -477,7 +478,9 @@
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
+          $('#blindsTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
+
           break;
         case 'action.devices.types.THERMOSTAT':
           $('#OnOff').prop('checked',false);
@@ -494,6 +497,7 @@
           $('#temperatureTraits').removeAttr('disabled');
           $('#sceneTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
+          $('#blindsTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
           break;
         case 'action.devices.types.FAN':
@@ -511,6 +515,7 @@
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').removeAttr('disabled');
           $('#sceneTraits').attr('disabled','');
+          $('#blindsTraits').attr('disabled','');
           $('#reportState').removeAttr('disabled');
           $('#fanTraits').removeAttr('disabled');
           break;
@@ -531,6 +536,7 @@
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
+          $('#blindsTraits').attr('disabled','');
           $('#sceneTraits').removeAttr('disabled');
           break;
         case 'action.devices.types.HEATER':
