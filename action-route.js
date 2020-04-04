@@ -179,7 +179,11 @@ module.exports = function(app, passport, mqttOptions, logger){
 						if (err) {
 							logger.debug("problem getting device to update status - ", err);
 						} else {
-							logger.debug("device not found - ", payload.id);
+							if (!payload.execution) {
+								logger.debug("no device state in the response");
+							} else {
+								logger.debug("device not found - ", payload.id);
+							}
 						}
 					}
 				})

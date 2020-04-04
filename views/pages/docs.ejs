@@ -211,9 +211,89 @@
 }</pre>
     		</div>
     	</li>
-    	<li>FanSpeed</li>
-    	<li>TemperatureSetting</li>
-    	<li>OpenClose</li>
+    	<li><span class="toggle" data-toggle="collapse" data-target="#FanSpeed">FanSpeed</span>
+        <div id="FanSpeed" class="collapse">
+          <p>Fans currently support 3 speeds (and currently only in English, if you want to supply translations please open an issue on Github)</p>
+          <ol>
+            <li>Low</li>
+            <li>Medium</li>
+            <li>High</li>
+          </ol>
+          <pre>{
+  topic: "",
+  name: "Fan",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.SetFanSpeed",
+    "params": {
+      "fanSpeed": "Low"
+    }
+  }
+}</pre>
+        </div>
+      </li>
+    	<li><span class="toggle" data-toggle="collapse" data-target="#TemperatureSetting">TemperatureSetting</span>
+        <div id="TemperatureSetting" class="collapse">
+          <p>The TemperatureSettings currently supports the following modes on,off,heat,cool 
+          (more modes to come later). When you request a mode change the message will look like this:</p>
+          <pre>{
+  topic: "",
+  name: "Thermostat",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.ThermostatSetMode"
+    "params": {
+      "thermostatMode": "cool"
+    }
+  }
+}</pre>
+          <p>When you set the Thermostat set point you get the following message. Currently all values are in 
+          Degrees C.</p>
+          <pre>{
+  topic: "",
+  name: "Thermostat",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.ThermostatTemperatureSetpoint"
+    "params": {
+      "thermostatTemperatureSetpoint: 15"
+    }
+  }
+}</pre>
+        </div>
+      </li>
+    	<li><span class="toggle" data-toggle="collapse" data-target="#OpenClose">OpenClose</span>
+        <div id="OpenClose" class="collapse">
+          <p>Open/Close behaves in 2 different ways depending if the device is a Door or Blinds</p>
+          <h4>Door</h4>
+          <p>Doors can currently only be open or closed so will request 0% for closed and 100% for open</p>
+          <pre>{
+  topic: "",
+  name: "Door",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.OpenClose"
+    "params": {
+      "openPercent": 100
+    }
+  }
+}</pre>
+          <h4>Blinds</h4>
+          <p>Blinds can be partially open or closed. At the moment the only supported direction is UP</p>
+          <pre>{
+  topic: "",
+  name: "Blinds",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.OpenClose"
+    "params": {
+      "openPercent": 50,
+      "openDirection": "UP"
+    }
+  }
+}</pre>
+        </div>
+      </li>
     </ul>
 
     <p>More traits and configuration options for traits when I get time to work out how to nicely expose them.</p>
