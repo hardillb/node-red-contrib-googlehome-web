@@ -1,0 +1,171 @@
+[
+  {
+    "id": "34e77087.0485d",
+    "type": "google-home",
+    "z": "4dcb5d34.5bbb7c",
+    "conf": "e6ffb768.488ad",
+    "device": "4",
+    "acknowledge": true,
+    "name": "Hall Light",
+    "topic": "",
+    "x": 80,
+    "y": 60,
+    "wires": [
+      [
+        "68411b04.f2f68c",
+        "1477b663.9198a2"
+      ]
+    ]
+  },
+  {
+    "id": "1424b432.8620fc",
+    "type": "wemo out",
+    "z": "4dcb5d34.5bbb7c",
+    "name": "",
+    "device": "c383eef8.84ab5",
+    "label": "Hall Light",
+    "x": 620,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "68411b04.f2f68c",
+    "type": "function",
+    "z": "4dcb5d34.5bbb7c",
+    "name": "",
+    "func": "if (msg.payload.command == \"action.devices.commands.OnOff\") {\n    if (msg.payload.params.on) {\n        msg.payload = true;\n        return [msg,null];\n    } else {\n        msg.payload = false;\n        return [null,msg];\n    }\n} else {\n  //brightness\n  var bright = Math.round(255 * (msg.payload.params.brightness / 100));\n  msg.payload = {\n      state: 1,\n      dim: bright\n  }\n  return [msg,null];\n}",
+    "outputs": "2",
+    "noerr": 0,
+    "x": 250,
+    "y": 80,
+    "wires": [
+      [
+        "d27b03c3.d8bd7"
+      ],
+      [
+        "c035189c.99da48",
+        "1424b432.8620fc"
+      ]
+    ]
+  },
+  {
+    "id": "1477b663.9198a2",
+    "type": "debug",
+    "z": "4dcb5d34.5bbb7c",
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "true",
+    "x": 248,
+    "y": 35,
+    "wires": []
+  },
+  {
+    "id": "d27b03c3.d8bd7",
+    "type": "trigger",
+    "z": "4dcb5d34.5bbb7c",
+    "op1": "",
+    "op2": "false",
+    "op1type": "pay",
+    "op2type": "bool",
+    "duration": "5",
+    "extend": true,
+    "units": "min",
+    "reset": "",
+    "name": "",
+    "x": 615.5,
+    "y": 20,
+    "wires": [
+      [
+        "1424b432.8620fc",
+        "3662a569.efac9a"
+      ]
+    ]
+  },
+  {
+    "id": "c035189c.99da48",
+    "type": "change",
+    "z": "4dcb5d34.5bbb7c",
+    "name": "",
+    "rules": [
+      {
+        "t": "set",
+        "p": "reset",
+        "pt": "msg",
+        "to": "true",
+        "tot": "str"
+      },
+      {
+        "t": "delete",
+        "p": "payload",
+        "pt": "msg"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 460,
+    "y": 80,
+    "wires": [
+      [
+        "d27b03c3.d8bd7"
+      ]
+    ]
+  },
+  {
+    "id": "e1eea1d8.dc5e",
+    "type": "google-home-response",
+    "z": "4dcb5d34.5bbb7c",
+    "conf": "e6ffb768.488ad",
+    "device": "4",
+    "name": "Hall Light",
+    "x": 800,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "3662a569.efac9a",
+    "type": "function",
+    "z": "4dcb5d34.5bbb7c",
+    "name": "",
+    "func": "if (!msg.payload) {\nmsg.payload = {\n    command: \"action.devices.commands.OnOff\",\n    params: {\n        on: false\n    }\n};\n\ndelete msg._confId;\n\nreturn msg;\n} else {\n    return;\n}",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 770,
+    "y": 40,
+    "wires": [
+      [
+        "e1eea1d8.dc5e",
+        "8729f1d0.629448"
+      ]
+    ]
+  },
+  {
+    "id": "8729f1d0.629448",
+    "type": "debug",
+    "z": "4dcb5d34.5bbb7c",
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "true",
+    "x": 890,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "e6ffb768.488ad",
+    "type": "google-home-conf",
+    "z": "",
+    "username": "hardillb",
+    "localControl": true
+  },
+  {
+    "id": "c383eef8.84ab5",
+    "type": "wemo-dev",
+    "z": "",
+    "device": "231442B01005F2-841826000005BAAB",
+    "name": "Hall Light"
+  }
+]
