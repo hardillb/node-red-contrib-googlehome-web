@@ -317,11 +317,21 @@ module.exports = function(app, passport, mqttOptions, logger){
 							if (Array.isArray(data)) {
 								logger.debug("Query response is array");
 								for (var i in data) {
-									response.payload.devices[data[i].id] = data[i].state;
+									if (data[i].state.online) {
+										response.payload.devices[data[i].id] = data[i].state;
+										response.payload.devices[data[i].id].status = "SUCCESS";
+									} else {
+										response.payload.devices[data[i].id].status = "OFFLINE";
+									}
 								}
 							} else {
 								logger.debug("Query single result");
-								response.payload.devices[data.id] = data.state;
+								if (data[i].state.online) {
+									response.payload.devices[data.id] = data.state;
+									response.payload.devices[data[i].id].status = "SUCCESS";
+								} else {
+									response.payload.devices[data[i].id].status = "OFFLINE";
+								}
 							}
 							logger.debug("Query response",response);
 							res.send(response);
