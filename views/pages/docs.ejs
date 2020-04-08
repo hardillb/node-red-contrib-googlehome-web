@@ -140,9 +140,9 @@
   }
 }</pre>
 
-    <p>The <em>msg.payload.command</em> value will be one of the commands identified in the 
+    <p>The <code>msg.payload.command</code> value will be one of the commands identified in the 
     <a href="https://developers.google.com/actions/smarthome/traits/">traits</a> identifiers from the 
-    Google Smart Home Action API. The <em>msg.payload.params</em> will hold the settings to be updated
+    Google Smart Home Action API. The <code>msg.payload.params</code> will hold the settings to be updated
     on the device.</p>
 
     <p>Example messages from the supported traits (click on trait name to expand):</p>
@@ -303,6 +303,9 @@
     When you do this you will have to terminate the flow with a Google Home Response node.</p>
     <p>You need to configure the response node to point to the same device as the input node it is connected
     to by selecting the account name and device name from the dropdowns provided.</p>
+
+    <p>If you are going to handle your own response, it needs to be sent in less than 3 seconds from the arriving
+    event otherwise the backend will assume a failure and respond accordingly.</p>
 
 		<img src="images/response-config.png">
 

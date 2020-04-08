@@ -255,7 +255,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 				var response = {
 					requestId: waiting.requestId,
 					payload: {
-						errorCode: "timeout"
+						status: "ERROR",
+						errorCode: "  offline"
 					}
 				}
 				waiting.resp.send(response);
