@@ -47,25 +47,12 @@ module.exports = function(app, passport, mqttOptions, logger){
 			var waiting = inflightRequests[payload.requestId];
 			var deviceId = payload.id;
 			if (waiting) {
-				// delete inflightRequests[payload.requestId];
 				if(waiting.devices.indexOf(deviceId) != -1) {
 					waiting.devices.splice(waiting.devices.indexOf(deviceId), 1);
 				}
 
-				// var response = {
-				// 	requestId: payload.requestId
-				// };
-				if (payload.status == true) {
-					logger.debug("sucess")
-					// response.payload = {
-					// 	commands: [
-					// 		{
-					// 			ids: [payload.id],
-					// 			status: "SUCCESS",
-					// 			states: payload.execution.params
-					// 		}
-					// 	]
-					// }
+				if (payload.status == true || !payload.hasOwnProperty("status")) {
+					logger.debug("success: " + payload.id)
 					var command = {
 						ids: [payload.id],
 						status: "SUCCESS",
@@ -75,8 +62,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 						case "action.devices.commands.SetFanSpeed":
 							command.states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
 							delete command.states.fanSpeed;
-							// response.payload.commands[0].states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
-							// delete response.payload.commands[0].states.fanSpeed;
 							break;
 						case "action.devices.commands.ColorAbsolute":
 							if (command.states.color) {
@@ -88,25 +73,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 									delete command.states.color.name;
 								}
 							}
-							// if (response.payload.commands[0].states.color) {
-							// 	// if (response.payload.commands[0].states.color.spectrumRGB){
-							// 	// 	response.payload.commands[0].states.color.spectrumRgb = response.payload.commands[0].states.color.spectrumRGB;
-							// 	// 	delete response.payload.commands[0].states.color.spectrumRGB;
-							// 	// }
-							// 	if (response.payload.commands[0].states.color.temperature) {
-							// 		response.payload.commands[0].states.color.temperatureK = response.payload.commands[0].states.color.temperature;
-							// 		delete response.payload.commands[0].states.color.temperature;
-							// 	}
-							// 	if (response.payload.commands[0].states.color.name) {
-							// 		delete response.payload.commands[0].states.color.name;
-							// 	}
-							// }
 							break;
 						case "action.devices.commands.SetModes":
 							command.states.currentModeSettings = command.states.updateModeSettings;
 							delete command.states.updateModeSettings
-							// response.payload.commands[0].states.currentModeSettings = response.payload.commands[0].states.updateModeSettings;
-							// delete response.payload.commands[0].states.updateModeSettings
 							break;
 						case "action.devices.commands.StartStop":
 
@@ -123,18 +93,6 @@ module.exports = function(app, passport, mqttOptions, logger){
 								command.states.isPaused = false;
 							}
 							delete command.states.start;
-							// if (payload.execution.params.start) {
-							// 	response.payload.commands[0].states.isRunning = true;
-							// 	response.payload.commands[0].states.isPaused = false;
-							// 	if (payload.execution.params.zone) {
-							// 		response.payload.commands[0].states.activeZones = [payload.execution.params.zone];
-							// 		delete payload.execution.params.zone;
-							// 	}
-							// } else {
-							// 	response.payload.commands[0].states.isRunning = false;
-							// 	response.payload.commands[0].states.isPaused = false;
-							// }
-							// delete payload.execution.params.start;
 							break;
 						case "action.devices.commands.PauseUnpause":
 							if (command.states.pause) {
@@ -145,43 +103,21 @@ module.exports = function(app, passport, mqttOptions, logger){
 								command.states.isPaused = false;
 							}
 							delete command.states.pause;
-							// if (payload.execution.params.pause) {
-							// 	response.payload.commands[0].states.isRunning = false;
-							// 	response.payload.commands[0].states.isPaused = true;
-							// } else {
-							// 	response.payload.commands[0].states.isRunning = true;
-							// 	response.payload.commands[0].states.isPaused = false;
-							// }
-							// delete payload.execution.params.pause;
 							break;
 						case "action.devices.commands.SetToggles":
 							command.states.currentToggleSettings = command.states.updateToggleSettings;
 							delete command.states.updateToggleSettings;
-							// response.payload.commands[0].states.currentToggleSettings = response.payload.commands[0].states.updateToggleSettings;
-							// delete response.payload.commands[0].states.updateToggleSettings;
 							break;
 						case "action.devices.commands.Locate":
 							command.states.generatedAlert = true;
 							delete command.states.silent;
 							delete command.states.lang;
-							// response.payload.commands[0].states.generatedAlert = true;
-							// delete response.payload.commands[0].states.silent;
-							// delete response.payload.commands[0].states.lang;
 							break;
 					}
 
 					inflightRequests[payload.requestId].commands.push(command)
 				} else {
-					logger.debug("Need to send a failure");
-					//need more here
-					// response.payload = {
-					// 	commands: [
-					// 		{
-					// 			ids: [payload.id],
-					// 			status: "ERROR"
-					// 		}
-					// 	]
-					// }
+					logger.debug("Need to send a failure: " + payload.id);
 					inflightRequests[payload.requestId].commands.push({
 						ids: [payload.id],
 						status: "ERROR"
