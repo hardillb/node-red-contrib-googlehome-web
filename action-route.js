@@ -42,7 +42,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 	mqttClient.on('message',function(topic, message){
 		logger.debug("MQTT message on ",topic, " - " , message.toString("utf8"), " ", topic.startsWith("response/"))
 		if (topic.startsWith('response/')) {
-			logger.debug("respose")
+			logger.debug("response");
 			var payload = JSON.parse(message);
 			var waiting = inflightRequests[payload.requestId];
 			var deviceId = payload.id;
@@ -128,7 +128,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 					var response = {
 						requestId: payload.requestId,
-						commands: inflightRequests[payload.requestId].commands
+						payload:{
+							commands: inflightRequests[payload.requestId].commands
+						}
 					}
 				
 					logger.debug("got all devices, sending response ", response);
@@ -487,7 +489,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 			logger.debug("reportStateDevice - ", payload);
 			if (state.willReportState) {
 				logger.debug("should report state HTTP")
-				logger.debug("reportStateUser url ", reportStateURL)
+				//logger.debug("reportStateUser url ", reportStateURL)
 				request({
 					url: reportStateURL,
 					method: 'POST',
