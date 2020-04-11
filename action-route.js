@@ -45,148 +45,217 @@ module.exports = function(app, passport, mqttOptions, logger){
 			logger.debug("respose")
 			var payload = JSON.parse(message);
 			var waiting = inflightRequests[payload.requestId];
-			logger.debug(inflightRequests)
+			var deviceId = payload.id;
 			if (waiting) {
-				delete inflightRequests[payload.requestId];
-				var response = {
-					requestId: payload.requestId
-				};
+				// delete inflightRequests[payload.requestId];
+				if(waiting.devices.indexOf(deviceId) != -1) {
+					waiting.devices.splice(waiting.devices.indexOf(deviceId), 1);
+				}
+
+				// var response = {
+				// 	requestId: payload.requestId
+				// };
 				if (payload.status == true) {
 					logger.debug("sucess")
-					response.payload = {
-						commands: [
-							{
-								ids: [payload.id],
-								status: "SUCCESS",
-								states: payload.execution.params
-							}
-						]
+					// response.payload = {
+					// 	commands: [
+					// 		{
+					// 			ids: [payload.id],
+					// 			status: "SUCCESS",
+					// 			states: payload.execution.params
+					// 		}
+					// 	]
+					// }
+					var command = {
+						ids: [payload.id],
+						status: "SUCCESS",
+						states: payload.execution.params
 					}
 					switch (waiting.execution.command){
 						case "action.devices.commands.SetFanSpeed":
-							response.payload.commands[0].states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
-							delete response.payload.commands[0].states.fanSpeed;
+							command.states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
+							delete command.states.fanSpeed;
+							// response.payload.commands[0].states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
+							// delete response.payload.commands[0].states.fanSpeed;
 							break;
 						case "action.devices.commands.ColorAbsolute":
-							if (response.payload.commands[0].states.color) {
-								// if (response.payload.commands[0].states.color.spectrumRGB){
-								// 	response.payload.commands[0].states.color.spectrumRgb = response.payload.commands[0].states.color.spectrumRGB;
-								// 	delete response.payload.commands[0].states.color.spectrumRGB;
-								// }
-								if (response.payload.commands[0].states.color.temperature) {
-									response.payload.commands[0].states.color.temperatureK = response.payload.commands[0].states.color.temperature;
-									delete response.payload.commands[0].states.color.temperature;
+							if (command.states.color) {
+								if (command.states.color.temperature){
+									command.states.color.temperatureK = command.states.color.temperature;
+									delete command.states.color.temperature;
 								}
-								if (response.payload.commands[0].states.color.name) {
-									delete response.payload.commands[0].states.color.name;
+								if (command.states.color.name) {
+									delete command.states.color.name;
 								}
 							}
+							// if (response.payload.commands[0].states.color) {
+							// 	// if (response.payload.commands[0].states.color.spectrumRGB){
+							// 	// 	response.payload.commands[0].states.color.spectrumRgb = response.payload.commands[0].states.color.spectrumRGB;
+							// 	// 	delete response.payload.commands[0].states.color.spectrumRGB;
+							// 	// }
+							// 	if (response.payload.commands[0].states.color.temperature) {
+							// 		response.payload.commands[0].states.color.temperatureK = response.payload.commands[0].states.color.temperature;
+							// 		delete response.payload.commands[0].states.color.temperature;
+							// 	}
+							// 	if (response.payload.commands[0].states.color.name) {
+							// 		delete response.payload.commands[0].states.color.name;
+							// 	}
+							// }
 							break;
 						case "action.devices.commands.SetModes":
-							response.payload.commands[0].states.currentModeSettings = response.payload.commands[0].states.updateModeSettings;
-							delete response.payload.commands[0].states.updateModeSettings
+							command.states.currentModeSettings = command.states.updateModeSettings;
+							delete command.states.updateModeSettings
+							// response.payload.commands[0].states.currentModeSettings = response.payload.commands[0].states.updateModeSettings;
+							// delete response.payload.commands[0].states.updateModeSettings
 							break;
 						case "action.devices.commands.StartStop":
 
-							if (payload.execution.params.start) {
-								response.payload.commands[0].states.isRunning = true;
-								response.payload.commands[0].states.isPaused = false;
-								if (payload.execution.params.zone) {
-									response.payload.commands[0].states.activeZones = [payload.execution.params.zone];
-									delete payload.execution.params.zone;
+							if (command.states.start) {
+								command.states.isRunning = true;
+								command.states.isPaused = false;
+								if (command.states.zone) {
+									command.states.activeZones = [command.states.zone];
+									delete command.states.zone;
 								}
+
 							} else {
-								response.payload.commands[0].states.isRunning = false;
-								response.payload.commands[0].states.isPaused = false;
+								command.states.isRunning = false;
+								command.states.isPaused = false;
 							}
-							delete payload.execution.params.start;
+							delete command.states.start;
+							// if (payload.execution.params.start) {
+							// 	response.payload.commands[0].states.isRunning = true;
+							// 	response.payload.commands[0].states.isPaused = false;
+							// 	if (payload.execution.params.zone) {
+							// 		response.payload.commands[0].states.activeZones = [payload.execution.params.zone];
+							// 		delete payload.execution.params.zone;
+							// 	}
+							// } else {
+							// 	response.payload.commands[0].states.isRunning = false;
+							// 	response.payload.commands[0].states.isPaused = false;
+							// }
+							// delete payload.execution.params.start;
 							break;
 						case "action.devices.commands.PauseUnpause":
-							if (payload.execution.params.pause) {
-								response.payload.commands[0].states.isRunning = false;
-								response.payload.commands[0].states.isPaused = true;
+							if (command.states.pause) {
+								command.states.isRunning = false;
+								command.states.isPaused = true;
 							} else {
-								response.payload.commands[0].states.isRunning = true;
-								response.payload.commands[0].states.isPaused = false;
+								command.states.isRunning = true;
+								command.states.isPaused = false;
 							}
-							delete payload.execution.params.pause;
+							delete command.states.pause;
+							// if (payload.execution.params.pause) {
+							// 	response.payload.commands[0].states.isRunning = false;
+							// 	response.payload.commands[0].states.isPaused = true;
+							// } else {
+							// 	response.payload.commands[0].states.isRunning = true;
+							// 	response.payload.commands[0].states.isPaused = false;
+							// }
+							// delete payload.execution.params.pause;
 							break;
 						case "action.devices.commands.SetToggles":
-							response.payload.commands[0].states.currentToggleSettings = response.payload.commands[0].states.updateToggleSettings;
-							delete response.payload.commands[0].states.updateToggleSettings;
+							command.states.currentToggleSettings = command.states.updateToggleSettings;
+							delete command.states.updateToggleSettings;
+							// response.payload.commands[0].states.currentToggleSettings = response.payload.commands[0].states.updateToggleSettings;
+							// delete response.payload.commands[0].states.updateToggleSettings;
 							break;
 						case "action.devices.commands.Locate":
-							response.payload.commands[0].states.generatedAlert = true;
-							delete response.payload.commands[0].states.silent;
-							delete response.payload.commands[0].states.lang;
+							command.states.generatedAlert = true;
+							delete command.states.silent;
+							delete command.states.lang;
+							// response.payload.commands[0].states.generatedAlert = true;
+							// delete response.payload.commands[0].states.silent;
+							// delete response.payload.commands[0].states.lang;
 							break;
 					}
+
+					inflightRequests[payload.requestId].commands.push(command)
 				} else {
 					logger.debug("Need to send a failure");
 					//need more here
-					response.payload = {
-						commands: [
-							{
-								ids: [payload.id],
-								status: "ERROR"
-							}
-						]
-					}
+					// response.payload = {
+					// 	commands: [
+					// 		{
+					// 			ids: [payload.id],
+					// 			status: "ERROR"
+					// 		}
+					// 	]
+					// }
+					inflightRequests[payload.requestId].commands.push({
+						ids: [payload.id],
+						status: "ERROR"
+					})
 				}
-				logger.debug("response ", response);
-				waiting.resp.send(response); // http response
-				Devices.findOne({id: payload.id}, function(err, data){
-					if (!err && data && payload.execution) {
-						logger.debug("Existing status for device ", payload.id, " ", data);
-						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
+				logger.debug("waiting.devices ", waiting.devices);
+				if (waiting.devices.length == 0) {
 
-						if (data.state) {
-
-							data.state = Object.assign(data.state, payload.execution.params);
-
-							if (payload.execution.params.color && payload.execution.params.color.spectrumRGB) {
-								data.state.spectrumRGB = data.state.color.spectrumRGB;
-								delete data.state.color;
-								delete data.state.temperatureK;
-							} else if (payload.execution.params.color && payload.execution.params.color.temperatureK) {
-								data.state.temperatureK = data.state.color.temperatureK;
-								delete data.state.color;
-								delete data.state.spectrumRGB;
-							}
-
-							if (!payload.execution.params.isRunning && !payload.execution.params.isPaused) {
-								delete data.state.activeZones;
-							}
-
-						} else {
-							data.state = payload.execution.params;
-							if (data.state.color && data.state.color.spectrumRGB) {
-								data.state.spectrumRGB = data.state.color.spectrumRGB;
-								delete data.state.color;
-							}
-							if (data.state.color && data.state.color.temperatureK) {
-								data.state.temperatureK = data.state.color.temperatureK;
-								delete data.state.color;
-							}
-						}
-						Devices.update({id: payload.id}, data, function(err, raw){
-							if (!err) {
-								logger.debug("Updated sucessfully");
-								reportStateDevice(waiting.user, payload.id, payload.requestId);
-							}
-						});
-					} else  {
-						if (err) {
-							logger.debug("problem getting device to update status - ", err);
-						} else {
-							if (!payload.execution) {
-								logger.debug("no device state in the response");
-							} else {
-								logger.debug("device not found - ", payload.id);
-							}
-						}
+					var response = {
+						requestId: payload.requestId,
+						commands: inflightRequests[payload.requestId].commands
 					}
-				})
+				
+					logger.debug("got all devices, sending response ", response);
+					waiting.resp.send(response); // http response
+
+					delete inflightRequests[payload.requestId];
+				}
+
+				if (payload.execution.params) {
+
+					Devices.findOne({id: payload.id}, function(err, data){
+						if (!err && data && payload.execution) {
+							logger.debug("Existing status for device ", payload.id, " ", data);
+							logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
+
+							if (data.state) {
+
+								data.state = Object.assign(data.state, payload.execution.params);
+
+								if (payload.execution.params.color && payload.execution.params.color.spectrumRGB) {
+									data.state.spectrumRGB = data.state.color.spectrumRGB;
+									delete data.state.color;
+									delete data.state.temperatureK;
+								} else if (payload.execution.params.color && payload.execution.params.color.temperatureK) {
+									data.state.temperatureK = data.state.color.temperatureK;
+									delete data.state.color;
+									delete data.state.spectrumRGB;
+								}
+
+								if (!payload.execution.params.isRunning && !payload.execution.params.isPaused) {
+									delete data.state.activeZones;
+								}
+
+							} else {
+								data.state = payload.execution.params;
+								if (data.state.color && data.state.color.spectrumRGB) {
+									data.state.spectrumRGB = data.state.color.spectrumRGB;
+									delete data.state.color;
+								}
+								if (data.state.color && data.state.color.temperatureK) {
+									data.state.temperatureK = data.state.color.temperatureK;
+									delete data.state.color;
+								}
+							}
+							Devices.update({id: payload.id}, data, function(err, raw){
+								if (!err) {
+									logger.debug("Updated sucessfully");
+									reportStateDevice(waiting.user, payload.id, payload.requestId);
+								}
+							});
+						} else  {
+							if (err) {
+								logger.debug("problem getting device to update status - ", err);
+							} else {
+								if (!payload.execution) {
+									logger.debug("no device state in the response");
+								} else {
+									logger.debug("device not found - ", payload.id);
+								}
+							}
+						}
+					})
+				}
 			}
 		} else  if (topic.startsWith('status/')) {
 			//need to do very similar to above
@@ -199,6 +268,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						logger.debug("Updating status for device ", payload.id, " with ", payload.execution.params);
 
 						if (data.state){
+
 							data.state = Object.assign(data.state, payload.execution.params);
 
 							if (payload.execution.params.color && payload.execution.params.color.spectrumRGB) {
@@ -251,15 +321,29 @@ module.exports = function(app, passport, mqttOptions, logger){
 			var waiting = inflightRequests[keys[key]];
 			var diff = now - waiting.timestamp;
 			if (diff > 3000) {
-				logger.debug("inflight timed out - ", waiting);
+				logger.debug("inflight timed out " + waiting.requestId);
+
+				
+				waiting.commands.push({
+					ids: waiting.devices,
+					status: "ERROR",
+					errorCode: "offline"
+				})
+
+				logger.debug("waiting.commands: ", keys[key]);
+
 				var response = {
-					requestId: waiting.requestId,
+					requestId: keys[key],
 					payload: {
-						status: "ERROR",
-						errorCode: "  offline"
+						commands: waiting.commands
+						// status: "ERROR",
+						// errorCode: "  offline"
 					}
-				}
+				};
+
 				waiting.resp.send(response);
+				logger.debug("sending timeout response:");
+				logger.debug(response);
 				delete(inflightRequests[keys[key]])
 			}
 		}
@@ -342,34 +426,50 @@ module.exports = function(app, passport, mqttOptions, logger){
 					})
 					break;
 				case 'action.devices.EXECUTE':
-					logger.debug("Execute");
+					logger.debug("BEN Execute");
 					//send MQTT message to control device
 					var payload = request.inputs[0].payload;
 					logger.debug(payload);
 					var devices = payload.commands[0].devices;
-					logger.debug(devices);
+					logger.debug("devices ", devices);
 					var execution = payload.commands[0].execution[0];
 					logger.debug(execution);
 					var params = execution.params;
 					params.online = true;
+
+					var devIds = []
+
+					for (var i=0; i<devices.length; i++) {
+						devIds.push(devices[i].id)
+					}
+
 					inflightRequests[requestId] = {
 						user:req.user,
 						resp: res,
-						devices: devices,
+						devices: devIds,
 						execution: execution,
+						commands:[],
 						timestamp: Date.now()
 					};
+
 					var topic = "command/" +req.user.username;
-					var message = JSON.stringify({
-						requestId: requestId,
-						id: devices[0].id,
-						execution: execution
-					});
-					logger.debug(message);
-					try {
-						mqttClient.publish(topic, message);
-					} catch (err) {
-						logger.debug(err);
+					logger.debug("topic - " + topic);
+					for (var i=0; i<devices.length; i++) {
+
+						var message = JSON.stringify({
+							requestId: requestId,
+							// id: devices[0].id,
+							id: devices[i].id,
+							execution: execution
+						});
+						
+						logger.debug("message" , message);
+						try {
+							mqttClient.publish(topic, message);
+						} catch (err) {
+							logger.debug("problem publishing");
+						}
+
 					}
 					break;
 				case 'action.devices.DISCONNECT':
@@ -408,6 +508,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					}
 				}
 				logger.debug("reportStateUser states ", payload)
+				logger.debug("reportStateUser url ", reportStateURL)
 				request({
 					url: reportStateURL,
 					method: 'POST',
@@ -450,6 +551,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 			logger.debug("reportStateDevice - ", payload);
 			if (state.willReportState) {
 				logger.debug("should report state HTTP")
+				logger.debug("reportStateUser url ", reportStateURL)
 				request({
 					url: reportStateURL,
 					method: 'POST',
@@ -467,6 +569,8 @@ module.exports = function(app, passport, mqttOptions, logger){
 						logger.debug();
 					}
 				});
+			} else {
+				logger.debug("not reporting state as disabled in the db")
 			}
 		})
 	}
