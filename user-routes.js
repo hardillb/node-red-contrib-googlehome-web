@@ -281,7 +281,7 @@ module.exports = function(app, passport, logger) {
 			var id = req.params.dev_id;
 			Devices.findOne({_id: id, username: user},
 				function(err, data) {
-					if (!err) {
+					if (!err && data) {
 						logger.debug("found device to be deleted ", id);
 						var devId = data.id;
 						Devices.remove({_id: id, username: user}, function(err2){
