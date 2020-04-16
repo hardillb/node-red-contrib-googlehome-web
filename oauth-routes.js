@@ -61,7 +61,7 @@ module.exports = function(app, passport, logger) {
 			currentURL: encodeURIComponent(req.originalUrl),
 			response_type: req.query.response_type,
 			errors: req.flash('error'),
-			scope: req.oauth2.req.scope,
+			oAuthScope: req.oauth2.req.scope,
 			application: req.oauth2.client,
 			user: req.user,
 			map: scopeMap
