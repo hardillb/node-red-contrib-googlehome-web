@@ -344,6 +344,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 										response.payload.devices[data[i].id] = data[i].state;
 										response.payload.devices[data[i].id].status = "SUCCESS";
 									} else {
+										response.payload.devices[data[i].id] = data[i].state;
 										response.payload.devices[data[i].id].status = "OFFLINE";
 									}
 								}
