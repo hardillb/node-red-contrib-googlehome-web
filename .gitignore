@@ -1,5 +1,6 @@
 node_modules/
 testing/token
+testing/token-test
 test-local.sh
 log/
 setup-oauth-apps.txt

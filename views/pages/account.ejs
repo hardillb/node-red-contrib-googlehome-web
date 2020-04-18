@@ -1,0 +1,70 @@
+<% include ../fragments/header.ejs %>
+  <div class="container main-content">
+    <h1>Account Details</h1>
+    <p>Username : <%= user.username%></p>
+    <p>Email: <%= user.email%></p>
+
+    <p><a href="/user/changePassword">Change Password</a></p>
+
+    <p><a onclick="deleteUser()">Delete Account</a></p>
+
+     <div id="dialog" hidden>
+      <h3>Please enter your password to confirm account deletion</h3>
+      <input id="password" type="password"/>
+      <br/>
+      <strong style="color: red">Hitting Submit is final</strong>
+     </div>
+
+    <script type="text/javascript">
+
+       $('#dialog').dialog({
+        autoOpen: false,
+        dragable: false,
+        modal: true,
+        position: {
+          my: "center",
+          at: "center",
+          of: window,
+          using: function( pos ) {
+            $(this).css("top", '55px');
+            $(this).css("left", pos.left);
+          }
+        },
+        title: "Delete Account",
+        dialogClass: "no-close",
+        buttons:[
+          {
+            text: "Submit",
+            click: function(){
+              var password = $("#password").val();
+              $.ajax({
+                url: '/user/delete',
+                method: 'POST',
+                data: JSON.stringify({"password": password}),
+                contentType: "application/json",
+                success: function(){
+                  document.location = '/';
+                },
+                error: function(){
+                  alert("Failed to delete account")
+                }
+              });
+              $(this).dialog( "close" );
+            }
+          },
+          {
+            text: 'Cancel',
+            click: function(){
+              $(this).dialog( "close" );
+            }
+          }
+        ]
+      });
+
+      function deleteUser() {
+        $("#dialog").dialog({}).dialog("open");
+      }
+    </script>
+
+  </div>
+<% include ../fragments/footer.ejs %>

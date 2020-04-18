@@ -81,7 +81,7 @@ module.exports = function(app, passport, logger) {
 				});
 			
 				passport.authenticate('local')(req, res, function () {
-					console.log("created new user %s", req.body.username);
+					logger.info("created new user %s", req.body.username);
 					// measurement.send({
 					// 	t:'event', 
 					// 	ec:'System', 
@@ -365,6 +365,40 @@ module.exports = function(app, passport, logger) {
 			res.render('pages/expert-mode',{user: req.user, device: data, devs: true, id: -1});
 		}
 	)
+
+	app.get('/user/account',
+		ensureAuthenticated,
+		function(req,res) {
+			res.render('pages/account', {user: req.user});
+		}
+	)
+
+	app.post('/user/delete',
+		ensureAuthenticated,
+		function(req,res){
+			//need to double check the password
+			var pwd = req.body.password;
+			var username = req.user.username;
+
+			Account.findOne({username: username}, function (err, data){
+				data.authenticate(pwd, function(err, authed, passwdErr){
+					if (authed) {
+						//delete all the things
+						logger.info("Deleting User: " + authed.username);
+						Devices.deleteMany({username: authed.username}, function(err){});
+						Oauth.RefreshToken.deleteOne({user: authed}, function(err){});
+						Oauth.AccessToken.deleteMany({user: authed}, function(err){});
+						Oauth.GrantCode.deleteOne({user: authed},function(err){});
+						Account.deleteOne({username: authed.username},function(err){});
+						req.logout();
+						res.status(200).send();
+					} else {
+						res.status(500).send();
+					}
+				});
+			});
+		}
+	);
 
 	function ensureAuthenticated(req,res,next) {
 		if (req.isAuthenticated()) {

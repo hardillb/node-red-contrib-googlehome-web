@@ -34,7 +34,7 @@ passport.use(new OAuth2Strategy({
 	clientID: '2',
 	clientSecret: 'foobar',
 	scope: "access_devices",
-	callbackURL: 'http://localhost:3001/callback'
+	callbackURL: 'http://localhost:3002/callback'
 }, function(accessToken, refreshToken, profile, callback){
 	console.log("accessToken: ", accessToken);
 	console.log("refreshToken: ", refreshToken);
