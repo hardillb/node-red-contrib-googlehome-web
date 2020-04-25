@@ -2,7 +2,6 @@ var Accounts = require('./models/account');
 var Devices = require('./models/device');
 var OAuth = require('./models/oauth');
 var request = require('request');
-//var States = require('./models/state');
 var mqtt = require('mqtt');
 var path = require('path');
 var jwt = require('jsonwebtoken');
@@ -301,7 +300,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 			var response = {};
 			switch(intent) {
 				case 'action.devices.SYNC':
-					logger.info("Sync");
+					logger.debug("Sync");
 					Devices.find({username: user},
 						{"_id": 0, "__v": 0, username: 0, state: 0 },
 						function(error, data){
@@ -364,7 +363,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					})
 					break;
 				case 'action.devices.EXECUTE':
-					logger.debug("BEN Execute");
+					logger.debug("Execute: " + user);
 					//send MQTT message to control device
 					var payload = request.inputs[0].payload;
 					logger.debug(payload);
@@ -396,12 +395,11 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 						var message = JSON.stringify({
 							requestId: requestId,
-							// id: devices[0].id,
 							id: devices[i].id,
 							execution: execution
 						});
 						
-						logger.debug("message" , message);
+						logger.debug("message: " , message);
 						try {
 							mqttClient.publish(topic, message);
 						} catch (err) {
@@ -411,12 +409,12 @@ module.exports = function(app, passport, mqttOptions, logger){
 					}
 					break;
 				case 'action.devices.DISCONNECT':
-					logging.debug("Disconnecting user" );
+					logger.info("Disconnecting user: " + req.user.username);
 					//Need to remove access tokens here.
-					// OAuth.AccessToken.deleteMany({user: req.user});
-					// OAuth.RefreshToken.deleteMany({user: req.user});
-					// OAuth.GrantCode.deleteMany({user: req.user});
-					res.send({});
+					OAuth.RefreshToken.deleteMany({user: req.user},function(err){});
+					OAuth.AccessToken.deleteMany({user: req.user},function(err){});
+					OAuth.GrantCode.deleteMany({user: req.user},function(err){});
+					res.status(200).send({});
 					break;
 			}
 		}
@@ -424,93 +422,102 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	function reportStateUser(user, requestId) {
 		logger.debug("reportStateUser for ", user.username);
-			Devices.find({username: user.username}, function(err, states){	
-			if (err) {
-				logger.debug("reportStateUser state error-  ", err);
-			} else {
-				//logger.debug("reportStateUser states ", states)
+		OAuth.AccessToken.findOne({user: user._id},function(err, accessToken){
+			if (!err && accessToken){
+				Devices.find({username: user.username}, function(err, states){
+					if (err) {
+						logger.debug("reportStateUser state error-  ", err);
+					} else {
+						//logger.debug("reportStateUser states ", states)
+						var payload = {
+							agentUserId: user._id,
+							payload: {
+								devices:{
+									states:{}
+								}
+							}
+						}
+						if (requestId) {
+							payload.requestId = requestId;
+						}
+						for(var i=0; i<states.length; i++) {
+							if (states[i].willReportState) {
+								payload.payload.devices.states[states[i].id] = states[i].state;
+							}
+						}
+						logger.debug("reportStateUser states ", payload)
+						logger.debug("reportStateUser url ", reportStateURL)
+						request({
+							url: reportStateURL,
+							method: 'POST',
+							headers:{
+								'Content-Type': 'application/json',
+								'Authorization': 'Bearer ' + oAuthToken,
+								'X-GFE-SSL': 'yes'
+							},
+							json: payload
+						},
+						function(err, resp, body){
+							if (err) {
+								logger.debug("Problem reporting state - ", err, " - ", body);
+							} else {
+								//logger.debug();
+							}
+						});
+					}
+				});
+			}
+		})
+	}
+
+	function reportStateDevice(user,device,requestId) {
+		OAuth.AccessToken.findOne({user: user._id},function(err, accessToken){
+			if (!err && accessToken){
+				logger.debug("reportStateDevice - ", device);
 				var payload = {
 					agentUserId: user._id,
 					payload: {
-						devices:{
-							states:{}
+						devices: {
+							states: {
+							}
 						}
 					}
 				}
 				if (requestId) {
-					payload.requestId = requestId;
+					payload.requestId = requestId
+				} else {
+					logger.debug("out of band update");
 				}
-				for(var i=0; i<states.length; i++) {
-					if (states[i].willReportState) {
-						payload.payload.devices.states[states[i].id] = states[i].state;
-					}
-				}
-				logger.debug("reportStateUser states ", payload)
-				logger.debug("reportStateUser url ", reportStateURL)
-				request({
-					url: reportStateURL,
-					method: 'POST',
-					headers:{
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + oAuthToken,
-						'X-GFE-SSL': 'yes'
-					},
-					json: payload
-				},
-				function(err, resp, body){
-					if (err) {
-						logger.debug("Problem reporting state - ", err, " - ", body);
+
+				Devices.findOne({id: device}, function(err, state){
+					payload.payload.devices.states[device] = state.state;
+					logger.debug("reportStateDevice - ", payload);
+					if (state.willReportState) {
+						logger.debug("should report state HTTP")
+						//logger.debug("reportStateUser url ", reportStateURL)
+						request({
+							url: reportStateURL,
+							method: 'POST',
+							headers:{
+								'Content-Type': 'application/json',
+								'Authorization': 'Bearer ' + oAuthToken,
+								'X-GFE-SSL': 'yes'
+							},
+							json: payload
+						},
+						function(err, resp, body){
+							if (err) {
+								logger.debug("Problem reporting state - ", err, " - ", body);
+							} else {
+								//logger.debug();
+							}
+						});
 					} else {
-						logger.debug();
+						logger.debug("not reporting state as disabled in the db")
 					}
-				});
+				})
 			}
 		});
-	}
-
-	function reportStateDevice(user,device,requestId) {
-		logger.debug("reportStateDevice - ", device);
-		var payload = {
-			agentUserId: user._id,
-			payload: {
-				devices: {
-					states: {
-					}
-				}
-			}
-		}
-		if (requestId) {
-			payload.requestId = requestId
-		} else {
-			logger.debug("out of band update");
-		}
-		Devices.findOne({id: device}, function(err, state){
-			payload.payload.devices.states[device] = state.state;
-			logger.debug("reportStateDevice - ", payload);
-			if (state.willReportState) {
-				logger.debug("should report state HTTP")
-				//logger.debug("reportStateUser url ", reportStateURL)
-				request({
-					url: reportStateURL,
-					method: 'POST',
-					headers:{
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + oAuthToken,
-						'X-GFE-SSL': 'yes'
-					},
-					json: payload
-				},
-				function(err, resp, body){
-					if (err) {
-						logger.debug("Problem reporting state - ", err, " - ", body);
-					} else {
-						logger.debug();
-					}
-				});
-			} else {
-				logger.debug("not reporting state as disabled in the db")
-			}
-		})
 	}
 
 	function getOAuthToken() {
