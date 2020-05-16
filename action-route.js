@@ -173,7 +173,19 @@ module.exports = function(app, passport, mqttOptions, logger){
 									data.state.temperatureK = data.state.color.temperatureK;
 									delete data.state.color;
 								}
-							}
+
+								if (data.state.cameraStreamAccessUrl) {
+									delete data.state.cameraStreamAccessUrl;
+								}
+
+								if (data.state.cameraStreamReceiverAppId) {
+									delete data.state.cameraStreamReceiverAppId;
+								}
+
+								if (data.state.cameraStreamAuthToken) {
+									delete data.state.cameraStreamAuthToken;
+								}
+ 							}
 							Devices.update({id: payload.id}, data, function(err, raw){
 								if (!err) {
 									logger.debug("Updated sucessfully");
