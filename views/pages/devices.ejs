@@ -61,6 +61,7 @@
           <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
           <input type="radio" name="type" value="action.devices.types.HEATER" onclick="switchType(this.value);">Heater</input><br/>
           <input type="radio" name="type" value="action.devices.types.AIRPURIFIER" onclick="switchType(this.value);">Purifier</input><br/>
+          <input type="radio" name="type" value="action.devices.types.CAMERA" onclick="switchType(this.value);">Camera</input><br/>
         </div>
       </div>
     </fieldset>
@@ -83,6 +84,10 @@
             <input type="checkbox" name="trait" id="StartStop" value="action.devices.traits.StartStop"><br>
             <label for="RunCycle">Run Cycle: </label>
             <input type="checkbox" name="trait" id="RunCycle" value="action.devices.traits.RunCycle">
+          </fieldset>
+          <fieldset id="CameraTraits" disabled>
+            <label for="CameraStream">Camera Stream: </label>
+            <input type="checkbox" name="trait" id="CameraStream" value="action.devices.traits.CameraStream">
           </fieldset>
         </div>
         <div class="traits">
@@ -458,6 +463,7 @@
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -474,6 +480,7 @@
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').removeAttr('disabled');
@@ -493,6 +500,7 @@
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
@@ -512,6 +520,7 @@
           $('#FanSetting').prop('checked',true);
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -530,6 +539,7 @@
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked',true);
           $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
 
           $('#willReportState').prop('checked', false);
           $('#reportState').attr('disabled','');
@@ -550,6 +560,7 @@
           $('#FanSetting').prop('checked',true);
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -569,6 +580,7 @@
           $('#FanSetting').prop('checked',false);
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', true);
+          $('#CameraStream').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
@@ -578,6 +590,26 @@
           $('#fanTraits').attr('disabled','');
           $('#blindsTraits').removeAttr('disabled');
           break;
+        case 'action.devices.types.CAMERA':
+          $('#OnOff').prop('checked', false);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',false);
+          $('#FanSetting').prop('checked',false);
+          $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', true);
+
+          $('#OnOffTraits').attr('disabled','');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').attr('disabled','');
+          $('#sceneTraits').attr('disabled','');
+          $('#reportState').attr('disabled','');
+          $('#fanTraits').attr('disabled','');
+          $('#blindsTraits').attr('disabled','');
+          $('#CameraStream').removeAttr('disabled');
+
       }
     }
 

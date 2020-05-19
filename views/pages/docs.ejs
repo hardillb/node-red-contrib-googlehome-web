@@ -52,6 +52,7 @@
 			<li>Heater</li>
 			<li>Pureifier</li>
 			<li>Scene</li>
+      <li>Camera</li>
 		</ul>
 
 		<p>Traits:</p>
@@ -62,6 +63,7 @@
     	<li>FanSpeed</li>
     	<li>TemperatureSetting</li>
     	<li>OpenClose</li>
+      <li>CameraStream</li>
     </ul>
 
     <p>There are some extras in the lists in the wizard for creating devices that are disabled, they are 
@@ -294,6 +296,41 @@
 }</pre>
         </div>
       </li>
+      <li><span class="toggle" data-toggle="collapse" data-target="#CameraStream">CameraStream</span>
+        <div id="CameraStream" class="collapse">
+          <p>CameraStream requests a URL for either a HLS or DASH video stream.</p>
+          <pre>{
+  topic: "",
+  name: "Camera",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.GetCameraStream"
+    "params": {
+      "StreamToChromecast":true,
+      "SupportedStreamProtocols":[
+        "progressive_mp4",
+        "hls",
+        "dash",
+        "smooth_stream"
+      ]
+    }
+  }
+}</pre>
+          <p>This request requires a response node, Auto Acknowlege will not work. The response should look like the following:</p>
+          <pre>{
+  topic: "",
+  name: "Camera",
+  raw: {},
+  payload: {
+    "command": "action.devices.commands.GetCameraStream"
+    "params": {
+      "cameraStreamAccessUrl": "http://192.168.1.96:8080/hls/stream.m3u8"
+    }
+  }
+}</pre>
+        </div>
+      </li>
+      
     </ul>
 
     <p>More traits and configuration options for traits when I get time to work out how to nicely expose them.</p>
