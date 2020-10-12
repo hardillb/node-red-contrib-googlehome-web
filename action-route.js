@@ -352,7 +352,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 								logger.debug("Query response is array");
 								for (var i in data) {
 									response.payload.devices[data[i].id] = data[i].state;
-									if (data[i].state.online) {
+									if (data[i].state && data[i].state.online) {
 										response.payload.devices[data[i].id].status = "SUCCESS";
 									} else {
 										response.payload.devices[data[i].id].status = "OFFLINE";
@@ -361,7 +361,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							} else {
 								logger.debug("Query single result");
 								response.payload.devices[data.id] = data.state;
-								if (data[i].state.online) {
+								if (data[i].state && data[i].state.online) {
 									response.payload.devices[data[i].id].status = "SUCCESS";
 								} else {
 									response.payload.devices[data[i].id].status = "OFFLINE";
