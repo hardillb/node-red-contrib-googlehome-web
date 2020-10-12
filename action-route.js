@@ -262,6 +262,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 	var inflightRequests = {};
 
+	app.get('/inflight', function(req,res,next){
+		res.send(inflightRequests);
+	});
+
 	var timeout = setInterval(function() {
 		var now = Date.now();
 		var keys = Object.keys(inflightRequests);

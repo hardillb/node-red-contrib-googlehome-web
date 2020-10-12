@@ -75,16 +75,22 @@ if (process.env.VCAP_APPLICATION) {
 
 mongoose.Promise = global.Promise;
 var mongoose_options = {
-	server: {
-		auto_reconnect:true,
-		autoReconnect: true,
-		reconnectTries: Number.MAX_VALUE,
-		reconnectInterval: 1000,
-		socketOptions: {
-			autoReconnect: true
-		}
-	}
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
 };
+// var mongoose_options = {
+// 	server: {
+// 		auto_reconnect:true,
+// 		autoReconnect: true,
+// 		reconnectTries: Number.MAX_VALUE,
+// 		reconnectInterval: 1000,
+// 		socketOptions: {
+// 			autoReconnect: true
+// 		}
+// 	}
+// };
 var mongoose_connection = mongoose.connection;
 mongoose.connect(mongo_url, mongoose_options);
 
