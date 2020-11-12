@@ -28,6 +28,7 @@
         if (u.indexOf('#') != -1 || 
             u.indexOf('+') != -1 || 
             u.indexOf('/') != -1 ||
+            u.indexOf(':') != -1 ||
             u.indexOf('$') == 0) {
             document.getElementById('usrValid').style.background = 'red';
             document.getElementById('usrValid').innerHTML = 'invalid';
@@ -67,7 +68,11 @@
             document.getElementById('pwq').innerHTML = "strong";
             break;
         }
-      } else {
+        if (val.indexOf(":") != -1) {
+          document.getElementById('pwq').style.background = 'red';
+          document.getElementById('pwq').innerHTML = "invalid";
+        }
+      }  else {
         document.getElementById('pwq').style.background = 'white';
         document.getElementById('pwq').innerHTML = "";
       }

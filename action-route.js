@@ -218,6 +218,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 						if (data.state){
 
+							//should compare current to previous and only update if different
 							data.state = Object.assign(data.state, payload.execution.params);
 
 							if (payload.execution.params.color && payload.execution.params.color.spectrumRGB) {
@@ -523,7 +524,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 						},
 						function(err, resp, body){
 							if (err) {
-								logger.debug("Problem reporting state - ", err, " - ", body);
+								logger.info("Problem reporting state - ", err, " - ", body);
 							} else {
 								//logger.debug();
 							}
