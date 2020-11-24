@@ -81,7 +81,7 @@ module.exports = function(app, passport, logger) {
 				});
 			
 				passport.authenticate('local')(req, res, function () {
-					logger.info("created new user %s", req.body.username);
+					logger.info("created new user ", req.body.username);
 					// measurement.send({
 					// 	t:'event', 
 					// 	ec:'System', 

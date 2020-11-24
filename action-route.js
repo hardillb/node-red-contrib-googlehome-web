@@ -375,7 +375,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							logger.debug("Query response",response);
 							res.send(response);
 						} else {
-							logger.debug("Query Problem with status, ", error)
+							logger.info("Query Problem with status, ", error);
 						}
 					})
 					break;
