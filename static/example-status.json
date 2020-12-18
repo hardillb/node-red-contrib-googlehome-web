@@ -158,8 +158,8 @@
     "id": "e6ffb768.488ad",
     "type": "google-home-conf",
     "z": "",
-    "username": "hardillb",
-    "localControl": true
+    "username": "example",
+    "localControl": false
   },
   {
     "id": "c383eef8.84ab5",
