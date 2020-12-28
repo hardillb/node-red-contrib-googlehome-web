@@ -262,6 +262,16 @@
     }
   }
 }</pre>
+          <p>You can update the Ambient readings from your Thermostat, by feeding the following into a response node</p>
+          <pre>{
+  payload: {
+    params: {
+        thermostatTemperatureAmbient: msg.payload.temp,
+        thermostatHumidityAmbient: msg.payload.humidity
+    }
+  }
+}</pre>
+          <p>Temperatures should be in Celcius and humidity in percent.</p>
         </div>
       </li>
     	<li><span class="toggle" data-toggle="collapse" data-target="#OpenClose">OpenClose</span>
