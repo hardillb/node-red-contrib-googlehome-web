@@ -45,75 +45,106 @@
     <fieldset id="deviceType">
       <legend>Type</legend>
       <div style="display: flex; width: 100%">
-        <div class="types">
-          <input type="radio" name="type" value="action.devices.types.SWITCH" checked="true" onclick="switchType(this.value);">Switch</input><br/>
-          <input type="radio" name="type" value="action.devices.types.OUTLET" onclick="switchType(this.value);">Outlet</input><br/>
-          <input type="radio" name="type" value="action.devices.types.LIGHT" onclick="switchType(this.value);">Light</input><br/>
-          <input type="radio" name="type" value="action.devices.types.BLINDS" onclick="switchType(this.value);">Blinds</input><br/>
-        </div>
-        <div class="types">
-          <input type="radio" name="type" value="action.devices.types.THERMOSTAT" onclick="switchType(this.value);">Thermostat</input><br/>
-          <input type="radio" name="type" value="action.devices.types.VACUUM" disabled onclick="switchType(this.value);">Vacuum</input><br/>
-          <input type="radio" name="type" value="action.devices.types.SCENE" onclick="switchType(this.value);">Scene</input><br/>
-          <input type="radio" name="type" value="action.devices.types.DOOR" onclick="switchType(this.value);">Door</input><br/>
-        </div>
-        <div class="types">
-          <input type="radio" name="type" value="action.devices.types.FAN" onclick="switchType(this.value);">Fan</input><br/>
-          <input type="radio" name="type" value="action.devices.types.HEATER" onclick="switchType(this.value);">Heater</input><br/>
-          <input type="radio" name="type" value="action.devices.types.AIRPURIFIER" onclick="switchType(this.value);">Purifier</input><br/>
-          <input type="radio" name="type" value="action.devices.types.CAMERA" onclick="switchType(this.value);">Camera</input><br/>
-        </div>
+
+        <select style="width: 90%" id="type" onchange="switchType(this.value);">
+           <option value="action.devices.types.SWITCH">Switch</option>
+           <option value="action.devices.types.OUTLET">Outlet</option>
+           <option value="action.devices.types.LIGHT">Light</option>
+           <option value="action.devices.types.BLINDS">Blinds</option>
+           <option value="action.devices.types.DOOR">Door</option>    
+           <option value="action.devices.types.THERMOSTAT">Thermostat</option>       
+           <option value="action.devices.types.FAN">Fan</option>
+           <option value="action.devices.types.HEATER">Heater</option>
+           <option value="action.devices.types.AIRPURIFIER">Purifier</option>
+           <option value="action.devices.types.SENSOR">Sensor</option>
+           <option value="action.devices.types.CAMERA">Camera</option>
+           <option value="action.devices.types.SCENE">Scene</option>
+           <!-- <option value="action.devices.types.VACUUM">Vacume</option> -->
+        </select>
+
       </div>
     </fieldset>
     <fieldset id="deviceTraits">
       <legend>Traits</legend>
-      <div style="display: flex; width: 100%">
-        <div class="traits">
-          <fieldset id="OnOffTraits">
+      <!-- <div style="display: flex; width: 50%"> -->
+      <div>
+        <!-- <div class="traits"> -->
+          <fieldset id="OnOffTraits" class="traits">
             <label for="OnOff">On/Off: </label>
             <input type="checkbox" name="trait" id="OnOff" value="action.devices.traits.OnOff" checked="true">
           </fieldset>
-          <fieldset id="lightTraits" disabled>
+          <fieldset id="lightTraits" class="traits" disabled>
             <label for="Brightness">Brightness: </label>
             <input type="checkbox" name="trait" id="Brightness" value="action.devices.traits.Brightness"><br/>
             <label for="ColorTemperature">Color Settings: </label>
             <input type="checkbox" name="trait" id="ColorSetting" value="action.devices.traits.ColorSetting">
           </fieldset>
-          <fieldset id="vacuumTraits" disabled>
+<!--           <fieldset id="vacuumTraits" disabled>
             <label for="StartStop">Start/Stop: </label>
             <input type="checkbox" name="trait" id="StartStop" value="action.devices.traits.StartStop"><br>
             <label for="RunCycle">Run Cycle: </label>
             <input type="checkbox" name="trait" id="RunCycle" value="action.devices.traits.RunCycle">
-          </fieldset>
-          <fieldset id="CameraTraits" disabled>
+          </fieldset> -->
+          <fieldset id="CameraTraits" class="traits" disabled>
             <label for="CameraStream">Camera Stream: </label>
             <input type="checkbox" name="trait" id="CameraStream" value="action.devices.traits.CameraStream">
           </fieldset>
-        </div>
-        <div class="traits">
-          <fieldset id="temperatureTraits" disabled>
-            <label for="TemperatureSetting">Temperature: </label>
-            <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting">
+          <fieldset id="blindsTraits" class="traits" disabled>
+            <label for="OpenClose">Open/Close: </label>
+            <input type="checkbox" name="trait" id="OpenClose" value="action.devices.traits.OpenClose">
           </fieldset>
-          <fieldset id="fanTraits" disabled>
+          <fieldset id="sensorTraits" class="traits" disabled>
+            <label for="TemperatureSensor">TemperatureSensor: </label>
+            <input type="checkbox" name="trait" id="TemperatureSensor" value="action.devices.traits.TemperatureControl" onchange="temperatureControls(this.checked)">
+            <label for="HumiditySensor">HumiditySensor: </label>
+            <input type="checkbox" name="trait" id="HumiditySensor" value="action.devices.traits.HumiditySetting">
+            <fieldset class="subTrait" id="TemperatureControlUnits">
+              <legend><strong>Display</strong> Units</legend>
+              <label for="C">C</label>
+              <input type="radio" name="TemperatureControlUnit" value="C" checked>
+              <label for="F">F</label>
+              <input type="radio" name="TemperatureControlUnit" value="F">
+            </fieldset>
+          </fieldset>
+        <!-- </div> -->
+        <!-- <div class="traits"> -->
+          <fieldset id="temperatureTraits" class="traits" disabled>
+            <label for="TemperatureSetting">Temperature: </label>
+            <input type="checkbox" name="trait" id="TemperatureSetting" value="action.devices.traits.TemperatureSetting" onchange="temperatureSettings(this.checked)">
+            <fieldset class="subTrait" id="TemperatureSettingModes">
+              <legend>Temperature Modes:</legend>
+              <label>Heat: </label>
+              <input type="checkbox" id="TemperatureSettingMode" value="heat" checked>
+              <label>Cool: </label>
+              <input type="checkbox" id="TemperatureSettingMode" value="cool">
+              <label>Auto: </label>
+              <input type="checkbox" id="TemperatureSettingMode" value="auto">
+              <label>HeatCool: </label>
+              <input type="checkbox" id="TemperatureSettingMode" value="heatcool">
+            </fieldset>
+            <fieldset class="subTrait" id="TemperatureSettingUnits">
+              <legend><strong>Display</strong> Units</legend>
+              <label for="C">C</label>
+              <input type="radio" name="TemperatureSettingUnit" value="C" checked>
+              <label for="F">F</label>
+              <input type="radio" name="TemperatureSettingUnit" value="F">
+            </fieldset>
+          </fieldset>
+          <fieldset id="fanTraits" class="traits" disabled>
             <label for="Fan">Fan Speed: </label>
             <input type="checkbox" name="trait" id="FanSetting" value="action.devices.traits.FanSpeed">
           </fieldset>
-          <fieldset id="sceneTraits" disabled hidden>
+          <fieldset id="sceneTraits" class="traits" disabled hidden>
             <label for="Scene">Scene: </label>
             <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
           </fieldset>
-          <fieldset id="modeToggleTraits" disabled>
+          <fieldset id="modeToggleTraits" class="traits" disabled>
             <label for="Scene">Toggles: </label>
             <input type="checkbox" name="trait" id="Toggles" value="action.devices.traits.Toggles">
             <label for="Scene">Modes: </label>
             <input type="checkbox" name="trait" id="Modes" value="action.devices.traits.Modes">
           </fieldset> 
-          <fieldset id="blindsTraits" disabled>
-            <label for="OpenClose">Open/Close: </label>
-            <input type="checkbox" name="trait" id="OpenClose" value="action.devices.traits.OpenClose">
-          </fieldset>
-        </div>
+        <!-- </div> -->
       </div>
       <fieldset id="reportState" hidden>
           <legend>Report State</legend>
@@ -148,7 +179,7 @@
             var name = $('#friendlyName').val();
             if (devID === '') {
               var dev = {
-                type: $('input[name=type]:checked').val(),
+                type: $('#type').val(),
                 traits: [],
                 roomHint: $('#roomHint').val(),
                 willReportState: true,
@@ -190,7 +221,9 @@
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
-                dev.attributes["thermostatTemperatureUnit"] = "C";
+
+                dev.attributes["thermostatTemperatureUnit"] = $("input:radio[name=TemperatureSettingUnit]:checked").val()
+                
                 dev.state = Object.assign(dev.state, {
                   thermostatMode: "heat",
                   thermostatTemperatureSetpoint: 20,
@@ -255,6 +288,27 @@
                 })
               }
 
+              if (dev.traits.includes("action.devices.traits.TemperatureControl")) {
+                dev.attributes["queryOnlyTemperatureControl"] = true
+                dev.state = Object.assign(dev.state,{
+                  temperatureAmbientCelsius: 22
+                })
+                dev.attributes["temperatureRange"] = {
+                  minThresholdCelsius: -20,
+                  maxThresholdCelsius: 150
+                };
+                
+                dev.attributes["temperatureUnitForUX"] = $("input:radio[name=TemperatureControlUnit]:checked").val();
+
+              }
+
+              if (dev.traits.includes("action.devices.traits.HumiditySetting")) {
+                dev.attributes["queryOnlyHumiditySetting"] = true
+                dev.state = Object.assign(dev.state,{
+                  humidityAmbientPercent: 50
+                })
+              }
+
               console.log(dev);
               if (name && dev.type && dev.traits.length > 0) {
                 $.ajax({
@@ -278,7 +332,7 @@
               console.log("update");
               var dev = devices[devID];
               console.log(dev);
-              dev.type = $('input[name=type]:checked').val();
+              dev.type = $('#type').val();
               dev.roomHint = $('#roomHint').val();
               dev.traits = [];
               dev.attributes = {};
@@ -306,7 +360,7 @@
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
-                dev.attributes["thermostatTemperatureUnit"] = "C";
+                dev.attributes["thermostatTemperatureUnit"] = $("input:radio[name=TemperatureSettingUnit]:checked").val()
                 dev.state = Object.assign({
                   thermostatMode: "heat",
                   thermostatTemperatureSetpoint: 20,
@@ -360,6 +414,26 @@
 
               }
 
+              if (dev.traits.includes("action.devices.traits.TemperatureControl")) {
+                dev.attributes["queryOnlyTemperatureControl"] = true
+                dev.state = Object.assign(dev.state,{
+                  temperatureAmbientCelsius: 22
+                });
+                dev.attributes["temperatureRange"] = {
+                  minThresholdCelsius: -20,
+                  maxThresholdCelsius: 150
+                };
+                dev.attributes["temperatureUnitForUX"] = $("input:radio[name=TemperatureControlUnit]:checked").val();
+
+              }
+
+              if (dev.traits.includes("action.devices.traits.HumiditySetting")) {
+                dev.attributes["queryOnlyHumiditySetting"] = true
+                dev.state = Object.assign(dev.state,{
+                  humidityAmbientPercent: 50
+                })
+              }
+
               console.log(dev);
               console.log(dev.attributes);
               $.ajax({
@@ -399,6 +473,8 @@
       $('input[name=trait]').each(function(index){
         this.checked = false;
       });
+      $('type').val('action.devices.types.SWITCH');
+      $('#OnOff').prop('checked',true);
       $("#dialog")
     }
 
@@ -417,11 +493,20 @@
         $('#friendlyName').prop('readonly', true);
         $('#roomHint').val(device.roomHint);
         switchType(device.type);
-        $('input[name=type][value="' + device.type + '"]').prop('checked', true);
+        // $('input[name=type][value="' + device.type + '"]').prop('checked', true);
+        $("#type").val(device.type);
         device.traits.forEach(function(trait){
           var stuff = trait.split('\.');
           $('#'+stuff[stuff.length-1]).prop('checked',true);
         });
+        if (device.traits.includes('action.devices.traits.TemperatureSetting')) {
+          var unit = device.attributes["thermostatTemperatureUnit"]
+          $("input:radio[name=TemperatureSettingUnit][value=" + unit + "]").prop("checked", true)
+        }
+        if (device.traits.includes('action.devices.traits.TemperatureControl')) {
+          var unit = device.attributes["temperatureUnitForUX"]
+          $("input:radio[name=TemperatureControlUnit][value=" + unit + "]").prop("checked", true)
+        }
       }
     }
 
@@ -464,14 +549,33 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
-          $('#OpenClose').attr('disabled');
-          $('#reportState').removeAttr('disabled');
+          $('#blindsTraits').attr('disabled');
+          // $('#reportState').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+          $('#modeToggleTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled', '');
+
+          $('#OnOffTraits').removeAttr('hidden');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').attr('hidden','');
+          $('#sceneTraits').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          // $('#reportState').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+          $('#modeToggleTraits').attr('hidden','');
+
+          $('#willReportState').prop('checked', true);
+
           
           break;
         case 'action.devices.types.LIGHT':
@@ -481,6 +585,8 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').removeAttr('disabled');
@@ -488,7 +594,23 @@
           $('#sceneTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
           $('#blindsTraits').attr('disabled','');
-          $('#reportState').removeAttr('disabled');
+          // $('#reportState').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+          $('#modeToggleTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled', '');
+
+          $('#OnOffTraits').removeAttr('hidden');
+          $('#lightTraits').removeAttr('hidden');
+          $('#temperatureTraits').attr('hidden','');
+          $('#sceneTraits').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          // $('#reportState').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+          $('#modeToggleTraits').attr('hidden','');
+
+          $('#willReportState').prop('checked', true);
 
           break;
         case 'action.devices.types.THERMOSTAT':
@@ -501,6 +623,8 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
@@ -508,7 +632,21 @@
           $('#sceneTraits').attr('disabled','');
           $('#fanTraits').attr('disabled','');
           $('#blindsTraits').attr('disabled','');
-          $('#reportState').removeAttr('disabled');
+          // $('#reportState').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled', '');
+
+          $('#OnOffTraits').attr('hidden','');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').removeAttr('hidden');
+          $('#sceneTraits').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          // $('#reportState').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+
+          $('#willReportState').prop('checked', true);
           break;
         case 'action.devices.types.FAN':
         case 'action.devices.types.AIRPURIFIER':
@@ -521,14 +659,29 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').removeAttr('disabled');
           $('#sceneTraits').attr('disabled','');
           $('#blindsTraits').attr('disabled','');
-          $('#reportState').removeAttr('disabled');
+          // $('#reportState').removeAttr('disabled');
           $('#fanTraits').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+
+          $('#OnOffTraits').removeAttr('hidden');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').removeAttr('hidden');
+          $('#sceneTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          // $('#reportState').removeAttr('hidden');
+          $('#fanTraits').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+
+          $('#willReportState').prop('checked', true);
           break;
         case 'action.devices.types.SCENE':
           $('#OnOff').prop('checked',false);
@@ -540,9 +693,11 @@
           $('#Scene').prop('checked',true);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#willReportState').prop('checked', false);
-          $('#reportState').attr('disabled','');
+          // $('#reportState').attr('disabled','');
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
@@ -550,6 +705,18 @@
           $('#fanTraits').attr('disabled','');
           $('#blindsTraits').attr('disabled','');
           $('#sceneTraits').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled', '');
+
+          $('#OnOffTraits').attr('hidden','');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          $('#sceneTraits').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+
           break;
         case 'action.devices.types.HEATER':
           $('#OnOff').prop('checked', true);
@@ -561,14 +728,30 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').removeAttr('disabled');
           $('#sceneTraits').attr('disabled','');
-          $('#reportState').removeAttr('disabled');
+          // $('#reportState').removeAttr('disabled');
           $('#fanTraits').removeAttr('disabled');
           $('#blindsTraits').attr('disabled','');
+          $('#sensorTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled', '');
+
+          $('#OnOffTraits').removeAttr('hidden');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').removeAttr('hidden');
+          $('#sceneTraits').attr('hidden','');
+          // $('#reportState').removeAttr('hidden');
+          $('#fanTraits').removeAttr('hidden');
+          $('#blindsTraits').attr('hidden','');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+
+          $('#willReportState').prop('checked', true);
           break;
         case 'action.devices.types.BLINDS':
         case 'action.devices.types.DOOR':
@@ -581,14 +764,28 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', true);
           $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').removeAttr('disabled');
           $('#lightTraits').attr('disabled','');
-          $('#temperatureTraits').removeAttr('disabled');
+          $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
-          $('#reportState').removeAttr('disabled');
           $('#fanTraits').attr('disabled','');
           $('#blindsTraits').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled', '');
+
+          $('#OnOffTraits').removeAttr('hidden');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').attr('hidden', '');
+          $('#sceneTraits').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden', '');
+
+          $('#willReportState').prop('checked', true);
           break;
         case 'action.devices.types.CAMERA':
           $('#OnOff').prop('checked', false);
@@ -600,20 +797,71 @@
           $('#Scene').prop('checked', false);
           $('#OpenClose').prop('checked', false);
           $('#CameraStream').prop('checked', true);
+          $('#TemperatureSensor').prop('checked', false);
+          $('#HumiditySensor').prop('checked', false);
 
           $('#OnOffTraits').attr('disabled','');
           $('#lightTraits').attr('disabled','');
           $('#temperatureTraits').attr('disabled','');
           $('#sceneTraits').attr('disabled','');
-          $('#reportState').attr('disabled','');
+          // $('#reportState').attr('disabled','');
           $('#fanTraits').attr('disabled','');
           $('#blindsTraits').attr('disabled','');
-          $('#CameraStream').removeAttr('disabled');
+          $('#CameraTraits').removeAttr('disabled');
+          $('#sensorTraits').attr('disabled','');
+
+          $('#OnOffTraits').attr('hidden','');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').attr('hidden','');
+          $('#sceneTraits').attr('hidden','');
+          // $('#reportState').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          $('#CameraTraits').removeAttr('hidden');
+          $('#sensorTraits').attr('hidden','');
+
+          $('#willReportState').prop('checked', true);
+          break;
+        case 'action.devices.types.SENSOR':
+          $('#OnOff').prop('checked', false);
+          $('#Brightness').prop('checked', false);
+          $('#ColorTemperature').prop('checked', false);
+          $('#ColorSpectrum').prop('checked', false);
+          $('#TemperatureSetting').prop('checked',false);
+          $('#FanSetting').prop('checked',false);
+          $('#Scene').prop('checked', false);
+          $('#OpenClose').prop('checked', false);
+          $('#CameraStream').prop('checked', false);
+          $('#TemperatureSensor').prop('checked', true);
+          $('#HumiditySensor').prop('checked', true);
+
+          $('#OnOffTraits').attr('disabled','');
+          $('#lightTraits').attr('disabled','');
+          $('#temperatureTraits').attr('disabled','');
+          $('#sceneTraits').attr('disabled','');
+          // $('#reportState').attr('disabled','');
+          $('#fanTraits').attr('disabled','');
+          $('#blindsTraits').attr('disabled','');
+          $('#CameraTraits').attr('disabled','');
+          $('#sensorTraits').removeAttr('disabled');
+
+          $('#OnOffTraits').attr('hidden','');
+          $('#lightTraits').attr('hidden','');
+          $('#temperatureTraits').attr('hidden','');
+          $('#sceneTraits').attr('hidden','');
+          // $('#reportState').attr('hidden','');
+          $('#fanTraits').attr('hidden','');
+          $('#blindsTraits').attr('hidden','');
+          $('#CameraTraits').attr('hidden','');
+          $('#sensorTraits').removeAttr('hidden');
+
+          $('#willReportState').prop('checked', true);
 
       }
     }
 
     function reset() {
+      $('#type').val('action.devices.types.SWITCH');
       $('#devID').val("");
       $('#OnOff').prop('checked',true);
       $('#Brightness').prop('checked', false);
@@ -621,13 +869,16 @@
       $('#ColorSpectrum').prop('checked', false);
       $('#TemperatureSetting').prop('checked',false);
       $('#Scene').prop('checked',false);
+      $('#TemperatureSensor').prop('checked', false);
+      $('#HumiditySensor').prop('checked', false);
 
       $('#OnOffTraits').removeAttr('disabled');
       $('#lightTraits').attr('disabled','');
       $('#temperatureTraits').attr('disabled','');
       $('#sceneTraits').attr('disabled','');
       $('#fanTraits').attr('disabled','');
-      $('#blindTraits').attr('disabled','');
+      $('#blindsTraits').attr('disabled','');
+      $('#sensorTraits').attr('disabled','');
 
       $('input[name=type]').each(function(index){
         if (this.value === 'action.devices.types.SWITCH') {
@@ -635,6 +886,39 @@
         }
       });
 
+      $("input:radio[name=TemperatureSettingUnit][value=C]").prop("checked", true)
+
+      $('#OnOffTraits').removeAttr('hidden');
+      $('#lightTraits').attr('hidden','');
+      $('#temperatureTraits').attr('hidden','');
+      $('#sceneTraits').attr('hidden','');
+      $('#fanTraits').attr('hidden','');
+      $('#blindsTraits').attr('hidden','');
+      // $('#reportState').removeAttr('hidden');
+      $('#sensorTraits').attr('hidden','');
+      $('#CameraTraits').attr('hidden', '');
+      $('#modeToggleTraits').attr('hidden','');
+
+    }
+
+    function temperatureSettings(checked) {
+      console.log(checked);
+      if (checked) {
+        $("#TemperatureSettingModes").removeAttr('disabled');
+        $("#TemperatureSettingUnits").removeAttr('disabled');
+      } else {
+        $('#TemperatureSettingModes').attr('disabled','');
+        $("#TemperatureSettingUnits").attr('disabled','');
+      }
+    }
+
+    function temperatureControls(checked) {
+      console.log(checked);
+      if (checked) {
+        $("#TemperatureControlUnits").removeAttr('disabled');
+      } else {
+        $("#TemperatureControlUnits").attr('disabled','');
+      }
     }
 
     function checkName(name) {
@@ -648,5 +932,7 @@
     <%- JSON.stringify(devices) %>.forEach(function(device){
       devices[device._id] = device;
     });
+
+    reset();
   </script>
 <% include ../fragments/footer.ejs %>

@@ -53,6 +53,7 @@
 			<li>Pureifier</li>
 			<li>Scene</li>
       <li>Camera</li>
+      <li>Sensor</li>
 		</ul>
 
 		<p>Traits:</p>
@@ -196,6 +197,8 @@
     }
   }
 }</pre>
+<p>The spectrumRGB value is the interger representation of the RGB value in hex. If you convert it to Hex and front pad it with 0 so it's 6 digits long.
+The first 2 digits will be the Red value, the middle 2 digits will be Green and the last 2 digits are Blue.</p>
 <p>Colour Temperature in K</p>
 <pre>{
   topic: "",
@@ -249,7 +252,7 @@
     }
   }
 }</pre>
-          <p>When you set the Thermostat set point you get the following message. Currently all values are in 
+          <p>When you set the Thermostat set point you get the following message. All values must be in 
           Degrees C.</p>
           <pre>{
   topic: "",
@@ -378,6 +381,31 @@
     <p>If you are going to use the trigger node as in the example above, you need to remove the 
       <code>msg._confId</code>. The flow that matches the image above can be found <a href="/example-status.json">here</a></p>
 
+    <h4>Sensors</h4>
+    <p>When using the Sensor device type, these can only be used as an output</p>
+    <p>Currently the Sensor supports 2 value types</p>
+    <ul>
+      <li>Temperature</li>
+      <li>Humidity</li>
+    </ul>
+
+    <p>These can be updated independly or as a pair, the input msg should look something like</p>
+    <pre>{
+  topic: "",
+  payload: {
+    params: {
+        temperatureAmbientCelsius: temp,
+        humidityAmbientPercent: Math.round(humidity)
+    }
+  }
+}</pre>
+
+    <p>As with all interactions the input temperature <strong>must</strong> be in Centegrade even if the output will be 
+    displayed in Fahrenheit. Unlike the Thermostat device, the humidity must be an integer value, if you try to send a 
+    decimal value it will be ignored</p>
+
+    <p>Also like all Google Home Graph updates, <strong>Please only send status updates when the state changes</strong>, 
+    use an RBE node if needed to filter out duplicates</p>
 
     <h3>Questions</h3>
     <p>If you have questions please ask them in the <stong>#google-home-assistant</stong> channel on the  

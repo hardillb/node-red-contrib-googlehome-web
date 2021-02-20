@@ -33,7 +33,7 @@ app.post('/requestSync', function(req,res,next){
 		  }]
 		},
 		headers: {
-			Authorization: "Bearer 4bFKvVSCPxneduqUc0R1bV5A2cLB7iqkCU4EM1MLNyCQICIy4552SMKDGKWnb0ioKb5KyZX5QCBv1sTiA2oKKOFtbfppCWD6V4r5Iqg01aKg0v5FeBurQWPUOwyb"
+			Authorization: "Bearer a21U7j4U4Gp9WiQsI8kSUD64lAMoLrDx8qT7CmFOp5ICQ2G3DJEvUS3pEnIytlgWui03Yfh5DUawBR65BGeXp25UJQU9T06hUH96KYcQ0o7F4QYJ1d8bCNkEBlFO"
 		}
 	}, function (err, resp, body){
 		console.log("Sync: %j", body);	
