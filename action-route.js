@@ -113,7 +113,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 							delete command.states.lang;
 							break;
 						case "action.devices.commands.ThermostatSetMode":
-							commands.states.activeThermostatMode = commands.states.thermostatMode;
+							command.states.activeThermostatMode = command.states.thermostatMode;
 							break;
 					}
 
