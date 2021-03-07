@@ -112,6 +112,9 @@ module.exports = function(app, passport, mqttOptions, logger){
 							delete command.states.silent;
 							delete command.states.lang;
 							break;
+						case "action.devices.commands.ThermostatSetMode":
+							commands.states.activeThermostatMode = commands.states.thermostatMode;
+							break;
 					}
 
 					inflightRequests[payload.requestId].commands.push(command)
@@ -232,6 +235,10 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 							if (!payload.execution.params.isRunning && !payload.execution.params.isPaused) {
 								delete data.state.activeZones;
+							}
+
+							if (payload.execution.params.thermostatMode && !payload.execution.params.activeThermostatMode) {
+								data.state.activeThermostatMode = payload.execution.params.thermostatMode;
 							}
 
 						} else {

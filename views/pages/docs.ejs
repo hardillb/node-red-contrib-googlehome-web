@@ -218,7 +218,7 @@ The first 2 digits will be the Red value, the middle 2 digits will be Green and 
     	</li>
     	<li><span class="toggle" data-toggle="collapse" data-target="#FanSpeed">FanSpeed</span>
         <div id="FanSpeed" class="collapse">
-          <p>Fans currently support 3 speeds (and currently only in English, if you want to supply translations please open an issue on Github)</p>
+          <p>Fans currently support 3 speeds (and currently only in English & Brazilian Portugues, if you want to supply translations please open an issue on Github)</p>
           <ol>
             <li>Low</li>
             <li>Medium</li>
@@ -261,11 +261,11 @@ The first 2 digits will be the Red value, the middle 2 digits will be Green and 
   payload: {
     "command": "action.devices.commands.ThermostatTemperatureSetpoint"
     "params": {
-      "thermostatTemperatureSetpoint: 15"
+      "thermostatTemperatureSetpoint": 15
     }
   }
 }</pre>
-          <p>You can update the Ambient readings from your Thermostat, by feeding the following into a response node</p>
+          <!-- <p>You can update the Ambient readings from your Thermostat, by feeding the following into a response node</p>
           <pre>{
   payload: {
     params: {
@@ -274,7 +274,7 @@ The first 2 digits will be the Red value, the middle 2 digits will be Green and 
     }
   }
 }</pre>
-          <p>Temperatures should be in Celcius and humidity in percent.</p>
+          <p>Temperatures should be in Celcius and humidity in percent.</p> -->
         </div>
       </li>
     	<li><span class="toggle" data-toggle="collapse" data-target="#OpenClose">OpenClose</span>
@@ -385,8 +385,8 @@ The first 2 digits will be the Red value, the middle 2 digits will be Green and 
     <p>When using the Sensor device type, these can only be used as an output</p>
     <p>Currently the Sensor supports 2 value types</p>
     <ul>
-      <li>Temperature</li>
-      <li>Humidity</li>
+      <li>Temperature (must be in celsius)</li>
+      <li>Humidity Percentage (must me an integer)</li>
     </ul>
 
     <p>These can be updated independly or as a pair, the input msg should look something like</p>
@@ -403,6 +403,22 @@ The first 2 digits will be the Red value, the middle 2 digits will be Green and 
     <p>As with all interactions the input temperature <strong>must</strong> be in Centegrade even if the output will be 
     displayed in Fahrenheit. Unlike the Thermostat device, the humidity must be an integer value, if you try to send a 
     decimal value it will be ignored</p>
+
+    <h4>Thermostat</h4>
+    <p>The Thermostat device can also show the current ambient temperature and humidity these are updated in a similar way to the 
+    Sensor device, just with slightly different inputs.</p>
+    <ul>
+      <li>Ambient Temperature (must be in celsius)</li>
+      <li>Ambient Humidity percentage(this can be decimal unlike the Sensor reading)</li>
+    </ul>
+    <pre>{
+  topic: "",
+  payload: {
+    parmas: {
+      thermostatTemperatureAmbient: temp,
+      thermostatHumidityAmbient: humidity
+  }
+}</pre>
 
     <p>Also like all Google Home Graph updates, <strong>Please only send status updates when the state changes</strong>, 
     use an RBE node if needed to filter out duplicates</p>

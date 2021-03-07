@@ -119,8 +119,8 @@
               <input type="checkbox" id="TemperatureSettingMode" value="cool">
               <label>Auto: </label>
               <input type="checkbox" id="TemperatureSettingMode" value="auto">
-              <label>HeatCool: </label>
-              <input type="checkbox" id="TemperatureSettingMode" value="heatcool">
+              <!-- <label>HeatCool: </label>
+              <input type="checkbox" id="TemperatureSettingMode" value="heatcool"> -->
             </fieldset>
             <fieldset class="subTrait" id="TemperatureSettingUnits">
               <legend><strong>Display</strong> Units</legend>
@@ -225,6 +225,7 @@
                 dev.attributes["thermostatTemperatureUnit"] = $("input:radio[name=TemperatureSettingUnit]:checked").val()
                 
                 dev.state = Object.assign(dev.state, {
+                  activeThermostatMode: "heat",
                   thermostatMode: "heat",
                   thermostatTemperatureSetpoint: 20,
                   thermostatTemperatureAmbient: 20
@@ -380,6 +381,7 @@
                 dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
                 dev.attributes["thermostatTemperatureUnit"] = $("input:radio[name=TemperatureSettingUnit]:checked").val()
                 dev.state = Object.assign({
+                  activeThermostatMode: "heat",
                   thermostatMode: "heat",
                   thermostatTemperatureSetpoint: 20,
                   thermostatTemperatureAmbient: 20
@@ -397,6 +399,12 @@
                             "low", "slow"
                           ],
                           lang: "en"
+                        },
+                        {
+                          speed_synonym: [
+                            "mínimo", "um", "baixa", "mínima"
+                          ],
+                          lang: "pt-BR"
                         }
                       ]
                     },
@@ -408,6 +416,12 @@
                             "medium", "mid"
                           ],
                           lang: "en"
+                        },
+                        {
+                          speed_synonym: [
+                            "médio", "dois", "média"
+                          ],
+                          lang: "pt-BR"
                         }
                       ]
                     },
@@ -419,6 +433,12 @@
                             "high", "full","max"
                           ],
                           lang: "en"
+                        },
+                        {
+                          speed_synonym: [
+                            "máximo", "três","máxima"
+                          ],
+                          lang: "pt-BR"
                         }
                       ]
                     }
