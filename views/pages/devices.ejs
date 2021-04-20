@@ -114,11 +114,11 @@
             <fieldset class="subTrait" id="TemperatureSettingModes">
               <legend>Temperature Modes:</legend>
               <label>Heat: </label>
-              <input type="checkbox" id="TemperatureSettingMode" value="heat" checked>
+              <input type="checkbox" id="TemperatureSettingModeHeat" name="TemperatureSettingMode" value="heat" checked>
               <label>Cool: </label>
-              <input type="checkbox" id="TemperatureSettingMode" value="cool">
+              <input type="checkbox" id="TemperatureSettingModeCool" name="TemperatureSettingMode" value="cool">
               <label>Auto: </label>
-              <input type="checkbox" id="TemperatureSettingMode" value="auto">
+              <input type="checkbox" id="TemperatureSettingModeAuto" name="TemperatureSettingMode" value="auto">
               <!-- <label>HeatCool: </label>
               <input type="checkbox" id="TemperatureSettingMode" value="heatcool"> -->
             </fieldset>
@@ -220,7 +220,15 @@
               }
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
-                dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
+                // dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
+                var tempSet = $("input[name='TemperatureSettingMode'")
+                var tempSetArray = ["on", "off"]
+                for (let i=0; i<tempSet.length; i++) {
+                  if (tempSet[i].checked) {
+                    tempSetArray.push(tempSet[i].value)
+                  }
+                }
+                dev.attributes["availableThermostatModes"] = tempSetArray.join(",")
 
                 dev.attributes["thermostatTemperatureUnit"] = $("input:radio[name=TemperatureSettingUnit]:checked").val()
                 
@@ -378,7 +386,16 @@
               }
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
-                dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
+                //dev.attributes["availableThermostatModes"] = "off,heat,cool,on";
+                var tempSet = $("input[name='TemperatureSettingMode'")
+                var tempSetArray = ["on", "off"]
+                for (let i=0; i<tempSet.length; i++) {
+                  if (tempSet[i].checked) {
+                    tempSetArray.push(tempSet[i].value)
+                  }
+                }
+                dev.attributes["availableThermostatModes"] = tempSetArray.join(",")
+
                 dev.attributes["thermostatTemperatureUnit"] = $("input:radio[name=TemperatureSettingUnit]:checked").val()
                 dev.state = Object.assign({
                   activeThermostatMode: "heat",
@@ -511,6 +528,10 @@
       $('input[name=trait]').each(function(index){
         this.checked = false;
       });
+      $('input[name=TemperatureSettingMode]').each(function(index){
+        this.checked = false;
+      })
+      $('#TemperatureSettingModeHeat').prop('checked', true);
       $('type').val('action.devices.types.SWITCH');
       $('#OnOff').prop('checked',true);
       $("#dialog")
@@ -540,6 +561,14 @@
         if (device.traits.includes('action.devices.traits.TemperatureSetting')) {
           var unit = device.attributes["thermostatTemperatureUnit"]
           $("input:radio[name=TemperatureSettingUnit][value=" + unit + "]").prop("checked", true)
+          $("#TemperatureSettingModeHeat").prop('checked', false)
+          var modes = device.attributes["availableThermostatModes"].split(",")
+          modes.forEach(function(mode){
+            var modeName = "#TemperatureSettingMode" + mode.charAt(0).toUpperCase() + mode.slice(1)
+            if ($(modeName).length > 0) {
+              $(modeName).prop('checked', true)
+            }
+          })
         }
         if (device.traits.includes('action.devices.traits.TemperatureControl')) {
           var unit = device.attributes["temperatureUnitForUX"]
