@@ -134,7 +134,7 @@ Account.findOne({username: mqtt_user}, function(error, account){
 	}
 });
 
-var accessLogStream = rfs('access.log', {
+var accessLogStream = rfs.createStream('access.log', {
   interval: '1d', // rotate daily
   compress: 'gzip', // compress rotated files
   maxFiles: 30,
