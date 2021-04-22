@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var AutoIncrement = require('mongoose-sequence');
 var Schema = mongoose.Schema;
 
 var stateLife = 60 * 24 * 90 * 60000;
