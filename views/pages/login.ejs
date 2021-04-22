@@ -1,4 +1,4 @@
-<% include ../fragments/header.ejs %>
+<%- include('../fragments/header'); -%>
 <div class="login">
 	<h1>Login</h1>
 	<% if (message) { %>
@@ -13,4 +13,4 @@
 	</form>
 	<p>If you have misplaced your password click <a href="/user/lostPassword">here</a></p>
 </div>
-<% include ../fragments/footer.ejs %>
+<%- include('../fragments/footer'); -%>
