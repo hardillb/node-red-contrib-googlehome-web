@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var AutoIncrement = require('mongoose-sequence');
+var AutoIncrement = require('mongoose-sequence')(mongoose);
 var Schema = mongoose.Schema;
 
 //{

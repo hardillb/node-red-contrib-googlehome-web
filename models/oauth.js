@@ -1,7 +1,7 @@
 var uid = require('uid2');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var AutoIncrement = require('mongoose-sequence');
+var AutoIncrement = require('mongoose-sequence')(mongoose);
 
 var tokenLife = 60 * 24 * 90 * 60000;
 
