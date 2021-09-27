@@ -51,7 +51,8 @@
            <option value="action.devices.types.OUTLET">Outlet</option>
            <option value="action.devices.types.LIGHT">Light</option>
            <option value="action.devices.types.BLINDS">Blinds</option>
-           <option value="action.devices.types.DOOR">Door</option>    
+           <option value="action.devices.types.DOOR">Door</option>
+           <option value="action.devices.types.WINDOW">Window</option>    
            <option value="action.devices.types.THERMOSTAT">Thermostat</option>       
            <option value="action.devices.types.FAN">Fan</option>
            <option value="action.devices.types.HEATER">Heater</option>
@@ -98,6 +99,8 @@
             <input type="checkbox" name="trait" id="TemperatureSensor" value="action.devices.traits.TemperatureControl" onchange="temperatureControls(this.checked)">
             <label for="HumiditySensor">HumiditySensor: </label>
             <input type="checkbox" name="trait" id="HumiditySensor" value="action.devices.traits.HumiditySetting">
+            <label for="AirQualitySensor">Air Quality Sensor: </label>
+            <input type="checkbox" name="trait" id="AirQualitySensor" value="action.devices.traits.SensorState">
             <fieldset class="subTrait" id="TemperatureControlUnits">
               <legend><strong>Display</strong> Units</legend>
               <label for="C">C</label>
@@ -246,7 +249,7 @@
                   dev.state = Object.assign(dev.state, {
                     "openPercent": 0
                   })
-                } else if (dev.type == "action.devices.types.DOOR") {
+                } else if (dev.type == "action.devices.types.DOOR" || dev.type == "action.devices.types.WINDOW") {
                   dev.attributes["discreteOnlyOpenClose"] = true;
                 }
               }
@@ -822,6 +825,7 @@
           break;
         case 'action.devices.types.BLINDS':
         case 'action.devices.types.DOOR':
+        case 'action.devices.types.WINDOW':
           $('#OnOff').prop('checked', false);
           $('#Brightness').prop('checked', false);
           $('#ColorTemperature').prop('checked', false);
