@@ -60,6 +60,7 @@
            <option value="action.devices.types.SENSOR">Sensor</option>
            <option value="action.devices.types.CAMERA">Camera</option>
            <option value="action.devices.types.SCENE">Scene</option>
+           <!-- <option value="action.devices.types.CHARGER">Charger</option> -->
            <!-- <option value="action.devices.types.VACUUM">Vacume</option> -->
         </select>
 
@@ -142,11 +143,15 @@
             <input type="checkbox" name="trait" id="Scene" value="action.devices.traits.Scene">
           </fieldset>
           <fieldset id="modeToggleTraits" class="traits" disabled>
-            <label for="Scene">Toggles: </label>
+            <label for="Toggles">Toggles: </label>
             <input type="checkbox" name="trait" id="Toggles" value="action.devices.traits.Toggles">
-            <label for="Scene">Modes: </label>
+            <label for="Modes">Modes: </label>
             <input type="checkbox" name="trait" id="Modes" value="action.devices.traits.Modes">
-          </fieldset> 
+          </fieldset>
+          <!-- <fieldset id="chargeTraits" class="traits" disabled>
+            <label for="EnergyStorage">EnergyStorage: </label>
+            <input type="checkbox" name="trait" id="EnergyStorage" value="action.device.traits.EnergyStorage">
+          </fieldset> -->
         <!-- </div> -->
       </div>
       <fieldset id="reportState" hidden>
@@ -220,6 +225,12 @@
                   temperatureMaxK: 6500
                 }
                 dev.attributes["commandOnlyColorSetting"] = true
+              }
+
+              if (dev.traits.includes("action.devices.traits.Brightness")) {
+                Object.assign(dev.state, {
+                  brightness: 100
+                })
               }
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
@@ -339,6 +350,27 @@
                 })
               }
 
+              if (dev.traits.includes("action.devices.traits.CameraStream")) {
+                dev.attributes["cameraStreamNeedAuthToken"] = false
+                dev.attributes["cameraStreamNeedDrmEncryption"] = false
+                dev.attributes["cameraStreamSupportedProtocols"] = ["hls", "dash"]
+              }
+
+              // if (dev.traits.includes("actions.devices.traits.EnergyStorage")) {
+              //   dev.attributes["isRechargable"] = true
+              //   dev.attributes["queryOnlyEnergyStorage"] = false
+              //   dec.state = Object.assign(dev.state, {
+              //     isPluggedIn: true,
+              //     isCharging: true,
+              //     capacityRemaining: [
+              //       {
+              //         unit: "PERCENTAGE",
+              //         rawValue: 0
+              //       }
+              //     ]
+              //   })
+              // }
+
               console.log(dev);
               if (name && dev.type && dev.traits.length > 0) {
                 $.ajax({
@@ -386,6 +418,14 @@
                   temperatureMaxK: 6500
                 }
                 dev.attributes["commandOnlyColorSetting"] = true
+              }
+
+              if (dev.traits.includes("action.devices.traits.Brightness")) {
+                if (!dev.state.brightness) {
+                  Object.assign(dev.state, {
+                    brightness: 100
+                  })
+                }
               }
 
               if (dev.traits.includes("action.devices.traits.TemperatureSetting")) {
@@ -491,6 +531,27 @@
                   humidityAmbientPercent: 50
                 })
               }
+              
+              if (dev.traits.includes("action.devices.traits.CameraStream")) {
+                dev.attributes["cameraStreamNeedAuthToken"] = false
+                dev.attributes["cameraStreamNeedDrmEncryption"] = false
+                dev.attributes["cameraStreamSupportedProtocols"] = ["hls", "dash"]
+              }
+
+              // if (dev.traits.includes("actions.devices.traits.EnergyStorage")) {
+              //   dev.attributes["isRechargable"] = true
+              //   dev.attributes["queryOnlyEnergyStorage"] = false
+              //   dec.state = Object.assign(dev.state, {
+              //     isPluggedIn: true,
+              //     isCharging: true,
+              //     capacityRemaining: [
+              //       {
+              //         unit: "PERCENTAGE",
+              //         rawValue: 0
+              //       }
+              //     ]
+              //   })
+              // }
 
               console.log(dev);
               console.log(dev.attributes);
@@ -810,6 +871,7 @@
           $('#blindsTraits').attr('disabled','');
           $('#sensorTraits').attr('disabled','');
           $('#CameraTraits').attr('disabled', '');
+          // $('#chargeTraits').attr('hidden', '');
 
           $('#OnOffTraits').removeAttr('hidden');
           $('#lightTraits').attr('hidden','');
@@ -820,6 +882,7 @@
           $('#blindsTraits').attr('hidden','');
           $('#sensorTraits').attr('hidden','');
           $('#CameraTraits').attr('hidden', '');
+          // $('#chargeTraits').attr('hidden', '');
 
           $('#willReportState').prop('checked', true);
           break;
@@ -855,6 +918,7 @@
           $('#blindsTraits').removeAttr('hidden');
           $('#sensorTraits').attr('hidden','');
           $('#CameraTraits').attr('hidden', '');
+          // $('#chargeTraits').attr('hidden', '');
 
           $('#willReportState').prop('checked', true);
           break;
@@ -890,6 +954,7 @@
           $('#blindsTraits').attr('hidden','');
           $('#CameraTraits').removeAttr('hidden');
           $('#sensorTraits').attr('hidden','');
+          // $('#chargeTraits').attr('hidden', '');
 
           $('#willReportState').prop('checked', true);
           break;
@@ -927,6 +992,46 @@
           $('#sensorTraits').removeAttr('hidden');
 
           $('#willReportState').prop('checked', true);
+          break;
+
+        // case 'action.devices.types.CHARGER':
+        //   $('#OnOff').prop('checked', false);
+        //   $('#Brightness').prop('checked', false);
+        //   $('#ColorTemperature').prop('checked', false);
+        //   $('#ColorSpectrum').prop('checked', false);
+        //   $('#TemperatureSetting').prop('checked',false);
+        //   $('#FanSetting').prop('checked',false);
+        //   $('#Scene').prop('checked', false);
+        //   $('#OpenClose').prop('checked', false);
+        //   $('#CameraStream').prop('checked', false);
+        //   $('#TemperatureSensor').prop('checked', false);
+        //   $('#HumiditySensor').prop('checked', false);
+        //   $('#EnergyStorage').prop('checked', true);
+
+        //   $('#OnOffTraits').attr('disabled','');
+        //   $('#lightTraits').attr('disabled','');
+        //   $('#temperatureTraits').attr('disabled','');
+        //   $('#sceneTraits').attr('disabled','');
+        //   // $('#reportState').attr('disabled','');
+        //   $('#fanTraits').attr('disabled','');
+        //   $('#blindsTraits').attr('disabled','');
+        //   $('#CameraTraits').attr('disabled','');
+        //   $('#sensorTraits').attr('disabled');
+
+        //   $('#OnOffTraits').attr('hidden','');
+        //   $('#lightTraits').attr('hidden','');
+        //   $('#temperatureTraits').attr('hidden','');
+        //   $('#sceneTraits').attr('hidden','');
+        //   // $('#reportState').attr('hidden','');
+        //   $('#fanTraits').attr('hidden','');
+        //   $('#blindsTraits').attr('hidden','');
+        //   $('#CameraTraits').attr('hidden','');
+        //   // $('#chargeTraits').removeAttr('hidden');
+
+
+        //   $('#willReportState').prop('checked', true);
+        //   break;
+
 
       }
     }
@@ -969,6 +1074,7 @@
       $('#sensorTraits').attr('hidden','');
       $('#CameraTraits').attr('hidden', '');
       $('#modeToggleTraits').attr('hidden','');
+      // $('#chargeTraits').attr('hidden', '')
 
     }
 
