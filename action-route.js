@@ -517,7 +517,7 @@ module.exports = function(app, passport, mqttOptions, logger){
 					payload.payload.devices.states[device] = state.state;
 					if (state.state.spectrumRgb || state.state.temperatureK) {
 						payload.payload.devices.states[device].color = {
-						    spectrumRgb: state.state.specturmRgb
+						    spectrumRgb: state.state.specturmRgb,
 						    temperatureK: state.state.tempratureK
 						}
 						delete payload.payload.devices.states[device].spectrumRgb
