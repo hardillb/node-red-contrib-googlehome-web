@@ -515,6 +515,14 @@ module.exports = function(app, passport, mqttOptions, logger){
 
 				Devices.findOne({id: device}, function(err, state){
 					payload.payload.devices.states[device] = state.state;
+					if (state.state.spectrumRgb || state.state.temperatureK) {
+						payload.payload.devices.states[device].color = {
+						    spectrumRgb: state.state.specturmRgb
+						    temperatureK: state.state.tempratureK
+						}
+						delete payload.payload.devices.states[device].spectrumRgb
+						delete payload.payload.devices.states[device].temperatureK
+					}
 					logger.debug("reportStateDevice - ", payload);
 					if (state.willReportState) {
 						logger.debug("should report state HTTP")
