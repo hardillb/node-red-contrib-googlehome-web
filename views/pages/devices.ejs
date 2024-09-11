@@ -349,6 +349,40 @@
                   humidityAmbientPercent: 50
                 })
               }
+              if (dev.traits.includes("action.devices.traits.SensorState")) {
+                dev.attributes["sensorStatesSupported"] = [
+                  {
+                    "name": "AirQuality",
+                    "descriptiveCapabilities": {
+                      "availableStates": [
+                        "good",
+                        "fair",
+                        "poor",
+                        "very poor",
+                        "severe",
+                        "healthy",
+                        "moderate",
+                        "unhealthy",
+                        "very unhealthy",
+                        "unhealthy for sensitive groups",
+                        "hazardous"
+                      ]
+                    }
+                  }
+                ]
+                dev.state = Object.assign(dev.state, {
+                  "currentSensorStateData": [
+                    {
+                      "name": "AirQuality",
+                      "currentSensorState": "good"
+                    },
+                    {
+                      "name": "PM2.5",
+                      "rawValue": 2
+                    }
+                  ]
+                })
+              }
 
               if (dev.traits.includes("action.devices.traits.CameraStream")) {
                 dev.attributes["cameraStreamNeedAuthToken"] = false
@@ -531,6 +565,47 @@
                   humidityAmbientPercent: 50
                 })
               }
+
+              if (dev.traits.includes("action.devices.traits.HumiditySetting")) {
+                dev.attributes["queryOnlyHumiditySetting"] = true
+                dev.state = Object.assign(dev.state,{
+                  humidityAmbientPercent: 50
+                })
+              }
+              if (dev.traits.includes("action.devices.traits.SensorState")) {
+                dev.attributes["sensorStatesSupported"] = [
+                  {
+                    "name": "AirQuality",
+                    "descriptiveCapabilities": {
+                      "availableStates": [
+                        "good",
+                        "fair",
+                        "poor",
+                        "very poor",
+                        "severe",
+                        "healthy",
+                        "moderate",
+                        "unhealthy",
+                        "very unhealthy",
+                        "unhealthy for sensitive groups",
+                        "hazardous"
+                      ]
+                    }
+                  }
+                ]
+                dev.state = Object.assign(dev.state, {
+                  "currentSensorStateData": [
+                    {
+                      "name": "AirQuality",
+                      "currentSensorState": "good"
+                    },
+                    {
+                      "name": "PM2.5",
+                      "rawValue": 2
+                    }
+                  ]
+                })
+              }
               
               if (dev.traits.includes("action.devices.traits.CameraStream")) {
                 dev.attributes["cameraStreamNeedAuthToken"] = false
@@ -637,6 +712,9 @@
         if (device.traits.includes('action.devices.traits.TemperatureControl')) {
           var unit = device.attributes["temperatureUnitForUX"]
           $("input:radio[name=TemperatureControlUnit][value=" + unit + "]").prop("checked", true)
+        }
+        if (device.traits.includes('action.devices.traits.SensorState')) {
+          $('#AirQualitySensor').prop('checked', true)
         }
       }
     }
@@ -1047,6 +1125,7 @@
       $('#Scene').prop('checked',false);
       $('#TemperatureSensor').prop('checked', false);
       $('#HumiditySensor').prop('checked', false);
+      $('#AirQualitySensor').prop('checked', false);
 
       $('#OnOffTraits').removeAttr('disabled');
       $('#lightTraits').attr('disabled','');
