@@ -325,7 +325,7 @@
                 dev.attributes["reversible"] = true;
                 //dev.attributes["supportsFanSpeedPercent"] = true;
                 dev.state = Object.assign(dev.state, {
-                  fanSpeed: "Low"
+                  currentFanSpeedSetting: "Low"
                 })
               }
 
@@ -541,7 +541,7 @@
                 };
                 dev.attributes["reversible"] = true;
                 dev.state = Object.assign({
-                  fanSpeed: "Low"
+                  currentFanSpeedSetting: "Low"
                 }, dev.state)
 
               }
