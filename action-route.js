@@ -49,22 +49,21 @@ module.exports = function(app, passport, mqttOptions, logger){
 				if(waiting.devices.indexOf(deviceId) != -1) {
 					waiting.devices.splice(waiting.devices.indexOf(deviceId), 1);
 				}
-
 				if (payload.status == true || !payload.hasOwnProperty("status")) {
 					logger.debug("success: " + payload.id)
 					var command = {
 						ids: [payload.id],
 						status: "SUCCESS",
-						states: payload.execution.params
+						states: payload.execution.params || {}
 					}
-					switch (waiting.execution.command){
+					switch (waiting.execution.command) {
 						case "action.devices.commands.SetFanSpeed":
-							command.states.currentFanSpeedSetting = payload.execution.params.fanSpeed;
+							command.states.currentFanSpeedSetting = payload.execution?.params?.fanSpeed;
 							delete command.states.fanSpeed;
 							break;
 						case "action.devices.commands.ColorAbsolute":
 							if (command.states.color) {
-								if (command.states.color.temperature){
+								if (command.states.color.temperature) {
 									command.states.color.temperatureK = command.states.color.temperature;
 									delete command.states.color.temperature;
 								}
@@ -113,7 +112,12 @@ module.exports = function(app, passport, mqttOptions, logger){
 							delete command.states.lang;
 							break;
 						case "action.devices.commands.ThermostatSetMode":
-							command.states.activeThermostatMode = command.states.thermostatMode;
+							try {
+								command.states.activeThermostatMode = command.states.thermostatMode;
+							} catch (err) {
+								console.log(err)
+								console.log(topic, payload)
+							}
 							break;
 					}
 
